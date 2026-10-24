@@ -54,6 +54,7 @@ for (const name of [
   "ultimates.mjs",
   "model.mjs",
   "purchases.mjs",
+  "enrichment.mjs",
   "package.json",
   "package-lock.json",
   "POV-ADAPTER-LICENSE.txt",
@@ -61,6 +62,7 @@ for (const name of [
   "data/ultimates.json",
   "data/bridge-buffs.json",
   "data/items.json",
+  "data/signatures.json",
 ])
   files[`collector/${name}`] = new Uint8Array(
     await readFile(new URL(`../collector/${name}`, import.meta.url)),

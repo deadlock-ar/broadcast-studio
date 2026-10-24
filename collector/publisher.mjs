@@ -1,4 +1,5 @@
 import { randomBytes, randomUUID, createHash } from "node:crypto";
+import { applySeriesWin } from "./enrichment.mjs";
 import {
   emptySession,
   applyFrame,
@@ -173,6 +174,7 @@ export class Publisher {
     s.label = label(value.label) || `Game ${this.store.workspace.config.game}`;
     s.tournament ||= this.store.workspace.config.event;
     s.recording = {
+      clientVersion: label(value.clientVersion) || "0.1",
       name: label(value.recording),
       fromStart: value.fromStart === true,
       source: "local-client-demo",
@@ -211,6 +213,7 @@ export class Publisher {
       return { ack: value.sequence, catchingUp: true };
     }
     if (value.frame) {
+      const wasEnded = Boolean(s.result);
       const raw = value.frame;
       if (!Array.isArray(raw.players) || raw.players.length > 12)
         fail("Invalid roster.");
@@ -230,6 +233,7 @@ export class Publisher {
         };
         for (const k of [
           "damage",
+          "objectiveDamage",
           "healing",
           "souls",
           "kills",
@@ -242,12 +246,23 @@ export class Publisher {
         out.buffTypes = Object.fromEntries(
           Object.entries(p.buffTypes || {}).filter(
             ([k, v]) =>
-              /^[a-z_]{1,50}$/.test(k) &&
+              /^[a-z0-9_]{1,50}$/.test(k) &&
               Number.isInteger(v) &&
               v >= 0 &&
               v < 1000,
           ),
         );
+        out.items = Array.isArray(p.items)
+          ? p.items.filter(Number.isSafeInteger).slice(0, 24)
+          : null;
+        out.abilities = Array.isArray(p.abilities)
+          ? p.abilities.slice(0, 4).map((a) => ({
+              slot: a.slot,
+              id: a.id,
+              level: [0, 1, 2, 3].includes(a.level) ? a.level : null,
+              unlocked: typeof a.unlocked === "boolean" ? a.unlocked : null,
+            }))
+          : null;
         out.bridgeBuffs = (p.bridgeBuffs || []).slice(0, 4).map((b) => ({
           id: b.id,
           label: label(b.label),
@@ -262,6 +277,7 @@ export class Publisher {
           tick: finite(raw.tick),
           serverTick: finite(raw.serverTick),
           duration: finite(raw.duration),
+          matchId: /^\d{1,15}$/.test(raw.matchId || "") ? raw.matchId : null,
           paused: raw.paused === true,
           winner: [0, 1].includes(raw.winner) ? raw.winner : null,
           endObserved: raw.endObserved === true,
@@ -269,6 +285,9 @@ export class Publisher {
         now,
       );
       s.match.provider = "local-client-demo";
+      if (s.result) s.result.match.provider = "local-client-demo";
+      if (!wasEnded && applySeriesWin(this.store, s)) this.changed("workspace");
+      if (!wasEnded && s.result) this.changed("reports");
       s.sourceTiming = {
         decodedAt: finite(value.decodedAt),
         receivedAt: now,

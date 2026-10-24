@@ -5,6 +5,7 @@ import { useMatchStats } from "./use-match-stats";
 import {
   STATS_KEY,
   METRICS,
+  metricSupported,
   cleanPanel,
   clock,
   displayNumber,
@@ -63,12 +64,13 @@ export function StatGraphic({
   const metric = METRICS[panel.metric],
     max = Math.max(1, ...rows.map((p) => p[panel.metric] || 0));
   const live = match?.mode === "live",
-    unsupported = live && !metric.live && match?.provider !== "deadem";
+    unsupported = !metricSupported(panel.metric, match);
   const recorded = match?.mode === "finished" && time < match.duration;
   const stateLabel =
     status === "loading" || status === "connecting"
       ? "CONNECTING"
-      : status === "finished" && match?.provider === "deadem"
+      : status === "finished" &&
+          ["deadem", "local-client-demo"].includes(match?.provider)
         ? "CAPTURED"
         : status === "disconnected"
           ? "OFFLINE"
@@ -112,7 +114,20 @@ export function StatGraphic({
     <div className={`stat-canvas ${visible ? "" : "stat-hidden"}`}>
       <section
         className={`stat-box stat-theme-${panel.theme} stat-layout-${panel.layout} stat-position-${panel.position}`}
-        style={{ "--panel-scale": panel.scale }}
+        style={{
+          "--panel-scale": panel.scale,
+          "--panel-width": `${panel.width}px`,
+          "--stat-font-size": `${panel.fontSize}px`,
+          ...(panel.position === "custom"
+            ? {
+                left: panel.x,
+                top: panel.y,
+                right: "auto",
+                bottom: "auto",
+                transformOrigin: "top left",
+              }
+            : {}),
+        }}
         aria-label={`${metric.label} broadcast panel`}
       >
         <header className="stat-box-header">

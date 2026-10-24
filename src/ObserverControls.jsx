@@ -63,7 +63,7 @@ export default function ObserverControls({ active }) {
             href="/downloads/Deadlock-AR-Observer.zip"
             download
           >
-            Download observer companion ↓
+            Download observer companion v0.2 ↓
           </a>
         </div>
         <div>
@@ -112,8 +112,8 @@ export default function ObserverControls({ active }) {
             <strong>stop</strong> after the game ends.
           </p>
           <p>
-            Cheats must be enabled by the host. Spectator-slot compatibility
-            remains an acceptance check.
+            Cheats must be enabled by the host. Use a full-match spectator
+            recording for your pre-event check.
           </p>
         </div>
       </div>

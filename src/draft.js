@@ -93,6 +93,8 @@ export function cleanSnapshot(state) {
     throw new Error("Statlocker sent an unsupported draft state.");
   return {
     draftCode: state.draftCode,
+    banCount:
+      state.steps.filter((s) => s.selectionType === "ban").length === 4 ? 2 : 3,
     status: state.status || "WAITING",
     currentStepIndex: state.currentStepIndex ?? 0,
     steps: state.steps
@@ -123,7 +125,7 @@ export function teamSlots(snapshot, team, type) {
   const steps = (snapshot?.steps || []).filter(
     (s) => s.teamNumber === team && s.selectionType === type,
   );
-  const minimum = type === "pick" ? 6 : 3;
+  const minimum = type === "pick" ? 6 : snapshot?.banCount || steps.length || 3;
   return Array.from(
     { length: Math.max(minimum, steps.length) },
     (_, i) =>
@@ -158,21 +160,42 @@ export const DRAFT_ORDER = [
   [1, "pick"],
   [2, "pick"],
 ];
-export function makeDemo() {
+export const TWO_BAN_ORDER = [
+  [1, "ban"],
+  [2, "ban"],
+  [1, "pick"],
+  [2, "pick"],
+  [2, "pick"],
+  [1, "pick"],
+  [1, "pick"],
+  [2, "pick"],
+  [2, "ban"],
+  [1, "ban"],
+  [2, "pick"],
+  [1, "pick"],
+  [1, "pick"],
+  [2, "pick"],
+  [2, "pick"],
+  [1, "pick"],
+];
+export function makeDemo(banCount = 3) {
   const heroes = [2, 3, 6, 4, 7, 1, 13, 15, 10, 16, 12, 17];
   return {
     draftCode: "DEMO",
+    banCount: banCount === 2 ? 2 : 3,
     status: "ACTIVE",
     currentStepIndex: 12,
     teams: [],
     currentTimer: null,
-    steps: DRAFT_ORDER.map(([teamNumber, selectionType], i) => ({
-      id: `demo-${i}`,
-      selectionNumber: i + 1,
-      teamNumber,
-      selectionType,
-      heroId: heroes[i] || null,
-    })),
+    steps: (banCount === 2 ? TWO_BAN_ORDER : DRAFT_ORDER).map(
+      ([teamNumber, selectionType], i) => ({
+        id: `demo-${i}`,
+        selectionNumber: i + 1,
+        teamNumber,
+        selectionType,
+        heroId: heroes[i] || null,
+      }),
+    ),
   };
 }
 

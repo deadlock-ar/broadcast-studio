@@ -1,6 +1,6 @@
 # Deadlock AR — Broadcast Studio
 
-A shared tournament broadcast dashboard in the community’s parchment and olive identity. Railway hosts the website, Statlocker connection, password-protected controls, reports and persistent SQLite workspace. The observer companion reads a growing local Deadlock recording on whichever PC is observing and sends normalized statistics outward over HTTPS. The five OBS URLs stay the same when observers change.
+A shared tournament broadcast dashboard in the community’s parchment and olive identity. Railway hosts the website, Statlocker connection, password-protected controls, reports and persistent SQLite workspace. The observer companion reads a growing local Deadlock recording on whichever PC is observing and sends normalized statistics outward over HTTPS. OBS URLs stay the same when observers change.
 
 ## Observer workflow
 
@@ -18,13 +18,25 @@ The companion uses the same pinned Deadem 4.0.2 decoder with a client-demo adapt
 
 The current catalogue has 44 selectable heroes, including Violet and Nurse Harrow, with normal/gloat/critical portraits and selection voices. Portraits and the new voices are bundled with the site. Refresh with `npm run update:heroes`; new selection voices are resolved from VLViewer’s versioned manifest rather than guessed filenames.
 
-Manual drafts use the supplied 18-step competitive three-ban sequence. Live drafts follow the source’s received order. The opening ban round contains two bans per side; Hidden King’s first pick and both Archmother opening picks receive the first-round marker. Historical archives preserve their source order and rule identifier.
+Manual drafts offer the supplied 18-step competitive three-ban sequence and the classic 16-step two-ban sequence. Changing the format archives the current board; new manual drafts and rehearsals retain that format. Live drafts follow the source’s received order. Opening-round markers follow each draft’s actual order: the three-ban format opens with two bans per side, Hidden King’s first pick and both Archmother opening picks. Historical archives preserve their source order and rule identifier.
 
 Draft selections are saved as they arrive. Reconnecting a Statlocker code updates its existing archive. Use **Start next manual draft** to archive the old board and clear it for another game. In **Tournament reports**, select drafts and export the hero-priority PNG. Select completed games for item reports and optional comparison cohorts. Mid-game/incomplete recordings are excluded by default.
 
 Purchase reports count transaction events, not inventory snapshots. Duplicate ability-change/purchase notifications are reconciled. A full return is cancelled using refund eligibility or an exact full-cost currency receipt; a later partial sale retains the purchase. Returns without enough source evidence are flagged for operator review and block export. Retained pending purchases are confirmed at recorded game end. Components are counted when bought, not again when consumed by an upgrade. Buying the upgrade itself is a separate purchase. Bot IDs are synthetic rehearsal identities, never substituted for real account IDs.
 
-Series MVP combines selected ended-game totals, lets the operator choose a player, exports a PNG and publishes the card through the existing scoreboard URL. Publishing another match result switches that URL back to the scoreboard.
+Hero priority, top items and series MVP have separate permanent OBS URLs. Their previews, PNG exports and OBS sources use the same parchment/olive renderer. Series MVP uses the hero’s on-fire portrait and selected ended-game totals. These reports never replace the published match scoreboard.
+
+## Updated live desk and scoreboard
+
+Download the updated observer ZIP (companion 0.2.0) on each observer PC. It includes all-entity parsing for held items, objective damage, the numeric match ID and four signature ability upgrades. Older saved captures cannot gain data that their companion never sent. Recognized packed ability encodings map to upgrade tiers 0–3; unfamiliar encodings stay unknown. Confirm these tiers against the game during the next spectator rehearsal.
+
+Permanent-buff panels accept the local-recording source. Ultimate actor/victim lookup includes bot identities for custom-lobby tests and follows owner handles for summons/projectiles; the ambiguous Graves zombie ability remains suppressed. These fixes address reproducible source-filter and attribution failures, but ability-specific coverage still requires spectator recordings.
+
+Panel controls restore player tiles, ranked lists, team columns, themes, width, continuous scaling, text size and exact X/Y coordinates on the 1920 × 1080 canvas. The `/obs/deadem` link is labelled **Live stats panel**. Legacy API controls are under **Broadcast settings → Optional tools**; their old URL still works.
+
+The scoreboard shows souls, K/D/A, hero damage, objective damage and healing, held items, four ability upgrade tiers, team kill/soul totals and numeric match ID. A newly ended game adds one series point; retries, reconnects and republishing do not add another. Replay/rehearsal games do not award points. Previous finished archives are not automatically counted after upgrading.
+
+The recording has not yet demonstrated the official post-game awards message. **Verify with finished metadata** uses the captured numeric match ID, preserves recorded loadouts and imports official MVP/key-player ranks when available. Operators can choose an MVP immediately; otherwise the footer identifies explicit damage/objective/healing leaders. No calculated leader is presented as an official game award.
 
 ## Synchronization and acceptance checks
 
@@ -44,13 +56,16 @@ Stop collection, choose a JSON or `.json.gz` backup, review its game/draft count
 
 ## Permanent OBS outputs
 
-| Output                         | Path             |
-| ------------------------------ | ---------------- |
-| Draft                          | /obs/draft       |
-| Deadlock API stats             | /obs/live-events |
-| Deadem stats                   | /obs/deadem      |
-| Reviewed post-match scoreboard | /obs/scoreboard  |
-| Ultimate indicators            | /obs/ultimates   |
+| Output                         | Path               |
+| ------------------------------ | ------------------ |
+| Draft                          | /obs/draft         |
+| Deadlock API stats             | /obs/live-events   |
+| Deadem stats                   | /obs/deadem        |
+| Reviewed post-match scoreboard | /obs/scoreboard    |
+| Ultimate indicators            | /obs/ultimates     |
+| Hero priority                  | /obs/hero-priority |
+| Top items                      | /obs/top-items     |
+| Series MVP                     | /obs/series-mvp    |
 
 Copy the full URLs from **OBS outputs**. Add each source at **1920 × 1080**. Match IDs, branding, statistics and HUD calibration are stored on the server; changing them does not change the URLs. The scoreboard follows the latest explicitly published result, even after another game is selected. Hide/show controls are shared.
 
@@ -61,9 +76,7 @@ OBS outputs are publicly readable; dashboard controls, saved-game archives and b
 1. Sign in. All admins use the same workspace.
 2. Set team names, logos, series score, event and game number.
 3. In **Draft studio**, connect a Statlocker link or use manual/demo mode. The backend sends spectator messages only; decisions remain in Statlocker. Private-room passwords stay in memory, never in URLs or saved snapshots.
-4. Choose a stats source:
-   - **API stats** provides compact finished-match panels and the alternative Deadlock API live-events feed. Live permanent buffs are unavailable from this feed.
-   - **Deadem stats** uses Valve broadcast/replay data for live panels, permanent pickups, ultimate indicators and saved results. It runs on the server. Enter the match ID, or test with replay rehearsal.
+4. In **Live desk**, pair the observer companion and start the local recording. The collapsed relay/replay fallback remains available for delayed collection. Legacy **API stats** is under Broadcast settings → Optional tools.
 5. Calibrate ultimate badges against the game HUD and set any additional video delay. Calibration, display names and the selected statistic are shared.
 6. After an actual game-over signal, review the captured scoreboard, optionally verify against finished metadata, then **Publish reviewed scoreboard**. Later edits and verification stay off air until you publish again.
 
@@ -102,7 +115,7 @@ Restarting restores saved screens, selected game and published result. Active fe
 
 Download **workspace and results backup** from OBS outputs after each event. It includes workspace configuration and captures, excluding passwords and login sessions. Retain independent copies alongside Railway volume backups. Legacy collector JSON captures placed in the data directory are imported once and preserved. A full backup restore currently requires server access.
 
-Do not use multiple replicas with this SQLite deployment. Horizontal scaling would need a shared database and collector coordination. MVP graphics, brackets and highlights remain future roadmap work.
+Do not use multiple replicas with this SQLite deployment. Horizontal scaling would need a shared database and collector coordination. Brackets and highlights remain future roadmap work.
 
 ## Local development and rehearsal
 

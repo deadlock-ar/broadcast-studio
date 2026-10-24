@@ -6,6 +6,9 @@ import { BroadcastDatabase } from "./database.mjs";
 import { AdminAuth } from "./auth.mjs";
 import { CollectorEngine } from "./engine.mjs";
 import { SharedFeeds } from "./feeds.mjs";
+import { blankDraft } from "../src/workspace-model.js";
+import { reportOutput } from "./reports.mjs";
+import { applySeriesWin } from "./enrichment.mjs";
 import { Archive } from "./archive.mjs";
 import { Publisher } from "./publisher.mjs";
 import { Backups, exportBackup, prepareRestore } from "./backups.mjs";
@@ -100,6 +103,12 @@ export async function createBroadcastServer(options = {}) {
       await readFile(new URL("../src/heroes.json", import.meta.url), "utf8"),
     ).map((h) => h.id),
   );
+  const reportHeroes = JSON.parse(
+    await readFile(new URL("../src/heroes.json", import.meta.url), "utf8"),
+  );
+  const reportItems = JSON.parse(
+    await readFile(new URL("./data/items.json", import.meta.url), "utf8"),
+  );
   const clients = new Set();
   let lastBroadcast = 0,
     pendingBroadcast = null;
@@ -107,6 +116,10 @@ export async function createBroadcastServer(options = {}) {
   function output(channel) {
     const w = store.workspace,
       s = session();
+    if (["hero-priority", "top-items", "series-mvp"].includes(channel))
+      return {
+        report: reportOutput(store, channel, reportHeroes, reportItems),
+      };
     if (channel === "draft") return { config: w.config, draft: w.draft };
     if (channel === "live-events")
       return { config: w.config, apiStats: w.apiStats };
@@ -114,7 +127,7 @@ export async function createBroadcastServer(options = {}) {
       return {
         visible: w.scoreboard.visible,
         scoreboard: store.sessions.get(w.scoreboard.matchId)?.published || null,
-        kind: w.scoreboard.kind || "scoreboard",
+        kind: "scoreboard",
         mvp: w.scoreboard.mvp || null,
       };
     // Exclude archived/published copies and branding images from frequent live messages.
@@ -164,7 +177,10 @@ export async function createBroadcastServer(options = {}) {
       if (c.kind !== "output") continue;
       const relevant =
         section === "workspace" ||
-        (section === "draft" && c.channel === "draft") ||
+        (section === "draft" &&
+          ["draft", "hero-priority"].includes(c.channel)) ||
+        (section === "reports" &&
+          ["hero-priority", "top-items", "series-mvp"].includes(c.channel)) ||
         (section === "apiStats" && c.channel === "live-events") ||
         (section === "scoreboard" && c.channel === "scoreboard") ||
         (section === "collector" &&
@@ -415,10 +431,16 @@ export async function createBroadcastServer(options = {}) {
             games: appearances.length,
             publishedAt: Date.now(),
           };
-          store.workspace.scoreboard.kind = "mvp";
+          store.workspace.reports.mvpPlayerId = v.playerId;
+          store.workspace.reports.selectedGames = games.map((s) => s.id);
+          store.workspace.reports.titles.mvp = String(v.title || "").slice(
+            0,
+            43,
+          );
+          store.workspace.scoreboard.kind = "scoreboard";
           store.workspace.revision++;
           store.saveWorkspace();
-          changed("scoreboard");
+          changed("workspace");
           json(res, 200, { ok: true });
           return;
         }
@@ -456,6 +478,7 @@ export async function createBroadcastServer(options = {}) {
           Object.assign(row, correction);
           s.itemReviews = { ...s.itemReviews, [row.id]: correction };
           await store.save(s);
+          changed("reports");
           json(res, 200, { ok: true });
           return;
         }
@@ -485,6 +508,24 @@ export async function createBroadcastServer(options = {}) {
         }
         if (url.pathname === "/api/draft/connect" && method === "POST") {
           feeds.connectDraft(await body(req));
+          json(res, 200, store.workspace);
+          return;
+        }
+        if (url.pathname === "/api/draft/rule" && method === "POST") {
+          const v = await body(req),
+            d = store.workspace.draft;
+          if (d.mode === "live")
+            throw Error(
+              "A live room controls its own draft order. Disconnect it before choosing a manual format.",
+            );
+          if (![2, 3].includes(v.banCount))
+            throw Error("Choose two or three bans.");
+          store.archive.capture();
+          d.archiveId = null;
+          d.snapshot = blankDraft(v.banCount);
+          store.workspace.revision++;
+          store.saveWorkspace();
+          changed("draft");
           json(res, 200, store.workspace);
           return;
         }
@@ -611,7 +652,15 @@ export async function createBroadcastServer(options = {}) {
           return;
         }
         if (url.pathname === "/api/collector/publish" && method === "POST") {
-          publishResult(s, await body(req));
+          const presentation = await body(req);
+          const wasPublished = Boolean(s.published);
+          publishResult(s, presentation);
+          if (
+            !wasPublished &&
+            applySeriesWin(store, s, Number(presentation.winner))
+          ) {
+            s.published.teams = structuredClone(store.workspace.config.teams);
+          }
           await store.save(s);
           store.workspace.scoreboard.matchId = id;
           store.workspace.scoreboard.kind = "scoreboard";
@@ -623,14 +672,16 @@ export async function createBroadcastServer(options = {}) {
         }
         if (url.pathname === "/api/collector/verify" && method === "POST") {
           await body(req);
-          if (id.startsWith("local-"))
+          const numericId =
+            s.result?.match.matchId || (!id.startsWith("local-") ? id : null);
+          if (!numericId || !/^\d{1,15}$/.test(numericId))
             throw Error(
               "This recording has no verified numeric match ID. Its captured final result is retained.",
             );
           if (!s.result)
             throw Error("Wait for a game-over signal before verifying.");
           const upstream = await fetch(
-            `https://api.deadlock-api.com/v1/matches/${id}/metadata?is_custom=true`,
+            `https://api.deadlock-api.com/v1/matches/${numericId}/metadata?is_custom=true`,
             { signal: AbortSignal.timeout(30000) },
           );
           if (!upstream.ok)
@@ -638,10 +689,23 @@ export async function createBroadcastServer(options = {}) {
               `Finished metadata unavailable (HTTP ${upstream.status}). Captured results retained.`,
             );
           const raw = await upstream.json(),
-            normalized = normalizeMetadata(raw, id);
+            normalized = normalizeMetadata(raw, numericId);
           const players = playersAt(normalized, normalized.duration).map(
             (p) => ({
               ...p,
+              objectiveDamage:
+                s.result.match.players.find((old) => old.id === p.id)
+                  ?.objectiveDamage ?? null,
+              items:
+                s.result.match.players.find((old) => old.id === p.id)?.items ??
+                null,
+              abilities:
+                s.result.match.players.find((old) => old.id === p.id)
+                  ?.abilities ?? null,
+              mvpRank:
+                raw.match_info.players.find(
+                  (old) => String(old.account_id) === p.id,
+                )?.mvp_rank ?? null,
               name:
                 s.match?.players.find((old) => old.id === p.id)?.name || p.name,
             }),
@@ -664,6 +728,7 @@ export async function createBroadcastServer(options = {}) {
             },
             winner: [0, 1].includes(winner) ? winner : s.result.winner,
             verification: "metadata",
+            mvpId: players.find((p) => p.mvpRank === 1)?.id || null,
             verifiedAt: Date.now(),
           };
           await store.save(s);

@@ -9,9 +9,12 @@ export const OUTPUTS = {
   deadem: "/obs/deadem",
   scoreboard: "/obs/scoreboard",
   ultimates: "/obs/ultimates",
+  "hero-priority": "/obs/hero-priority",
+  "top-items": "/obs/top-items",
+  "series-mvp": "/obs/series-mvp",
 };
-export function blankDraft() {
-  const draft = makeDemo();
+export function blankDraft(banCount = 3) {
+  const draft = makeDemo(banCount);
   return {
     ...draft,
     draftCode: "",

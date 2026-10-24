@@ -15,6 +15,7 @@ import {
   teamSlots,
 } from "./draft";
 import "./App.css";
+import "./FeedbackUpdates.css";
 import StatPanels from "./StatPanels";
 import ProductionStudio from "./ProductionStudio";
 import SharedOutputs from "./SharedOutputs.jsx";
@@ -885,13 +886,15 @@ export default function App() {
             <Icon name="studio" />
             Draft studio<span>01</span>
           </button>
-          <button
-            className={tab === "stats" ? "selected" : ""}
-            onClick={() => setTab("stats")}
-          >
-            <Icon name="settings" />
-            API stats<span>02</span>
-          </button>
+          {tab === "stats" && (
+            <button
+              className={tab === "stats" ? "selected" : ""}
+              onClick={() => setTab("stats")}
+            >
+              <Icon name="settings" />
+              API stats<span>02</span>
+            </button>
+          )}
           <button
             className={tab === "live" ? "selected" : ""}
             onClick={() => setTab("live")}
@@ -966,7 +969,7 @@ export default function App() {
           </span>
         </header>
         <div
-          className={`workspace-content${tab === "stats" ? " stats-tab" : tab === "live" ? " production-tab" : tab === "outputs" ? " outputs-tab" : tab === "analytics" ? " analytics-tab" : ""}`}
+          className={`workspace-content${tab === "stats" ? " stats-tab" : tab === "live" ? " production-tab" : tab === "outputs" ? " outputs-tab" : tab === "analytics" ? " analytics-tab" : tab === "settings" ? " settings-only" : ""}`}
         >
           <StatPanels config={config} active={tab === "stats"} />
           <ProductionStudio config={config} active={tab === "live"} />
@@ -1080,6 +1083,28 @@ export default function App() {
                 </p>
               </div>
               <form onSubmit={connect}>
+                {cloud && (
+                  <Field label="Manual draft format">
+                    <select
+                      value={snapshot.banCount || 3}
+                      disabled={mode === "live"}
+                      onChange={(e) =>
+                        shared
+                          .command("draft/rule", {
+                            banCount: Number(e.target.value),
+                          })
+                          .catch((e) => setError(e.message))
+                      }
+                    >
+                      <option value={3}>Competitive · 3 bans per team</option>
+                      <option value={2}>Classic · 2 bans per team</option>
+                    </select>
+                    <small>
+                      Changing format saves the current draft and starts an
+                      empty board. Live rooms use their own order.
+                    </small>
+                  </Field>
+                )}
                 <Field label="Statlocker draft link">
                   <input
                     type="text"
@@ -1331,6 +1356,19 @@ export default function App() {
             </>
           ) : (
             <div className="settings-grid">
+              <section className="settings-panel">
+                <h2>Optional tools</h2>
+                <details>
+                  <summary>Legacy API statistics</summary>
+                  <p>The API source remains available for older workflows.</p>
+                  <button
+                    className="button secondary"
+                    onClick={() => setTab("stats")}
+                  >
+                    Open API stats
+                  </button>
+                </details>
+              </section>
               <section className="settings-panel">
                 <h2>On-screen details</h2>
                 <Toggle

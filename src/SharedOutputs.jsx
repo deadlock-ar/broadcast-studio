@@ -5,9 +5,12 @@ import BackupControls from "./BackupControls.jsx";
 const labels = {
   draft: "Draft",
   "live-events": "Deadlock API stats",
-  deadem: "Deadem stats",
+  deadem: "Live stats panel",
   scoreboard: "Post-match scoreboard",
   ultimates: "Ultimate HUD",
+  "hero-priority": "Hero priority",
+  "top-items": "Top items",
+  "series-mvp": "Series MVP",
 };
 export default function SharedOutputs() {
   const shared = useWorkspace();
@@ -21,48 +24,50 @@ export default function SharedOutputs() {
             OBS outputs<span>✦</span>
           </h1>
           <p>
-            Five permanent links. Changes in the studio update these sources
+            Permanent links. Changes in the studio update these sources
             automatically.
           </p>
         </div>
       </div>
-      {Object.entries(OUTPUTS).map(([key, path]) => {
-        const url = new URL(path, window.location.origin).href;
-        return (
-          <article className="production-card cloud-output-row" key={key}>
-            <div>
-              <h2>{labels[key]}</h2>
-              <input
-                aria-label={`${labels[key]} permanent OBS URL`}
-                value={url}
-                readOnly
-                onFocus={(e) => e.target.select()}
-              />
-            </div>
-            <button
-              className="button secondary"
-              onClick={() =>
-                navigator.clipboard
-                  .writeText(url)
-                  .then(() => setNotice(`${labels[key]} URL copied.`))
-                  .catch(() =>
-                    setNotice("Select the URL and copy it manually."),
-                  )
-              }
-            >
-              Copy URL
-            </button>
-            <a
-              className="button secondary"
-              href={url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Open output ↗
-            </a>
-          </article>
-        );
-      })}
+      {Object.entries(OUTPUTS)
+        .filter(([key]) => key !== "live-events")
+        .map(([key, path]) => {
+          const url = new URL(path, window.location.origin).href;
+          return (
+            <article className="production-card cloud-output-row" key={key}>
+              <div>
+                <h2>{labels[key]}</h2>
+                <input
+                  aria-label={`${labels[key]} permanent OBS URL`}
+                  value={url}
+                  readOnly
+                  onFocus={(e) => e.target.select()}
+                />
+              </div>
+              <button
+                className="button secondary"
+                onClick={() =>
+                  navigator.clipboard
+                    .writeText(url)
+                    .then(() => setNotice(`${labels[key]} URL copied.`))
+                    .catch(() =>
+                      setNotice("Select the URL and copy it manually."),
+                    )
+                }
+              >
+                Copy URL
+              </button>
+              <a
+                className="button secondary"
+                href={url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open output ↗
+              </a>
+            </article>
+          );
+        })}
       {notice && <p role="status">{notice}</p>}
       <p>
         Add each link as a 1920 × 1080 OBS Browser Source. Enable “Control audio

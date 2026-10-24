@@ -24,7 +24,8 @@ export class SharedFeeds {
   }
   connectDraft(value) {
     const d = this.store.workspace.draft,
-      mode = value.mode;
+      mode = value.mode,
+      banCount = d.snapshot.banCount || 3;
     if (!["live", "manual", "demo"].includes(mode))
       throw Error("Choose a draft source.");
     const selectedCode =
@@ -32,7 +33,8 @@ export class SharedFeeds {
     this.draft?.();
     this.draft = null;
     this.store.archive?.capture();
-    if (mode !== 'live' && (value.newDraft || d.mode !== mode)) d.archiveId = null;
+    if (mode !== "live" && (value.newDraft || d.mode !== mode))
+      d.archiveId = null;
     if (mode === "live") {
       const code = selectedCode;
       if (d.code !== code) d.snapshot = blankDraft();
@@ -66,9 +68,9 @@ export class SharedFeeds {
         { password: String(value.password || "").slice(0, 256) },
       );
     } else {
-      if (mode === "demo") d.snapshot = makeDemo();
-      else if (value.newDraft) d.snapshot = blankDraft();
-      else if (d.mode === "demo") d.snapshot = blankDraft();
+      if (mode === "demo") d.snapshot = makeDemo(banCount);
+      else if (value.newDraft) d.snapshot = blankDraft(banCount);
+      else if (d.mode === "demo") d.snapshot = blankDraft(banCount);
       else d.snapshot = { ...d.snapshot, draftCode: "", status: "WAITING" };
       Object.assign(d, {
         mode,

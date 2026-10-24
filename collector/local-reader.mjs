@@ -21,25 +21,23 @@ import { installPovSupport } from "./pov-compat.mjs";
 import { readFrame, playerFor } from "./extract.mjs";
 import { ultimateHit, ultimateEffects } from "./ultimates.mjs";
 import { PurchaseLedger } from "./purchases.mjs";
+import { enrichFrame } from "./enrichment.mjs";
 
 const load = async (name) =>
   JSON.parse(
     await readFile(new URL(`./data/${name}.json`, import.meta.url), "utf8"),
   );
 export async function collectLocal(options, publish, signal) {
-  const [pickups, ultimates, bridges, items] = await Promise.all(
-    ["permanent-pickups", "ultimates", "bridge-buffs", "items"].map(load),
+  const [pickups, ultimates, bridges, items, signatures] = await Promise.all(
+    [
+      "permanent-pickups",
+      "ultimates",
+      "bridge-buffs",
+      "items",
+      "signatures",
+    ].map(load),
   );
-  const parser = new Parser(
-    new ParserConfiguration({
-      entityClasses: [
-        "CCitadelPlayerController",
-        "CCitadelPlayerPawn",
-        "CCitadelGameRulesProxy",
-      ],
-    }),
-    Logger.CONSOLE_WARN,
-  );
+  const parser = new Parser(new ParserConfiguration(), Logger.CONSOLE_WARN);
   const compatibility = await installPovSupport(parser),
     demo = parser.getDemo(),
     ledger = new PurchaseLedger(items);
@@ -93,6 +91,7 @@ export async function collectLocal(options, publish, signal) {
       includeBots: true,
     });
     if (!frame.players.length) return;
+    enrichFrame(demo, frame, signatures, items);
     if (frame.endObserved && !ended) {
       ended = true;
       ledger.flush(tick, actors(), true);
@@ -146,7 +145,7 @@ export async function collectLocal(options, publish, signal) {
     }
     publish({
       frame,
-      effects: ultimateEffects(demo, ultimates),
+      effects: ultimateEffects(demo, ultimates, { includeBots: true }),
       hits: hits.filter((h) => Date.now() - h.at < 5000),
       items: ledger.snapshot(fromStart),
       audit,
@@ -203,7 +202,7 @@ export async function collectLocal(options, publish, signal) {
           order: order++,
         });
       if (packet.type === MessagePacketType.CITADEL_USER_MESSAGE_DAMAGE) {
-        const hit = ultimateHit(demo, data, ultimates);
+        const hit = ultimateHit(demo, data, ultimates, { includeBots: true });
         if (
           hit &&
           outer.tick - (hitTimes.get(hit.key) ?? -Infinity) >

@@ -10,15 +10,30 @@ export function accountId(value) {
     return null;
   }
 }
-export function playerFor(demo, entity, includeBots = false) {
+export function playerFor(demo, entity, includeBots = false, depth = 0) {
   if (!entity) return null;
+  if (
+    !["CCitadelPlayerPawn", "CCitadelPlayerController"].includes(
+      entity.class.name,
+    )
+  ) {
+    if (depth >= 4) return null;
+    const owner = entity.getField("m_hOwnerEntity");
+    return owner === undefined
+      ? null
+      : playerFor(demo, demo.getEntityByHandle(owner), includeBots, depth + 1);
+  }
   const controller =
     entity.class.name === "CCitadelPlayerPawn"
       ? demo.getEntityByHandle(entity.getField("m_hController"))
       : entity;
   if (controller?.class.name !== "CCitadelPlayerController") return null;
-  const slot = controller.getField('m_unLobbyPlayerSlot');
-  const id = accountId(controller.getField("m_steamID")) || (includeBots && Number.isInteger(slot) && slot >= 1 && slot <= 12 ? String(4000000000 + slot) : null);
+  const slot = controller.getField("m_unLobbyPlayerSlot");
+  const id =
+    accountId(controller.getField("m_steamID")) ||
+    (includeBots && Number.isInteger(slot) && slot >= 1 && slot <= 12
+      ? String(4000000000 + slot)
+      : null);
   const team = controller.getField("m_iTeamNum");
   const heroId = controller.getField("m_nHeroID");
   if (!id || !heroId || ![2, 3].includes(team)) return null;

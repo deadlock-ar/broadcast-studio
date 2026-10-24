@@ -6,7 +6,7 @@ import { setTimeout as wait } from "node:timers/promises";
 import assert from "node:assert/strict";
 const root = path.resolve(process.argv[2]),
   fixture = path.resolve(process.argv[3]);
-const studio = "http://127.0.0.1:49334",
+const studio = "http://127.0.0.1:49338",
   helper = "http://127.0.0.1:49337",
   data = path.join(root, ".dlar-observer"),
   folder = path.join(root, "fixture-game");

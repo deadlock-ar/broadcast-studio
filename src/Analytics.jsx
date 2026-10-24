@@ -116,7 +116,7 @@ export default function Analytics({ active, config }) {
       .sort((a, b) => (b.damage ?? -1) - (a.damage ?? -1))
       .map((p) => ({
         ...p,
-        image: heroes.find((h) => h.id === p.heroId)?.image,
+        image: heroes.find((h) => h.id === p.heroId)?.gloatImage,
       }));
   }, [chosenGames]);
   const rows = useMemo(
@@ -357,6 +357,33 @@ export default function Analytics({ active, config }) {
           </a>
         </aside>
         <div className="analytics-result">
+          <div className="report-studio-url">
+            <strong>
+              {report === "heroes"
+                ? "Hero priority"
+                : report === "items"
+                  ? "Top items"
+                  : "Series MVP"}{" "}
+              · permanent OBS URL
+            </strong>
+            <input
+              readOnly
+              aria-label="Report OBS URL"
+              value={`${window.location.origin}/obs/${{ heroes: "hero-priority", items: "top-items", mvp: "series-mvp" }[report]}`}
+              onFocus={(e) => e.target.select()}
+            />
+            <a
+              className="button secondary"
+              target="_blank"
+              rel="noreferrer"
+              href={`/obs/${{ heroes: "hero-priority", items: "top-items", mvp: "series-mvp" }[report]}`}
+            >
+              Open OBS output ↗
+            </a>
+            <small>
+              Follows the selected drafts or games and shared report settings.
+            </small>
+          </div>
           <div className="production-card analytics-options">
             <label>
               Image title
@@ -423,7 +450,7 @@ export default function Analytics({ active, config }) {
                   })
                 }
               >
-                Publish MVP to scoreboard URL
+                Confirm series MVP
               </button>
             )}
           </div>
@@ -484,13 +511,12 @@ export default function Analytics({ active, config }) {
           <div className="report-preview">
             <canvas ref={canvas} aria-label="Report image preview" />
           </div>
-          <p className="report-note">
-            {report === "heroes"
-              ? "First-round bans: the first two per side. First-round picks: Hidden King’s first pick and both Archmother opening picks."
-              : report === "items"
-                ? "Each confirmed purchase counts once. Full refunds are excluded; later sales keep the original purchase. Upgrades count when purchased; components are not counted again."
-                : "Select the MVP after reviewing the combined series totals. Publishing uses the existing scoreboard OBS URL."}
-          </p>
+          {report === "mvp" && (
+            <p className="report-note">
+              The series MVP uses its own OBS URL and the same on-fire portrait
+              as this preview.
+            </p>
+          )}
         </div>
       </div>
     </section>

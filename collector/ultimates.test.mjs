@@ -7,13 +7,15 @@ function fixture({
   removed = false,
   modifierId = 7,
   duplicate = false,
+  bots = false,
 } = {}) {
   const controller = (id, team, heroId) => ({
     class: { name: "CCitadelPlayerController" },
     index: id,
     getField: (key) =>
       ({
-        m_steamID: String(76561197960265728n + BigInt(id)),
+        m_steamID: bots ? "0" : String(76561197960265728n + BigInt(id)),
+        m_unLobbyPlayerSlot: id,
         m_iTeamNum: team,
         m_nHeroID: heroId,
         m_iszPlayerName: `Player ${id}`,
@@ -46,6 +48,24 @@ function fixture({
   };
 }
 const catalog = [{ id: 99, modifiers: [7] }];
+test("local recording ultimates include bot identities consistently with the roster", () => {
+  const d = fixture({ bots: true }),
+    damage = {
+      abilityId: 99,
+      damage: 10,
+      entindexAttacker: 1,
+      entindexVictim: 2,
+    };
+  assert.equal(ultimateHit(d, damage, catalog), null);
+  assert.equal(
+    ultimateHit(d, damage, catalog, { includeBots: true }).targetId,
+    "4000000002",
+  );
+  assert.equal(
+    ultimateEffects(d, catalog, { includeBots: true })[0].targetId,
+    "4000000002",
+  );
+});
 test("ultimate damage is attributed to its enemy target; basic attacks and zero damage are ignored", () => {
   const message = {
     abilityId: 99,

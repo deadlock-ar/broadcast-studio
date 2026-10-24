@@ -71,6 +71,7 @@ async function detectGame() {
 }
 config.gameFolder ||= await detectGame();
 const state = {
+  version: "0.2.0",
   status: "Ready",
   paired: Boolean(config.token),
   studio: config.studio || "",
@@ -112,6 +113,7 @@ async function cloud(route, value, authenticated = true) {
 }
 async function connectRun(run) {
   const begun = await cloud("begin", {
+    clientVersion: "0.2.0",
     id: run.id,
     recording: run.name,
     fromStart: run.fromStart,

@@ -22,6 +22,8 @@ import { useWorkspace, useWorkspaceField } from "./workspace-context.js";
 import { diffFields } from "./workspace-model.js";
 import { cleanSettings } from "../collector/model.mjs";
 import ObserverControls from "./ObserverControls.jsx";
+import PanelControls from "./PanelControls.jsx";
+import MatchScoreboard from "./MatchScoreboard.jsx";
 
 const roster = {
   ...Object.fromEntries(
@@ -152,117 +154,7 @@ export function Hud({
   );
 }
 export function Scoreboard({ result }) {
-  if (!result)
-    return (
-      <div className="production-canvas scoreboard-empty">
-        Waiting for an admin to publish this game's scoreboard.
-      </div>
-    );
-  const match = result.match;
-  return (
-    <div className="production-canvas scoreboard-canvas">
-      <section className="postmatch-board">
-        <header className="postmatch-heading">
-          <img src="/logo.png" alt="Deadlock AR" />
-          <div>
-            <span>{result.event || "DEADLOCK AR"}</span>
-            <h1>
-              Match results <b>✦</b>
-            </h1>
-          </div>
-          <div className="postmatch-details">
-            <strong>
-              {result.format} · GAME {result.game}
-            </strong>
-            <span>
-              {clock(match.duration)} · MATCH {match.id}
-            </span>
-          </div>
-        </header>
-        <div className="postmatch-teams">
-          {[0, 1].map((team) => (
-            <section
-              key={team}
-              className={`postmatch-team ${result.winner === team ? "winner" : ""}`}
-            >
-              <header>
-                {result.teams[team].logo && (
-                  <img src={result.teams[team].logo} alt="" />
-                )}
-                <div>
-                  <span>{result.winner === team ? "VICTORY" : "DEFEAT"}</span>
-                  <h2 dir="auto">{result.teams[team].name}</h2>
-                </div>
-                <b className="postmatch-series">
-                  {result.teams[team].score}
-                  <small>SERIES</small>
-                </b>
-              </header>
-              <div className="postmatch-row postmatch-labels">
-                <span>PLAYER</span>
-                <span>K / D / A</span>
-                <span>SOULS</span>
-                <span>DAMAGE</span>
-                <span>HEALING</span>
-                <span>BUFFS</span>
-              </div>
-              {match.players
-                .filter((p) => p.team === team)
-                .sort((a, b) => a.slot - b.slot)
-                .map((p) => (
-                  <div className="postmatch-row" key={p.id}>
-                    <div className="postmatch-player">
-                      <Portrait player={p} />
-                      <div>
-                        <strong dir="auto">
-                          {result.names?.[p.id] ||
-                            p.name ||
-                            roster[p.heroId]?.name}
-                        </strong>
-                        <small>
-                          {roster[p.heroId]?.name || `Hero ${p.heroId}`}
-                        </small>
-                      </div>
-                    </div>
-                    <b>
-                      {displayNumber(p.kills)}
-                      <i> / </i>
-                      {displayNumber(p.deaths)}
-                      <i> / </i>
-                      {displayNumber(p.assists)}
-                    </b>
-                    <b>{displayNumber(p.souls)}</b>
-                    <b>{displayNumber(p.damage)}</b>
-                    <b>{displayNumber(p.healing)}</b>
-                    <b>{displayNumber(p.buffs)}</b>
-                  </div>
-                ))}
-              <footer>
-                <span>TEAM TOTAL</span>
-                <strong>
-                  {displayNumber(
-                    match.players
-                      .filter((p) => p.team === team)
-                      .reduce((s, p) => s + (p.damage || 0), 0),
-                  )}{" "}
-                  <small>HERO DAMAGE</small>
-                </strong>
-              </footer>
-            </section>
-          ))}
-        </div>
-        <footer className="postmatch-footer">
-          <span>{result.round || "Deadlock AR broadcast"}</span>
-          <b>✦</b>
-          <span>
-            {result.verification === "metadata"
-              ? "Verified match metadata"
-              : "Reviewed broadcast capture"}
-          </span>
-        </footer>
-      </section>
-    </div>
-  );
+  return <MatchScoreboard result={result} />;
 }
 export function SeriesMvp({ result }) {
   if (!result) return null;
@@ -363,6 +255,11 @@ function ObsLink({ view, id, metric, label }) {
 }
 export default function ProductionStudio({ active, config }) {
   const shared = useWorkspace();
+  const [panel, setPanel] = useWorkspaceField(
+    ["deadem", "panel"],
+    cleanPanel({ theme: "ink" }),
+  );
+  const [mvpId, setMvpId] = useState("");
   const [id, setId] = useWorkspaceField(["deadem", "id"], ""),
     [mode, setMode] = useState("live"),
     [section, setSection] = useState("panels"),
@@ -425,6 +322,8 @@ export default function ProductionStudio({ active, config }) {
   const previewResult = session?.result
     ? {
         ...session.result,
+        mvpId:
+          mvpId || session.published?.mvpId || session.result.mvpId || null,
         winner: winner === "" ? session.result.winner : Number(winner),
         teams: config.teams,
         event: config.event,
@@ -570,6 +469,7 @@ export default function ProductionStudio({ active, config }) {
             onChange={(e) => {
               setId(e.target.value);
               setWinner("");
+              setMvpId("");
             }}
           >
             <option value="">Choose a game</option>
@@ -654,8 +554,8 @@ export default function ProductionStudio({ active, config }) {
                 <StatGraphic
                   match={match}
                   panel={cleanPanel({
+                    ...panel,
                     metric,
-                    theme: "ink",
                     names: session.settings.names,
                     teamNames: config.teams.map((t) => t.name),
                   })}
@@ -676,11 +576,12 @@ export default function ProductionStudio({ active, config }) {
                   }
                 />
               </Preview>
+              <PanelControls panel={cleanPanel(panel)} setPanel={setPanel} />
               <ObsLink
                 id={id}
                 metric={metric}
                 view="collector-panel"
-                label={`${METRICS[metric].label} panel`}
+                label="Live stats panel"
               />
             </>
           )}
@@ -886,6 +787,25 @@ export default function ProductionStudio({ active, config }) {
                         ))}
                       </select>
                     </label>
+                    <label>
+                      Game MVP (optional override)
+                      <select
+                        value={
+                          mvpId ||
+                          session.published?.mvpId ||
+                          session.result.mvpId ||
+                          ""
+                        }
+                        onChange={(e) => setMvpId(e.target.value)}
+                      >
+                        <option value="">No MVP confirmed</option>
+                        {session.result.match.players.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {session.settings.names[p.id] || p.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
                     <span className="production-pill">
                       {session.result.verification === "metadata"
                         ? "Metadata verified"
@@ -907,6 +827,7 @@ export default function ProductionStudio({ active, config }) {
                       onClick={() =>
                         action("publish", {
                           ...config,
+                          mvpId: mvpId || session.published?.mvpId || null,
                           winner:
                             winner === ""
                               ? session.result.winner

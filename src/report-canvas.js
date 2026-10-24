@@ -1,11 +1,12 @@
+import heroes from "./heroes.json";
 const palette = {
-  paper: "#efe8ce",
-  gold: "#bbaa72",
-  bg: "#0e2426",
-  panel: "#1c3436",
+  paper: "#292b27",
+  gold: "#65734f",
+  bg: "#eae1cf",
+  panel: "#d9ddca",
   firstBan: "#ff914d",
   ban: "#f16578",
-  firstPick: "#4dd5df",
+  firstPick: "#65734f",
   pick: "#5f9df7",
 };
 async function picture(url) {
@@ -22,10 +23,17 @@ function base(canvas, height, title, subtitle) {
   canvas.height = height;
   const c = canvas.getContext("2d");
   const fill = c.createLinearGradient(0, 0, 1920, height);
-  fill.addColorStop(0, "#122e30");
-  fill.addColorStop(1, "#071b20");
+  fill.addColorStop(0, "#f3ecdc");
+  fill.addColorStop(1, "#e0e4d2");
   c.fillStyle = fill;
   c.fillRect(0, 0, 1920, height);
+  c.fillStyle = "#292e25";
+  c.fillRect(54, 54, 1812, 174);
+  c.fillStyle = "#eae1cf";
+  c.fillRect(70, 72, 108, 112);
+  c.fillStyle = "#65734f";
+  c.font = "bold 42px Georgia";
+  c.fillText("AR", 92, 145);
   c.strokeStyle = palette.gold;
   c.lineWidth = 3;
   c.strokeRect(36, 36, 1848, height - 72);
@@ -42,26 +50,32 @@ function base(canvas, height, title, subtitle) {
       c.stroke();
     }
   c.textAlign = "center";
-  c.fillStyle = palette.gold;
+  c.fillStyle = "#b8c5a2";
   c.font = "500 18px sans-serif";
   c.fillText("DEADLOCK AR  /  TOURNAMENT REPORT", 960, 88);
-  c.fillStyle = palette.paper;
-  c.font = "bold 62px sans-serif";
+  c.fillStyle = "#eee6d6";
+  c.font = "bold 58px Georgia";
   c.fillText(title.toUpperCase().slice(0, 43), 960, 165);
   c.font = "24px sans-serif";
-  c.fillStyle = "#b5c9c4";
+  c.fillStyle = "#c3cbb5";
   c.fillText(subtitle.slice(0, 115), 960, 209);
   c.textAlign = "left";
   return c;
 }
-function footer(c, height, text) {
+async function footer(c, height, text) {
   c.fillStyle = palette.gold;
   c.font = "19px sans-serif";
   c.textAlign = "center";
   c.fillText(text, 960, height - 64);
   c.textAlign = "left";
+  const logo = await picture("/logo.png");
+  if (logo) {
+    c.fillStyle = "#eae1cf";
+    c.fillRect(70, 72, 108, 112);
+    c.drawImage(logo, 78, 79, 92, 100);
+  }
 }
-export async function drawHeroReport(canvas, { rows, title, games }) {
+export async function drawHeroReport(canvas, { rows, title }) {
   const groups = Map.groupBy(rows, (r) => r.total),
     capacity = 12,
     cell = 143;
@@ -81,7 +95,7 @@ export async function drawHeroReport(canvas, { rows, title, games }) {
     canvas,
     height,
     title || "Hero priority",
-    `${games} SELECTED DRAFT${games === 1 ? "" : "S"} · PICKS AND BANS BY PRIORITY`,
+    "HERO PRIORITY · PICKS & BANS",
   );
   let y = 245;
   for (const [total, group] of groups) {
@@ -133,11 +147,7 @@ export async function drawHeroReport(canvas, { rows, title, games }) {
     c.fillText(label, x + 15, y + 26);
     x += key.startsWith("first") ? 400 : 230;
   }
-  footer(
-    c,
-    height,
-    "First-round markers follow each saved draft’s opening phase",
-  );
+  await footer(c, height, "DEADLOCK AR · COMMUNITY TOURNAMENTS");
 }
 export async function drawItemReport(
   canvas,
@@ -150,9 +160,9 @@ export async function drawItemReport(
     canvas,
     height,
     title || "Top items",
-    `CONFIRMED PURCHASES PER GAME · ${games} SELECTED GAME${games === 1 ? "" : "S"}${baselineGames ? ` · COMPARED WITH ${baselineGames} GAMES` : ""}`,
+    `AVERAGE PURCHASES PER GAME · ${games} GAME${games === 1 ? "" : "S"}${baselineGames ? ` · COMPARED WITH ${baselineGames} GAMES` : ""}`,
   );
-  c.fillStyle = "#b5c9c4";
+  c.fillStyle = "#65734f";
   c.font = "18px sans-serif";
   c.fillText("ITEM", 180, 260);
   c.fillText("TOTAL", 1210, 260);
@@ -164,7 +174,7 @@ export async function drawItemReport(
     const y = 280 + i * 70;
     c.fillStyle = palette.panel;
     c.fillRect(72, y, 1776, 64);
-    c.fillStyle = "#2a4947";
+    c.fillStyle = "#abb894";
     c.fillRect(160, y + 2, (1040 * r.average) / max, 60);
     c.font = "24px sans-serif";
     c.fillStyle = palette.paper;
@@ -174,7 +184,7 @@ export async function drawItemReport(
     c.fillText(r.name || `Item ${r.id}`, 235, y + 43);
     c.font = "24px sans-serif";
     c.fillText(String(r.total), 1220, y + 43);
-    c.fillStyle = "#b7cebc";
+    c.fillStyle = "#526142";
     c.fillText(
       r.rankChange === null
         ? "—"
@@ -197,23 +207,16 @@ export async function drawItemReport(
     c.font = "bold 34px sans-serif";
     c.fillText(r.average.toFixed(1), 1735, y + 44);
   });
-  footer(
-    c,
-    height,
-    "Full refunds excluded · Later sales retain the original purchase",
-  );
+  await footer(c, height, "DEADLOCK AR · COMMUNITY TOURNAMENTS");
 }
-export async function drawMvpReport(canvas, { player, title, games }) {
+export async function drawMvpReport(canvas, { player, title }) {
   const value = (n) =>
     Number.isFinite(n) ? Math.round(n).toLocaleString() : "—";
-  const c = base(
-    canvas,
-    1080,
-    title || "Series MVP",
-    `${games} SELECTED GAMES · OPERATOR-SELECTED MVP`,
-  );
+  const c = base(canvas, 1080, title || "Series MVP", "MOST VALUABLE PLAYER");
   if (!player) return;
-  const image = await picture(player.image);
+  const image = await picture(
+    heroes.find((h) => h.id === player.heroId)?.gloatImage || player.image,
+  );
   if (image) c.drawImage(image, 195, 285, 360, 510);
   c.fillStyle = palette.gold;
   c.font = "bold 26px sans-serif";
@@ -232,7 +235,7 @@ export async function drawMvpReport(canvas, { player, title, games }) {
   c.font = "bold 40px sans-serif";
   c.fillText(`${value(player.damage)} DAMAGE`, 650, 715);
   c.fillText(`${value(player.souls)} SOULS`, 650, 790);
-  footer(c, 1080, "DEADLOCK AR · COMMUNITY TOURNAMENTS");
+  await footer(c, 1080, "DEADLOCK AR · COMMUNITY TOURNAMENTS");
 }
 export function downloadCanvas(canvas, name) {
   canvas.toBlob((blob) => {

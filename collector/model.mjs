@@ -8,8 +8,13 @@ export function matchId(value) {
   return id;
 }
 export function sessionId(value) {
-  const id = String(value ?? '');
-  if (/^local-[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(id)) return id;
+  const id = String(value ?? "");
+  if (
+    /^local-[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(
+      id,
+    )
+  )
+    return id;
   return matchId(id);
 }
 export function broadcastUrl(value, id) {
@@ -78,6 +83,7 @@ export function applyFrame(session, frame, now = Date.now()) {
   const players = mergePlayers(session.match?.players, frame.players);
   session.match = {
     ...frame,
+    matchId: frame.matchId ?? session.match?.matchId ?? null,
     id: session.id,
     mode: "live",
     provider: "deadem",
@@ -143,6 +149,9 @@ export function publishResult(session, presentation = {}) {
   }));
   session.published = {
     ...clone(session.result),
+    mvpId: session.result.match.players.some((p) => p.id === presentation.mvpId)
+      ? presentation.mvpId
+      : session.result.mvpId || null,
     winner,
     teams,
     event: label(presentation.event),

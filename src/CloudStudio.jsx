@@ -14,6 +14,7 @@ import { cleanPanel } from "./stats.js";
 import { enqueueCollectorState } from "./collector.js";
 import { WorkspaceContext, workspaceRequest } from "./workspace-context.js";
 import "./CloudStudio.css";
+import ReportCanvas from "./ReportCanvas.jsx";
 
 function WorkspaceProvider({ initial, children, logout }) {
   const canonical = useRef(initial),
@@ -231,6 +232,8 @@ function CloudBroadcast({ channel }) {
   );
   const visible =
     channel === "live-events" ? value?.apiStats?.visible : value?.visible;
+  if (["hero-priority", "top-items", "series-mvp"].includes(channel))
+    return <ReportCanvas report={value?.report} />;
   return (
     <BroadcastFrame>
       {visible === false ? null : channel === "scoreboard" ? (

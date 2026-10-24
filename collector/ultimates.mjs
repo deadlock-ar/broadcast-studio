@@ -1,7 +1,7 @@
 import { StringTableType } from "deadem";
 import { playerFor } from "./extract.mjs";
 
-export function ultimateHit(demo, damage, catalog) {
+export function ultimateHit(demo, damage, catalog, options = {}) {
   const ability = catalog.find((a) => a.id === damage.abilityId);
   // Player-confirmed 2026-10-24 regression: a second-ability zombie reports
   // Graves' ultimate ID even while the ultimate is locked. Never show that hit.
@@ -15,8 +15,16 @@ export function ultimateHit(demo, damage, catalog) {
     )
   )
     return null;
-  const caster = playerFor(demo, demo.getEntity(damage.entindexAttacker));
-  const target = playerFor(demo, demo.getEntity(damage.entindexVictim));
+  const caster = playerFor(
+    demo,
+    demo.getEntity(damage.entindexAttacker),
+    options.includeBots,
+  );
+  const target = playerFor(
+    demo,
+    demo.getEntity(damage.entindexVictim),
+    options.includeBots,
+  );
   if (!caster || !target || caster.team === target.team) return null;
   return {
     key: `${caster.id}:${target.id}:${ability.id}`,
@@ -27,7 +35,7 @@ export function ultimateHit(demo, damage, catalog) {
     durationMs: 1600,
   };
 }
-export function ultimateEffects(demo, catalog) {
+export function ultimateEffects(demo, catalog, options = {}) {
   const table = demo.stringTableContainer.getByType(
     StringTableType.ACTIVE_MODIFIERS,
   );
@@ -41,8 +49,16 @@ export function ultimateEffects(demo, catalog) {
         a.id === v.abilitySubclass && a.modifiers.includes(v.modifierSubclass),
     );
     if (!ability) continue;
-    const caster = playerFor(demo, demo.getEntityByHandle(v.caster));
-    const target = playerFor(demo, demo.getEntityByHandle(v.parent));
+    const caster = playerFor(
+      demo,
+      demo.getEntityByHandle(v.caster),
+      options.includeBots,
+    );
+    const target = playerFor(
+      demo,
+      demo.getEntityByHandle(v.parent),
+      options.includeBots,
+    );
     if (!caster || !target || caster.team === target.team) continue;
     const key = `${v.parent}:${v.serialNumber}`;
     if (seen.has(key)) continue;
