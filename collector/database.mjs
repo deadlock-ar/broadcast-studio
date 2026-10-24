@@ -36,6 +36,7 @@ export class BroadcastDatabase {
       }
     }
     this.workspace = this.read("workspace") || initialWorkspace();
+    this.workspace.reports ||= initialWorkspace().reports;
     this.workspace.draft.status = {
       state: "idle",
       message: this.workspace.draft.code
@@ -94,7 +95,14 @@ export class BroadcastDatabase {
       throw e;
     }
     // Preserve section identities held by the two running feed connections.
-    for (const key of ["config", "draft", "apiStats", "deadem", "scoreboard"])
+    for (const key of [
+      "config",
+      "draft",
+      "apiStats",
+      "deadem",
+      "scoreboard",
+      "reports",
+    ])
       Object.assign(this.workspace[key], next[key]);
     this.workspace.revision = next.revision;
   }

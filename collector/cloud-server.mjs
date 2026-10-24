@@ -398,7 +398,9 @@ export async function createBroadcastServer(options = {}) {
             totals = Object.fromEntries(
               ["damage", "souls", "kills", "deaths", "assists"].map((k) => [
                 k,
-                appearances.reduce((sum, p) => sum + (p[k] || 0), 0),
+                appearances.every((p) => Number.isFinite(p[k]))
+                  ? appearances.reduce((sum, p) => sum + p[k], 0)
+                  : null,
               ]),
             );
           store.workspace.scoreboard.mvp = {

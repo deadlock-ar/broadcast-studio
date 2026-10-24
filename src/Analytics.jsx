@@ -8,21 +8,37 @@ import {
   drawMvpReport,
   downloadCanvas,
 } from "./report-canvas.js";
-import { workspaceRequest } from "./workspace-context.js";
+import { workspaceRequest, useWorkspaceField } from "./workspace-context.js";
 import "./Analytics.css";
 
 export default function Analytics({ active, config }) {
+  const [report, setReport] = useWorkspaceField(["reports", "mode"], "heroes");
+  const [selected, setSelected] = useWorkspaceField(
+      ["reports", report === "heroes" ? "selectedDrafts" : "selectedGames"],
+      [],
+    ),
+    [baseline, setBaseline] = useWorkspaceField(
+      ["reports", "comparisonGames"],
+      [],
+    ),
+    [title, setTitle] = useWorkspaceField(["reports", "titles", report], ""),
+    [tournament, setTournament] = useWorkspaceField(
+      ["reports", "tournament"],
+      "",
+    ),
+    [mvp, setMvp] = useWorkspaceField(["reports", "mvpPlayerId"], ""),
+    [includeZero, setIncludeZero] = useWorkspaceField(
+      ["reports", "includeZero"],
+      true,
+    ),
+    [includePartial, setIncludePartial] = useWorkspaceField(
+      ["reports", "includePartial"],
+      false,
+    );
   const [data, setData] = useState({ drafts: [], games: [] }),
-    [selected, setSelected] = useState([]),
-    [baseline, setBaseline] = useState([]),
-    [report, setReport] = useState("heroes"),
-    [title, setTitle] = useState(""),
-    [tournament, setTournament] = useState(""),
     [notice, setNotice] = useState(""),
     [ready, setReady] = useState(false),
-    [mvp, setMvp] = useState(""),
-    [includeZero, setIncludeZero] = useState(true),
-    [includePartial, setIncludePartial] = useState(false);
+    [rendered, setRendered] = useState("");
   const canvas = useRef(null);
   const refresh = () => workspaceRequest("analytics").then(setData);
   useEffect(() => {
@@ -50,11 +66,13 @@ export default function Analytics({ active, config }) {
     () =>
       data.games.filter(
         (g) =>
-          (includePartial || (g.ended && g.fromStart)) &&
-          g.mode !== "rehearsal" &&
+          (report === "mvp"
+            ? g.ended
+            : includePartial || (g.ended && g.fromStart)) &&
+          !["rehearsal", "replay"].includes(g.mode) &&
           (!tournament || g.tournament === tournament),
       ),
-    [data, tournament, includePartial],
+    [data, tournament, includePartial, report],
   );
   const chosenDrafts = useMemo(
     () => drafts.filter((d) => selected.includes(d.id)),
@@ -89,12 +107,13 @@ export default function Analytics({ active, config }) {
           games: 0,
         };
         for (const k of ["kills", "deaths", "assists", "damage", "souls"])
-          old[k] += p[k] || 0;
+          old[k] =
+            Number.isFinite(p[k]) && old[k] !== null ? old[k] + p[k] : null;
         old.games++;
         map.set(p.id, old);
       }
     return [...map.values()]
-      .sort((a, b) => b.damage - a.damage)
+      .sort((a, b) => (b.damage ?? -1) - (a.damage ?? -1))
       .map((p) => ({
         ...p,
         image: heroes.find((h) => h.id === p.heroId)?.image,
@@ -109,6 +128,16 @@ export default function Analytics({ active, config }) {
         : itemPriority(chosenGames, items, baseGames),
     [report, chosenDrafts, chosenGames, includeZero, baseGames],
   );
+  const chartKey = JSON.stringify({
+    report,
+    title,
+    rows,
+    players,
+    mvp,
+    drafts: chosenDrafts.length,
+    games: chosenGames.length,
+    baseline: baseGames.length,
+  });
   useEffect(() => {
     if (!active || !canvas.current) return;
     let alive = true;
@@ -135,6 +164,7 @@ export default function Analytics({ active, config }) {
           canvas.current.height = target.height;
           canvas.current.getContext("2d").drawImage(target, 0, 0);
           setReady(true);
+          setRendered(chartKey);
         }
       })
       .catch((e) => {
@@ -156,6 +186,7 @@ export default function Analytics({ active, config }) {
     baseGames.length,
     players,
     mvp,
+    chartKey,
   ]);
   const toggle = (id, setter) =>
     setter((old) =>
@@ -176,7 +207,7 @@ export default function Analytics({ active, config }) {
     ),
   ];
   const list = report === "heroes" ? drafts : games;
-  const blocked = report !== "heroes" && unresolved.length > 0;
+  const blocked = report === "items" && unresolved.length > 0;
   return (
     <section className="analytics-studio" hidden={!active}>
       <div className="page-heading">
@@ -207,7 +238,6 @@ export default function Analytics({ active, config }) {
             className={report === id ? "selected" : ""}
             onClick={() => {
               setReport(id);
-              setSelected([]);
               setNotice("");
             }}
           >
@@ -257,14 +287,16 @@ export default function Analytics({ active, config }) {
               </p>
             </>
           ) : (
-            <label className="check-label">
-              <input
-                type="checkbox"
-                checked={includePartial}
-                onChange={(e) => setIncludePartial(e.target.checked)}
-              />
-              Include incomplete or mid-game recordings
-            </label>
+            report === "items" && (
+              <label className="check-label">
+                <input
+                  type="checkbox"
+                  checked={includePartial}
+                  onChange={(e) => setIncludePartial(e.target.checked)}
+                />
+                Include incomplete or mid-game recordings
+              </label>
+            )
           )}
           <div className="analytics-select-actions">
             <button
@@ -368,6 +400,7 @@ export default function Analytics({ active, config }) {
               className="button primary"
               disabled={
                 !ready ||
+                rendered !== chartKey ||
                 blocked ||
                 !selected.length ||
                 (report === "mvp" && !mvp)
@@ -442,7 +475,7 @@ export default function Analytics({ active, config }) {
               ))}
             </section>
           )}
-          {report !== "heroes" && includePartial && (
+          {report === "items" && includePartial && (
             <p className="production-notice">
               Partial captures omit purchases made before recording began. Their
               averages use only the selected recorded games.

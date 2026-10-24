@@ -4,7 +4,7 @@ A shared tournament broadcast dashboard in the community’s parchment and olive
 
 ## Observer workflow
 
-1. Open **Live desk** in the hosted studio. Download and extract the observer ZIP on the observer PC, then open **Start-Observer.cmd**. First run downloads the official portable Node.js 24.19.0 runtime, verifies its SHA-256 and installs the pinned parser. No administrator access is needed.
+1. Open **Live desk** in the hosted studio. Download and extract the observer ZIP on the observer PC, then open **Start-Observer.cmd**. The official Windows x64 Node.js 24.19.0 runtime and pinned parser are bundled. No installation or administrator access is needed. Packaging verifies the official runtime against its pinned SHA-256.
 2. Create a pairing code in Live desk. Enter it and the studio website address in the companion. The single-use code expires after five minutes. The companion stores a scoped publisher credential locally; it never needs the admin password. **Disconnect computer** revokes it.
 3. Join the custom lobby’s spectator slot before the host starts the game. The host must enable cheats for recording. Prepare a new recording in the companion and enter its fresh `record ...` command in Deadlock’s console before the countdown.
 4. Keep the companion open. It waits for the file, sends player statistics, permanent pickups, bridge buffs, purchase history and supported ultimate indicators, and retries temporary network interruptions. Use **Resume previous recording** after a companion restart. File replacement/truncation fails explicitly rather than mixing games.

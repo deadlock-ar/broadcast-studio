@@ -12,6 +12,7 @@ import { cleanConfig, cleanSnapshot } from "../src/draft.js";
 import { initialWorkspace } from "../src/workspace-model.js";
 import { cleanPanel } from "../src/stats.js";
 import { sessionId, cleanSettings, applyInterruption } from "./model.mjs";
+import { cleanReportSettings } from "../src/analytics.js";
 
 export function exportBackup(store) {
   const matches = structuredClone([...store.sessions.values()]);
@@ -64,6 +65,7 @@ export function prepareRestore(value, store) {
   const w = initialWorkspace(),
     source = value.workspace;
   w.config = cleanConfig(source.config);
+  w.reports = cleanReportSettings(source.reports);
   w.draft = {
     ...w.draft,
     mode: "manual",

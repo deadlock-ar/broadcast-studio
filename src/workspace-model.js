@@ -1,6 +1,7 @@
 import { cleanConfig, cleanSnapshot, makeDemo } from "./draft.js";
 import { cleanPanel } from "./stats.js";
 import { sessionId } from "../collector/model.mjs";
+import { cleanReportSettings } from "./analytics.js";
 
 export const OUTPUTS = {
   draft: "/obs/draft",
@@ -49,6 +50,7 @@ export function initialWorkspace() {
       hudVisible: true,
     },
     scoreboard: { matchId: "", visible: true },
+    reports: cleanReportSettings(),
   };
 }
 export const equalValue = (a, b) =>
@@ -123,6 +125,7 @@ export function patchWorkspace(state, operations) {
     const [section, key] = op.path || [];
     const valid =
       section === "config" ||
+      section === "reports" ||
       (section === "draft" &&
         key === "snapshot" &&
         state.draft.mode !== "live") ||
@@ -135,6 +138,7 @@ export function patchWorkspace(state, operations) {
   }
   const next = applyOperations(state, operations);
   next.config = cleanConfig(next.config);
+  next.reports = cleanReportSettings(next.reports);
   next.draft.snapshot = cleanSnapshot(next.draft.snapshot);
   for (const key of ["apiStats", "deadem"]) {
     next[key].panel = cleanPanel(next[key].panel);

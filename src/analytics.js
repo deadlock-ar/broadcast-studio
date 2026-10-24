@@ -1,5 +1,32 @@
 import { DRAFT_RULE } from "./draft.js";
 
+export function cleanReportSettings(value = {}) {
+  const ids = (values) =>
+    [...new Set(Array.isArray(values) ? values : [])]
+      .filter((v) => typeof v === "string" && v.length <= 250)
+      .slice(0, 500);
+  return {
+    mode: ["heroes", "items", "mvp"].includes(value.mode)
+      ? value.mode
+      : "heroes",
+    titles: Object.fromEntries(
+      ["heroes", "items", "mvp"].map((k) => [
+        k,
+        String(value.titles?.[k] || "").slice(0, 43),
+      ]),
+    ),
+    tournament: String(value.tournament || "").slice(0, 120),
+    selectedDrafts: ids(value.selectedDrafts),
+    selectedGames: ids(value.selectedGames),
+    comparisonGames: ids(value.comparisonGames),
+    mvpPlayerId: /^\d{1,10}$/.test(value.mvpPlayerId || "")
+      ? value.mvpPlayerId
+      : "",
+    includeZero: value.includeZero !== false,
+    includePartial: value.includePartial === true,
+  };
+}
+
 export function draftSelections(snapshot) {
   const counts = { "1:ban": 0, "2:ban": 0, "1:pick": 0, "2:pick": 0 };
   const openingPicks = {};

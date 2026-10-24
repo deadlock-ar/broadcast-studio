@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
-RUN npm run build && npm ci --prefix collector --omit=dev --ignore-scripts
+RUN npm ci --prefix collector --omit=dev --ignore-scripts && npm run build
 
 FROM node:24.19.0-bookworm-slim
 WORKDIR /app

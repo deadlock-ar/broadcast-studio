@@ -40,7 +40,7 @@ export class Archive {
         label || previous.label || `${w.config.round} · Game ${w.config.game}`,
       ).slice(0, 120),
       tournament: previous.tournament || w.config.event,
-      config: structuredClone(w.config),
+      config: previous.completed ? previous.config : structuredClone(w.config),
       snapshot: structuredClone(d.snapshot),
       selections: draftSelections(d.snapshot),
       completed:

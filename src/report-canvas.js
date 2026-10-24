@@ -65,10 +65,14 @@ export async function drawHeroReport(canvas, { rows, title, games }) {
   const groups = Map.groupBy(rows, (r) => r.total),
     capacity = 12,
     cell = 143;
+  const cellHeight = (total) => Math.max(112, Math.ceil(total / 4) * 14 + 24);
   const height =
-    330 +
+    410 +
     [...groups.values()].reduce(
-      (h, g) => h + Math.max(1, Math.ceil(g.length / capacity)) * 112 + 12,
+      (h, g) =>
+        h +
+        Math.max(1, Math.ceil(g.length / capacity)) * cellHeight(g[0].total) +
+        12,
       0,
     );
   const images = await Promise.all(rows.map((r) => picture(r.image)));
@@ -81,7 +85,7 @@ export async function drawHeroReport(canvas, { rows, title, games }) {
   );
   let y = 245;
   for (const [total, group] of groups) {
-    const rowHeight = Math.ceil(group.length / capacity) * 112;
+    const rowHeight = Math.ceil(group.length / capacity) * cellHeight(total);
     c.fillStyle = palette.panel;
     c.fillRect(72, y, 1776, rowHeight);
     c.fillStyle = palette.paper;
@@ -89,18 +93,18 @@ export async function drawHeroReport(canvas, { rows, title, games }) {
     c.fillText(String(total), 92, y + 66);
     group.forEach((row, index) => {
       const x = 165 + (index % capacity) * cell,
-        top = y + Math.floor(index / capacity) * 112 + 10,
+        top = y + Math.floor(index / capacity) * cellHeight(total) + 10,
         image = imageMap.get(row.id);
       if (image) c.drawImage(image, x, top, 62, 87);
       const markers = [];
       for (const k of ["firstBan", "ban", "firstPick", "pick"])
         for (let i = 0; i < row[k]; i++) markers.push(k);
       markers.forEach((k, i) => {
-        const mx = x + 75 + (i % 3) * 17,
-          my = top + 12 + Math.floor(i / 3) * 18;
+        const mx = x + 72 + (i % 4) * 14,
+          my = top + 12 + Math.floor(i / 4) * 14;
         c.fillStyle = palette[k];
         c.beginPath();
-        c.arc(mx, my, 6, 0, 2 * Math.PI);
+        c.arc(mx, my, 5.5, 0, 2 * Math.PI);
         c.fill();
         if (k.startsWith("first")) {
           c.fillStyle = palette.bg;
@@ -132,7 +136,7 @@ export async function drawHeroReport(canvas, { rows, title, games }) {
   footer(
     c,
     height,
-    "First ban round: two per side · Opening picks: Hidden King 1 / Archmother 2",
+    "First-round markers follow each saved draft’s opening phase",
   );
 }
 export async function drawItemReport(
@@ -140,7 +144,7 @@ export async function drawItemReport(
   { rows, title, games, baselineGames, limit = 20 },
 ) {
   const selected = rows.slice(0, limit),
-    height = 350 + selected.length * 70;
+    height = 390 + selected.length * 70;
   const images = await Promise.all(selected.map((r) => picture(r.image)));
   const c = base(
     canvas,
@@ -200,6 +204,8 @@ export async function drawItemReport(
   );
 }
 export async function drawMvpReport(canvas, { player, title, games }) {
+  const value = (n) =>
+    Number.isFinite(n) ? Math.round(n).toLocaleString() : "—";
   const c = base(
     canvas,
     1080,
@@ -217,15 +223,15 @@ export async function drawMvpReport(canvas, { player, title, games }) {
   c.fillText(player.name, 650, 455);
   c.font = "bold 45px sans-serif";
   c.fillText(
-    `${player.kills} / ${player.deaths} / ${player.assists}`,
+    `${value(player.kills)} / ${value(player.deaths)} / ${value(player.assists)}`,
     650,
     570,
   );
   c.font = "22px sans-serif";
   c.fillText("TOTAL KILLS / DEATHS / ASSISTS", 650, 615);
   c.font = "bold 40px sans-serif";
-  c.fillText(`${Math.round(player.damage).toLocaleString()} DAMAGE`, 650, 715);
-  c.fillText(`${Math.round(player.souls).toLocaleString()} SOULS`, 650, 790);
+  c.fillText(`${value(player.damage)} DAMAGE`, 650, 715);
+  c.fillText(`${value(player.souls)} SOULS`, 650, 790);
   footer(c, 1080, "DEADLOCK AR · COMMUNITY TOURNAMENTS");
 }
 export function downloadCanvas(canvas, name) {
