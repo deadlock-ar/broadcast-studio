@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useState } from "react";
 import { getAt } from "./workspace-model.js";
+import { tournamentHeaders } from "./tournament-context.js";
 export const WorkspaceContext = createContext(null);
 export const useWorkspace = () => useContext(WorkspaceContext);
 export function useWorkspaceField(path, initial) {
@@ -22,7 +23,10 @@ export async function workspaceRequest(path, value) {
       ? {}
       : {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...tournamentHeaders(),
+          },
           body: JSON.stringify(value),
         }),
   });

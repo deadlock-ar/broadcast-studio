@@ -22,10 +22,11 @@ export default function Analytics({ active, config }) {
       [],
     ),
     [title, setTitle] = useWorkspaceField(["reports", "titles", report], ""),
-    [tournament, setTournament] = useWorkspaceField(
-      ["reports", "tournament"],
-      "",
+    [mvpSource, setMvpSource] = useWorkspaceField(
+      ["reports", "mvpSource"],
+      "recorded",
     ),
+    [manualMvp, setManualMvp] = useWorkspaceField(["reports", "manualMvp"], {}),
     [mvp, setMvp] = useWorkspaceField(["reports", "mvpPlayerId"], ""),
     [includeZero, setIncludeZero] = useWorkspaceField(
       ["reports", "includeZero"],
@@ -55,13 +56,7 @@ export default function Analytics({ active, config }) {
       alive = false;
     };
   }, [active]);
-  const drafts = useMemo(
-    () =>
-      data.drafts.filter(
-        (d) => !d.excluded && (!tournament || d.tournament === tournament),
-      ),
-    [data, tournament],
-  );
+  const drafts = useMemo(() => data.drafts.filter((d) => !d.excluded), [data]);
   const games = useMemo(
     () =>
       data.games.filter(
@@ -69,10 +64,9 @@ export default function Analytics({ active, config }) {
           (report === "mvp"
             ? g.ended
             : includePartial || (g.ended && g.fromStart)) &&
-          !["rehearsal", "replay"].includes(g.mode) &&
-          (!tournament || g.tournament === tournament),
+          !["rehearsal", "replay"].includes(g.mode),
       ),
-    [data, tournament, includePartial, report],
+    [data, includePartial, report],
   );
   const chosenDrafts = useMemo(
     () => drafts.filter((d) => selected.includes(d.id)),
@@ -129,6 +123,8 @@ export default function Analytics({ active, config }) {
     [report, chosenDrafts, chosenGames, includeZero, baseGames],
   );
   const chartKey = JSON.stringify({
+    manualMvp,
+    mvpSource,
     report,
     title,
     rows,
@@ -153,7 +149,10 @@ export default function Analytics({ active, config }) {
               baselineGames: baseGames.length,
             })
           : drawMvpReport(target, {
-              player: players.find((p) => p.id === mvp),
+              player:
+                mvpSource === "manual"
+                  ? manualMvp
+                  : players.find((p) => p.id === mvp),
               title,
               games: chosenGames.length,
             });
@@ -187,6 +186,8 @@ export default function Analytics({ active, config }) {
     players,
     mvp,
     chartKey,
+    mvpSource,
+    manualMvp,
   ]);
   const toggle = (id, setter) =>
     setter((old) =>
@@ -201,11 +202,9 @@ export default function Analytics({ active, config }) {
       setNotice(e.message);
     }
   }
-  const tournaments = [
-    ...new Set(
-      [...data.drafts, ...data.games].map((d) => d.tournament).filter(Boolean),
-    ),
-  ];
+  const manual = report === "mvp" && mvpSource === "manual";
+  const manualReady =
+    manualMvp.name?.trim() && heroes.some((h) => h.id === manualMvp.heroId);
   const list = report === "heroes" ? drafts : games;
   const blocked = report === "items" && unresolved.length > 0;
   return (
@@ -245,21 +244,22 @@ export default function Analytics({ active, config }) {
           </button>
         ))}
       </div>
-      <div className="analytics-layout">
-        <aside className="production-card analytics-selection">
+      {report === "mvp" && (
+        <label className="production-card mvp-source">
+          MVP data source
+          <select
+            value={mvpSource}
+            onChange={(e) => setMvpSource(e.target.value)}
+          >
+            <option value="recorded">Saved match data</option>
+            <option value="manual">Enter manually</option>
+          </select>
+        </label>
+      )}
+      <div className={`analytics-layout ${manual ? "manual-mvp-layout" : ""}`}>
+        <aside className="production-card analytics-selection" hidden={manual}>
           <h2>Select {report === "heroes" ? "drafts" : "games"}</h2>
-          <label>
-            Tournament
-            <select
-              value={tournament}
-              onChange={(e) => setTournament(e.target.value)}
-            >
-              <option value="">All tournaments</option>
-              {tournaments.map((t) => (
-                <option key={t}>{t}</option>
-              ))}
-            </select>
-          </label>
+          <p>Only data from the current tournament is listed.</p>
           {report === "heroes" ? (
             <>
               <button
@@ -410,7 +410,63 @@ export default function Analytics({ active, config }) {
                 Include unused heroes
               </label>
             )}
-            {report === "mvp" && (
+            {manual && (
+              <div className="manual-mvp-fields">
+                <label>
+                  Player name
+                  <input
+                    value={manualMvp.name || ""}
+                    maxLength={48}
+                    onChange={(e) =>
+                      setManualMvp((old) => ({ ...old, name: e.target.value }))
+                    }
+                  />
+                </label>
+                <label>
+                  Hero
+                  <select
+                    value={manualMvp.heroId || ""}
+                    onChange={(e) =>
+                      setManualMvp((old) => ({
+                        ...old,
+                        heroId: Number(e.target.value) || null,
+                      }))
+                    }
+                  >
+                    <option value="">Select a hero</option>
+                    {heroes.map((h) => (
+                      <option key={h.id} value={h.id}>
+                        {h.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                {["kills", "deaths", "assists", "damage", "souls"].map(
+                  (key) => (
+                    <label key={key}>
+                      {key[0].toUpperCase() + key.slice(1)}
+                      <input
+                        type="number"
+                        min="0"
+                        max="9999999999"
+                        step="1"
+                        value={manualMvp[key] ?? ""}
+                        onChange={(e) =>
+                          setManualMvp((old) => ({
+                            ...old,
+                            [key]:
+                              e.target.value === ""
+                                ? null
+                                : Number(e.target.value),
+                          }))
+                        }
+                      />
+                    </label>
+                  ),
+                )}
+              </div>
+            )}
+            {report === "mvp" && !manual && (
               <label>
                 MVP player
                 <select value={mvp} onChange={(e) => setMvp(e.target.value)}>
@@ -429,8 +485,9 @@ export default function Analytics({ active, config }) {
                 !ready ||
                 rendered !== chartKey ||
                 blocked ||
-                !selected.length ||
-                (report === "mvp" && !mvp)
+                (manual
+                  ? !manualReady
+                  : !selected.length || (report === "mvp" && !mvp))
               }
               onClick={() =>
                 downloadCanvas(canvas.current, `deadlock-ar-${report}`)
@@ -438,7 +495,13 @@ export default function Analytics({ active, config }) {
             >
               Export PNG ↓
             </button>
-            {report === "mvp" && (
+            {manual && (
+              <p className="manual-mvp-note">
+                Manual values are saved for this tournament and update the
+                Series MVP OBS source. No saved match is required.
+              </p>
+            )}
+            {report === "mvp" && !manual && (
               <button
                 className="button secondary"
                 disabled={!mvp || !chosenGames.length}

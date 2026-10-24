@@ -16,6 +16,15 @@ export class CollectorEngine {
   start(options) {
     const id = matchId(options.id),
       prior = this.store.sessions.get(id);
+    if (this.store.tournaments?.isDeleted(id))
+      throw Error(
+        "This game was deleted. Restore it from Trash before collecting it again.",
+      );
+    if (
+      prior?.tournamentId &&
+      prior.tournamentId !== this.store.workspace.activeTournamentId
+    )
+      throw Error("Select this game's tournament before collecting it.");
     if (this.worker)
       throw Error(
         "Stop the current Deadem collector before starting another game.",
@@ -33,6 +42,8 @@ export class CollectorEngine {
         }
       : prior || emptySession(id, options.mode);
     Object.assign(state, {
+      tournamentId: this.store.workspace.activeTournamentId,
+      tournament: state.tournament || this.store.workspace.config.event,
       mode: options.mode,
       status: "connecting",
       effects: [],

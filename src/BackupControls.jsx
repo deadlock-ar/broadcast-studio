@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { workspaceRequest } from "./workspace-context.js";
-export default function BackupControls() {
+export default function BackupControls({ allowDelete = false }) {
+  const [deleting, setDeleting] = useState(""),
+    [confirmation, setConfirmation] = useState("");
   const [files, setFiles] = useState([]),
     [pending, setPending] = useState(null),
     [notice, setNotice] = useState(""),
@@ -73,9 +75,65 @@ export default function BackupControls() {
             >
               {file}
             </a>
+            {allowDelete && (
+              <button
+                className="text-button danger"
+                onClick={() => {
+                  setDeleting(file);
+                  setConfirmation("");
+                }}
+              >
+                Delete backup
+              </button>
+            )}
           </p>
         ))}
       </details>
+      {deleting && (
+        <section
+          className="data-confirm"
+          role="dialog"
+          aria-label="Delete backup"
+        >
+          <p>
+            Permanently delete {deleting}? Other backups and saved games stay
+            available. The current daily file may be created again by automatic
+            backups.
+          </p>
+          <label>
+            Type DELETE
+            <input
+              value={confirmation}
+              onChange={(e) => setConfirmation(e.target.value)}
+            />
+          </label>
+          <button
+            className="button primary"
+            disabled={confirmation !== "DELETE" || busy}
+            onClick={async () => {
+              setBusy(true);
+              try {
+                const x = await workspaceRequest("backups/delete", {
+                  name: deleting,
+                  confirmation,
+                });
+                setFiles(x.files);
+                setDeleting("");
+                setNotice("Backup deleted.");
+              } catch (e) {
+                setNotice(e.message);
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            Permanently delete backup
+          </button>
+          <button className="button secondary" onClick={() => setDeleting("")}>
+            Cancel
+          </button>
+        </section>
+      )}
       <label>
         Restore a studio backup
         <input

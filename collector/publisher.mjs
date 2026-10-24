@@ -139,6 +139,11 @@ export class Publisher {
         409,
       );
     const id = sessionId(value.id);
+    if (this.store.tournaments?.isDeleted(id))
+      fail(
+        "This recording was deleted. Restore it from Trash or prepare a new recording.",
+        409,
+      );
     if (!id.startsWith("local-"))
       fail("The companion must create a local game identifier.");
     for (const s of this.store.sessions.values())
@@ -153,6 +158,14 @@ export class Publisher {
           409,
         );
     const old = this.store.sessions.get(id);
+    if (
+      old?.tournamentId &&
+      old.tournamentId !== this.store.workspace.activeTournamentId
+    )
+      fail(
+        "Select this recording's tournament in the studio before resuming it.",
+        409,
+      );
     if (old?.publisher?.id && old.publisher.id !== p.id)
       fail("This recording belongs to a different companion.", 409);
     for (const other of this.store.sessions.values())
@@ -173,6 +186,7 @@ export class Publisher {
     };
     s.label = label(value.label) || `Game ${this.store.workspace.config.game}`;
     s.tournament ||= this.store.workspace.config.event;
+    s.tournamentId ||= this.store.workspace.activeTournamentId;
     s.recording = {
       clientVersion: label(value.clientVersion) || "0.1",
       name: label(value.recording),
@@ -192,6 +206,14 @@ export class Publisher {
   }
   ingest(p, value) {
     const s = this.store.sessions.get(sessionId(value.id));
+    if (
+      s?.tournamentId &&
+      s.tournamentId !== this.store.workspace.activeTournamentId
+    )
+      fail(
+        "This recording belongs to another tournament. Select it in the studio before resuming.",
+        409,
+      );
     if (!s || s.publisher?.id !== p.id || value.lease !== s.publisher.lease)
       fail(
         "This recording connection was replaced. Reconnect the companion.",

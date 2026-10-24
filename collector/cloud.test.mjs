@@ -120,6 +120,7 @@ test("cloud HTTP protects admin writes, shares edits and keeps all five output U
       headers: {
         Origin: origin,
         "Content-Type": "application/json",
+        "X-DLAR-Tournament": app.store.workspace.activeTournamentId,
         Cookie: cookie,
       },
       body: JSON.stringify(value),
@@ -181,6 +182,7 @@ test("cloud HTTP protects admin writes, shares edits and keeps all five output U
     endObserved: true,
     winner: 0,
   });
+  published.tournamentId = app.store.workspace.activeTournamentId;
   app.store.sessions.set("123", published);
   await app.store.save(published);
   const settings = structuredClone(published.settings);

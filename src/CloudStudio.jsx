@@ -15,6 +15,7 @@ import { enqueueCollectorState } from "./collector.js";
 import { WorkspaceContext, workspaceRequest } from "./workspace-context.js";
 import "./CloudStudio.css";
 import ReportCanvas from "./ReportCanvas.jsx";
+import { setTournamentContext } from "./tournament-context.js";
 
 function WorkspaceProvider({ initial, children, logout }) {
   const canonical = useRef(initial),
@@ -24,10 +25,15 @@ function WorkspaceProvider({ initial, children, logout }) {
     [error, setError] = useState(""),
     [connected, setConnected] = useState(true),
     [saving, setSaving] = useState(false);
+  const [changingTournament, setChangingTournament] = useState(false);
+  useEffect(() => {
+    setTournamentContext(data.activeTournamentId);
+  }, [data.activeTournamentId]);
   const refresh = useCallback(() => {
     let value = canonical.current;
     for (const task of pending.current)
       value = applyOperations(value, task.operations, false);
+    setTournamentContext(value.activeTournamentId);
     setData(value);
     setSaving(pending.current.length > 0);
   }, []);
@@ -69,7 +75,11 @@ function WorkspaceProvider({ initial, children, logout }) {
         value = typeof updater === "function" ? updater(before) : updater;
       const operations = diffFields(before, value, path);
       if (!operations.length) return;
-      pending.current.push({ id: crypto.randomUUID(), operations });
+      pending.current.push({
+        id: crypto.randomUUID(),
+        tournamentId: canonical.current.activeTournamentId,
+        operations,
+      });
       refresh();
       void drain();
     },
@@ -77,12 +87,20 @@ function WorkspaceProvider({ initial, children, logout }) {
   );
   const command = useCallback(
     async (path, value = {}) => {
-      const result = await workspaceRequest(path, value);
-      if (result.config && result.revision >= canonical.current.revision) {
-        canonical.current = result;
-        refresh();
+      const switching = ["tournaments/select", "tournaments/create"].includes(
+        path,
+      );
+      if (switching) setChangingTournament(true);
+      try {
+        const result = await workspaceRequest(path, value);
+        if (result.config && result.revision >= canonical.current.revision) {
+          canonical.current = result;
+          refresh();
+        }
+        return result;
+      } finally {
+        if (switching) setChangingTournament(false);
       }
-      return result;
     },
     [refresh],
   );
@@ -105,7 +123,16 @@ function WorkspaceProvider({ initial, children, logout }) {
   }, [refresh]);
   return (
     <WorkspaceContext.Provider
-      value={{ data, update, command, logout, error, connected, saving }}
+      value={{
+        data,
+        update,
+        command,
+        logout,
+        error,
+        connected,
+        saving,
+        changingTournament,
+      }}
     >
       {children}
       {error && (

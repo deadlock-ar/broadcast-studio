@@ -25,7 +25,11 @@ test("native publisher authenticates separately, cannot edit controls, and feeds
   async function post(route, value, headers = {}) {
     const r = await fetch(base + route, {
       method: "POST",
-      headers: { "Content-Type": "application/json", ...headers },
+      headers: {
+        "Content-Type": "application/json",
+        "X-DLAR-Tournament": app.store.workspace.activeTournamentId,
+        ...headers,
+      },
       body: JSON.stringify(value),
     });
     return { status: r.status, data: await r.json(), headers: r.headers };

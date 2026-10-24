@@ -27,6 +27,8 @@ export function initialWorkspace() {
   return {
     version: 1,
     revision: 0,
+    activeTournamentId: "",
+    tournaments: [],
     config: cleanConfig(),
     draft: {
       code: "",

@@ -10,6 +10,7 @@ import { blankDraft } from "../src/workspace-model.js";
 import { reportOutput } from "./reports.mjs";
 import { applySeriesWin } from "./enrichment.mjs";
 import { Archive } from "./archive.mjs";
+import { Tournaments, inTournament } from "./tournaments.mjs";
 import { Publisher } from "./publisher.mjs";
 import { Backups, exportBackup, prepareRestore } from "./backups.mjs";
 import {
@@ -112,7 +113,10 @@ export async function createBroadcastServer(options = {}) {
   const clients = new Set();
   let lastBroadcast = 0,
     pendingBroadcast = null;
-  const session = () => store.sessions.get(store.workspace.deadem.id) || null;
+  const session = () => {
+    const s = store.sessions.get(store.workspace.deadem.id);
+    return inTournament(s, store) ? s || null : null;
+  };
   function output(channel) {
     const w = store.workspace,
       s = session();
@@ -126,7 +130,12 @@ export async function createBroadcastServer(options = {}) {
     if (channel === "scoreboard")
       return {
         visible: w.scoreboard.visible,
-        scoreboard: store.sessions.get(w.scoreboard.matchId)?.published || null,
+        scoreboard: inTournament(
+          store.sessions.get(w.scoreboard.matchId),
+          store,
+        )
+          ? store.sessions.get(w.scoreboard.matchId)?.published || null
+          : null,
         kind: "scoreboard",
         mvp: w.scoreboard.mvp || null,
       };
@@ -203,6 +212,18 @@ export async function createBroadcastServer(options = {}) {
   const feeds = new SharedFeeds(store, changed);
   const publisher = new Publisher(store, changed, collector);
   const backups = new Backups(store);
+  store.collector = collector;
+  store.tournaments = new Tournaments(store, {
+    busy: () =>
+      Boolean(collector.worker) ||
+      [...store.sessions.values()].some(
+        (s) =>
+          !s.result &&
+          s.publisher?.lease &&
+          Date.now() - s.publisher.lastSeen < 15000,
+      ),
+    stopFeeds: () => feeds.stop(),
+  });
   function events(req, res, client, initial) {
     res.writeHead(200, {
       "Content-Type": "text/event-stream",
@@ -299,6 +320,92 @@ export async function createBroadcastServer(options = {}) {
           json(res, 401, { error: "Sign in to manage the shared broadcast." });
           return;
         }
+        const scopedWrite =
+          method === "POST" &&
+          [
+            "/api/workspace",
+            "/api/tournaments/",
+            "/api/data/",
+            "/api/analytics/",
+            "/api/collector/",
+            "/api/draft/",
+            "/api/live-events/",
+          ].some((prefix) => url.pathname.startsWith(prefix));
+        if (scopedWrite && !req.headers["x-dlar-tournament"])
+          throw Object.assign(
+            Error(
+              "Refresh this dashboard to load the current tournament before making changes.",
+            ),
+            { status: 409 },
+          );
+        if (
+          method === "POST" &&
+          req.headers["x-dlar-tournament"] &&
+          req.headers["x-dlar-tournament"] !==
+            store.workspace.activeTournamentId
+        )
+          throw Object.assign(
+            Error(
+              "Another admin changed the tournament. Review the selected tournament before trying again.",
+            ),
+            { status: 409 },
+          );
+        if (url.pathname === "/api/tournaments" && method === "GET") {
+          json(res, 200, {
+            activeTournamentId: store.workspace.activeTournamentId,
+            tournaments: store.workspace.tournaments,
+          });
+          return;
+        }
+        if (url.pathname === "/api/tournaments/create" && method === "POST") {
+          const v = await body(req);
+          store.tournaments.create(v.name);
+          changed();
+          json(res, 200, store.workspace);
+          return;
+        }
+        if (url.pathname === "/api/tournaments/select" && method === "POST") {
+          const v = await body(req);
+          store.tournaments.select(v.id);
+          changed();
+          json(res, 200, store.workspace);
+          return;
+        }
+        if (url.pathname === "/api/tournaments/rename" && method === "POST") {
+          const v = await body(req);
+          store.tournaments.rename(v.id, v.name);
+          changed();
+          json(res, 200, store.workspace);
+          return;
+        }
+        if (url.pathname === "/api/data" && method === "GET") {
+          json(res, 200, store.tournaments.summary());
+          return;
+        }
+        if (
+          ["/api/data/trash", "/api/data/restore", "/api/data/purge"].includes(
+            url.pathname,
+          ) &&
+          method === "POST"
+        ) {
+          const v = await body(req);
+          if (url.pathname.endsWith("/trash"))
+            store.tournaments.trash(v.kind, v.ids);
+          else if (url.pathname.endsWith("/restore"))
+            store.tournaments.restore(v.id);
+          else store.tournaments.purge(v.id, v.confirmation);
+          changed();
+          json(res, 200, store.tournaments.summary());
+          return;
+        }
+        if (url.pathname === "/api/backups/delete" && method === "POST") {
+          const v = await body(req);
+          if (v.confirmation !== "DELETE")
+            throw Error("Type DELETE to permanently remove a backup.");
+          await backups.remove(v.name);
+          json(res, 200, { files: await backups.list() });
+          return;
+        }
         if (url.pathname === "/api/backup" && method === "GET") {
           res.setHeader(
             "Content-Disposition",
@@ -337,11 +444,32 @@ export async function createBroadcastServer(options = {}) {
           feeds.stop();
           store.db.exec("BEGIN IMMEDIATE");
           try {
-            for (const s of prepared.sessions) await store.save(s);
+            for (const s of prepared.sessions) {
+              await store.save(s);
+              store.db
+                .prepare("DELETE FROM deleted_games WHERE id=?")
+                .run(s.id);
+            }
             for (const d of prepared.drafts)
               store.db
                 .prepare("INSERT OR REPLACE INTO drafts VALUES (?,?)")
                 .run(d.id, JSON.stringify(d));
+            for (const r of prepared.tournaments) store.tournaments.put(r);
+            for (const e of prepared.trash)
+              store.db
+                .prepare("INSERT OR REPLACE INTO trash VALUES (?,?)")
+                .run(e.id, JSON.stringify(e));
+            const restoredIds = new Set([
+              ...store.sessions.keys(),
+              ...prepared.sessions.map((s) => s.id),
+            ]);
+            for (const row of prepared.deletedGames)
+              if (!restoredIds.has(row.id))
+                store.db
+                  .prepare(
+                    "INSERT OR REPLACE INTO deleted_games VALUES (?,?,?)",
+                  )
+                  .run(row.id, row.tournamentId, row.deletedAt);
             store.write("workspace", prepared.workspace);
             store.db.exec("COMMIT");
           } catch (e) {
@@ -350,6 +478,9 @@ export async function createBroadcastServer(options = {}) {
           }
           for (const s of prepared.sessions) store.sessions.set(s.id, s);
           store.workspace = prepared.workspace;
+          for (const r of prepared.tournaments)
+            store.tournaments.records.set(r.id, r);
+          store.tournaments.migrate();
           changed();
           json(res, 200, {
             restored: true,
@@ -374,8 +505,9 @@ export async function createBroadcastServer(options = {}) {
         }
         if (url.pathname === "/api/analytics" && method === "GET") {
           json(res, 200, {
-            drafts: store.archive.list(),
+            drafts: store.archive.list().filter((d) => inTournament(d, store)),
             games: [...store.sessions.values()]
+              .filter((s) => inTournament(s, store))
               .filter((s) => s.items || s.result)
               .map((s) => ({
                 id: s.id,
@@ -401,7 +533,10 @@ export async function createBroadcastServer(options = {}) {
           if (
             games.some(
               (s) =>
-                !s?.result || s.mode === "rehearsal" || s.mode === "replay",
+                !s?.result ||
+                !inTournament(s, store) ||
+                s.mode === "rehearsal" ||
+                s.mode === "replay",
             )
           )
             throw Error("Choose completed tournament games.");
@@ -432,6 +567,7 @@ export async function createBroadcastServer(options = {}) {
             publishedAt: Date.now(),
           };
           store.workspace.reports.mvpPlayerId = v.playerId;
+          store.workspace.reports.mvpSource = "recorded";
           store.workspace.reports.selectedGames = games.map((s) => s.id);
           store.workspace.reports.titles.mvp = String(v.title || "").slice(
             0,
@@ -456,6 +592,14 @@ export async function createBroadcastServer(options = {}) {
         }
         if (url.pathname === "/api/analytics/draft" && method === "POST") {
           const v = await body(req);
+          if (
+            v.id &&
+            !inTournament(
+              store.archive.list().find((d) => d.id === v.id),
+              store,
+            )
+          )
+            throw Error("Choose a draft from the current tournament.");
           const result = v.id
             ? store.archive.update(v.id, v)
             : store.archive.capture({ force: true, label: v.label });
@@ -467,6 +611,8 @@ export async function createBroadcastServer(options = {}) {
           const v = await body(req),
             s = store.sessions.get(sessionId(v.gameId));
           if (!s?.items) throw Error("Purchase history not found.");
+          if (!inTournament(s, store))
+            throw Error("Choose a game from the current tournament.");
           const row = s.items.purchases.find((p) => p.id === v.purchaseId);
           if (!row || !["confirmed", "refunded"].includes(v.status))
             throw Error("Choose a purchase and its result.");
@@ -492,12 +638,25 @@ export async function createBroadcastServer(options = {}) {
         }
         if (url.pathname === "/api/workspace" && method === "POST") {
           const v = await body(req);
+          if (
+            v.tournamentId &&
+            v.tournamentId !== store.workspace.activeTournamentId
+          )
+            throw Object.assign(
+              Error("The tournament changed. Your edit was not applied."),
+              { status: 409 },
+            );
           if (!/^[a-f0-9-]{36}$/i.test(v.id || ""))
             throw Error("Invalid update identifier.");
           if (!store.hasPatch(v.id)) {
             const next = patchWorkspace(store.workspace, v.operations);
             if (next.deadem.id && !store.sessions.has(next.deadem.id))
               throw Error("Choose a saved or collected game.");
+            if (
+              next.deadem.id &&
+              !inTournament(store.sessions.get(next.deadem.id), store)
+            )
+              throw Error("Choose a game from the current tournament.");
             store.applyPatch(v.id, next);
             store.archive.capture();
             store.saveWorkspace();
@@ -577,13 +736,15 @@ export async function createBroadcastServer(options = {}) {
                     p.activeGame === store.workspace.deadem.id && !p.revoked,
                 ) || null,
             catalog,
-            games: [...store.sessions.values()].map((s) => ({
-              id: s.id,
-              status: s.status,
-              mode: s.mode,
-              published: Boolean(s.published),
-              ended: Boolean(s.result),
-            })),
+            games: [...store.sessions.values()]
+              .filter((s) => inTournament(s, store))
+              .map((s) => ({
+                id: s.id,
+                status: s.status,
+                mode: s.mode,
+                published: Boolean(s.published),
+                ended: Boolean(s.result),
+              })),
           });
           return;
         }
@@ -630,6 +791,8 @@ export async function createBroadcastServer(options = {}) {
           json(res, 404, { error: "This game has not been collected." });
           return;
         }
+        if (!inTournament(s, store))
+          throw Error("Select this game’s tournament first.");
         if (url.pathname === "/api/collector/state" && method === "GET") {
           json(res, 200, s);
           return;

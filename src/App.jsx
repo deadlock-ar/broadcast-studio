@@ -20,6 +20,9 @@ import StatPanels from "./StatPanels";
 import ProductionStudio from "./ProductionStudio";
 import SharedOutputs from "./SharedOutputs.jsx";
 import Analytics from "./Analytics.jsx";
+import TournamentSwitcher from "./TournamentSwitcher.jsx";
+import DataLibrary from "./DataLibrary.jsx";
+import "./TournamentTools.css";
 import { useWorkspace, useWorkspaceField } from "./workspace-context.js";
 
 const roster = Object.fromEntries(heroes.map((h) => [h.id, h]));
@@ -505,16 +508,30 @@ function Modal({ title, onClose, children }) {
   );
 }
 
+function useTournamentLocal(scope, initial) {
+  const [saved, setSaved] = useState({ scope, value: initial });
+  return [
+    saved.scope === scope ? saved.value : initial,
+    (value) => setSaved({ scope, value }),
+  ];
+}
 export default function App() {
   const shared = useWorkspace(),
     cloud = Boolean(shared);
   const [config, setConfig] = useWorkspaceField(["config"], initialConfig);
   const [code, setCode] = useWorkspaceField(["draft", "code"], initialCode);
-  const [link, setLink] = useState(
+  const [link, setLink] = useTournamentLocal(
+    shared?.data.activeTournamentId,
     code ? `https://statlocker.gg/draft/${code}` : "",
   );
-  const [password, setPassword] = useState("");
-  const [activePassword, setActivePassword] = useState("");
+  const [password, setPassword] = useTournamentLocal(
+    shared?.data.activeTournamentId,
+    "",
+  );
+  const [activePassword, setActivePassword] = useTournamentLocal(
+    shared?.data.activeTournamentId,
+    "",
+  );
   const initialDemo = isOverlay
     ? params.get("demo") === "1"
     : saved.mode === "demo" && !initialCode;
@@ -542,7 +559,7 @@ export default function App() {
     audioRef,
   } = usePickEffects(
     snapshot,
-    `${mode}:${code}`,
+    `${shared?.data.activeTournamentId || ""}:${mode}:${code}`,
     initialSnapshots,
     config,
     isOverlay,
@@ -556,7 +573,9 @@ export default function App() {
   const [toast, setToast] = useState("");
   const [activity, setActivity] = useState([]);
   const [tab, setTab] = useState(
-    ["stats", "live", "outputs", "analytics"].includes(params.get("tab"))
+    ["stats", "live", "outputs", "analytics", "data"].includes(
+      params.get("tab"),
+    )
       ? params.get("tab")
       : "studio",
   );
@@ -892,7 +911,7 @@ export default function App() {
               onClick={() => setTab("stats")}
             >
               <Icon name="settings" />
-              API stats<span>02</span>
+              API stats
             </button>
           )}
           <button
@@ -900,7 +919,7 @@ export default function App() {
             onClick={() => setTab("live")}
           >
             <Icon name="play" />
-            Live desk<span>03</span>
+            Live desk<span>02</span>
           </button>
           <button
             className={tab === "settings" ? "selected" : ""}
@@ -929,6 +948,15 @@ export default function App() {
             >
               <Icon name="external" />
               OBS outputs
+            </button>
+          )}
+          {cloud && (
+            <button
+              className={tab === "data" ? "selected" : ""}
+              onClick={() => setTab("data")}
+            >
+              <Icon name="settings" />
+              Data library
             </button>
           )}
           {shared?.logout && <button onClick={shared.logout}>Sign out</button>}
@@ -968,12 +996,35 @@ export default function App() {
                 : "Saved in this browser"}
           </span>
         </header>
+        {cloud && <TournamentSwitcher />}
         <div
-          className={`workspace-content${tab === "stats" ? " stats-tab" : tab === "live" ? " production-tab" : tab === "outputs" ? " outputs-tab" : tab === "analytics" ? " analytics-tab" : tab === "settings" ? " settings-only" : ""}`}
+          inert={shared?.changingTournament || undefined}
+          aria-busy={shared?.changingTournament || undefined}
+          className={`workspace-content${tab === "stats" ? " stats-tab" : tab === "live" ? " production-tab" : tab === "outputs" ? " outputs-tab" : tab === "analytics" ? " analytics-tab" : tab === "data" ? " data-tab" : tab === "settings" ? " settings-only" : ""}`}
         >
-          <StatPanels config={config} active={tab === "stats"} />
-          <ProductionStudio config={config} active={tab === "live"} />
-          {cloud && <Analytics config={config} active={tab === "analytics"} />}
+          <StatPanels
+            key={shared?.data.activeTournamentId}
+            config={config}
+            active={tab === "stats"}
+          />
+          <ProductionStudio
+            key={shared?.data.activeTournamentId}
+            config={config}
+            active={tab === "live"}
+          />
+          {cloud && (
+            <Analytics
+              key={shared.data.activeTournamentId}
+              config={config}
+              active={tab === "analytics"}
+            />
+          )}
+          {cloud && (
+            <DataLibrary
+              key={shared.data.activeTournamentId}
+              active={tab === "data"}
+            />
+          )}
           {cloud && <SharedOutputs />}
           <div className="page-heading">
             <div>
@@ -1034,7 +1085,10 @@ export default function App() {
                     onSelect={
                       mode === "manual"
                         ? (slot) => {
-                            setPicker(slot);
+                            setPicker({
+                              ...slot,
+                              tournamentId: shared?.data.activeTournamentId,
+                            });
                             setSearch("");
                           }
                         : null
@@ -1567,46 +1621,50 @@ export default function App() {
           </div>
         </Modal>
       )}
-      {picker && (
-        <Modal
-          title={`Choose a hero · Team ${picker.teamNumber} ${picker.selectionType}`}
-          onClose={() => setPicker(null)}
-        >
-          <input
-            className="hero-search"
-            placeholder="Search heroes…"
-            aria-label="Search heroes"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <div className="hero-picker">
-            {heroes
-              .filter((h) =>
-                h.name.toLowerCase().includes(search.toLowerCase()),
-              )
-              .sort((a, b) => a.name.localeCompare(b.name))
-              .map((h) => {
-                const used = snapshot.steps.some(
-                  (s) => s.id !== picker.id && s.heroId === h.id,
-                );
-                return (
-                  <button
-                    key={h.id}
-                    onClick={() => selectHero(h.id)}
-                    disabled={used}
-                  >
-                    <img src={h.image} alt="" />
-                    <span>{h.name}</span>
-                    {used && <small>Already selected</small>}
-                  </button>
-                );
-              })}
-          </div>
-          <button className="button secondary" onClick={() => selectHero(null)}>
-            Clear this slot
-          </button>
-        </Modal>
-      )}
+      {picker &&
+        (!cloud || picker.tournamentId === shared.data.activeTournamentId) && (
+          <Modal
+            title={`Choose a hero · Team ${picker.teamNumber} ${picker.selectionType}`}
+            onClose={() => setPicker(null)}
+          >
+            <input
+              className="hero-search"
+              placeholder="Search heroes…"
+              aria-label="Search heroes"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div className="hero-picker">
+              {heroes
+                .filter((h) =>
+                  h.name.toLowerCase().includes(search.toLowerCase()),
+                )
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((h) => {
+                  const used = snapshot.steps.some(
+                    (s) => s.id !== picker.id && s.heroId === h.id,
+                  );
+                  return (
+                    <button
+                      key={h.id}
+                      onClick={() => selectHero(h.id)}
+                      disabled={used}
+                    >
+                      <img src={h.image} alt="" />
+                      <span>{h.name}</span>
+                      {used && <small>Already selected</small>}
+                    </button>
+                  );
+                })}
+            </div>
+            <button
+              className="button secondary"
+              onClick={() => selectHero(null)}
+            >
+              Clear this slot
+            </button>
+          </Modal>
+        )}
     </div>
   );
 }

@@ -74,6 +74,7 @@ export class BroadcastDatabase {
   }
   saveWorkspace() {
     this.write("workspace", this.workspace);
+    this.tournaments?.saveActive();
   }
   hasPatch(id) {
     return Boolean(
@@ -85,6 +86,16 @@ export class BroadcastDatabase {
     this.db.exec("BEGIN IMMEDIATE");
     try {
       this.write("workspace", next);
+      const tournament = this.tournaments?.records.get(next.activeTournamentId);
+      if (tournament) {
+        const current = this.workspace;
+        this.workspace = next;
+        try {
+          this.tournaments.saveActive();
+        } finally {
+          this.workspace = current;
+        }
+      }
       this.db.prepare("INSERT INTO patches VALUES (?,?)").run(id, Date.now());
       this.db
         .prepare("DELETE FROM patches WHERE created < ?")

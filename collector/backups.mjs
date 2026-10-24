@@ -15,6 +15,7 @@ import { sessionId, cleanSettings, applyInterruption } from "./model.mjs";
 import { cleanReportSettings } from "../src/analytics.js";
 
 export function exportBackup(store) {
+  store.tournaments?.saveActive();
   const matches = structuredClone([...store.sessions.values()]);
   for (const s of matches) delete s.publisher;
   return {
@@ -23,6 +24,13 @@ export function exportBackup(store) {
     workspace: structuredClone(store.workspace),
     matches,
     drafts: store.archive.list(),
+    tournaments: store.tournaments
+      ? structuredClone([...store.tournaments.records.values()])
+      : [],
+    trash: store.tournaments?.listTrash() || [],
+    deletedGames: store.tournaments
+      ? store.db.prepare("SELECT * FROM deleted_games").all()
+      : [],
   };
 }
 export function prepareRestore(value, store) {
@@ -85,7 +93,86 @@ export function prepareRestore(value, store) {
     w.scoreboard.matchId = source.scoreboard.matchId;
   w.scoreboard.visible = source.scoreboard?.visible !== false;
   w.revision = store.workspace.revision + 1;
-  return { sessions, drafts, workspace: w };
+  const context = {
+    workspace: store.workspace,
+    sessions: new Map([...known].map((id) => [id, {}])),
+  };
+  const tournament = (raw) => {
+    if (
+      !raw ||
+      !/^[a-f0-9-]{36}$/i.test(raw.id || "") ||
+      !String(raw.name || "").trim() ||
+      !raw.state
+    )
+      throw Error("Invalid tournament in backup.");
+    const state = prepareRestore(
+      { version: 2, workspace: raw.state, matches: [], drafts: [] },
+      context,
+    ).workspace;
+    return {
+      id: raw.id,
+      name: String(raw.name).trim().slice(0, 120),
+      createdAt: Number(raw.createdAt) || Date.now(),
+      state,
+    };
+  };
+  if (
+    !Array.isArray(value.tournaments || []) ||
+    (value.tournaments || []).length > 5000 ||
+    !Array.isArray(value.trash || []) ||
+    (value.trash || []).length > 5000
+  )
+    throw Error("Invalid tournament archive in backup.");
+  const tournaments = (value.tournaments || []).map(tournament);
+  const trash = (value.trash || []).map((raw) => {
+    if (
+      !/^[a-f0-9-]{36}$/i.test(raw.id || "") ||
+      !["game", "draft", "tournament"].includes(raw.kind)
+    )
+      throw Error("Invalid deleted record in backup.");
+    const cleaned = prepareRestore(
+      {
+        version: 2,
+        workspace: initialWorkspace(),
+        matches: raw.kind === "game" ? [raw.record] : raw.games || [],
+        drafts: raw.kind === "draft" ? [raw.record] : raw.drafts || [],
+      },
+      context,
+    );
+    return {
+      id: raw.id,
+      kind: raw.kind,
+      label: String(raw.label || "").slice(0, 120),
+      tournamentId: String(raw.tournamentId || ""),
+      deletedAt: Number(raw.deletedAt) || Date.now(),
+      record:
+        raw.kind === "tournament"
+          ? tournament(raw.record)
+          : raw.kind === "game"
+            ? cleaned.sessions[0]
+            : cleaned.drafts[0],
+      games: raw.kind === "tournament" ? cleaned.sessions : undefined,
+      drafts: raw.kind === "tournament" ? cleaned.drafts : undefined,
+    };
+  });
+  if (source.activeTournamentId)
+    w.activeTournamentId = String(source.activeTournamentId);
+  w.tournaments = tournaments.map(({ id, name, createdAt }) => ({
+    id,
+    name,
+    createdAt,
+  }));
+  if (
+    !Array.isArray(value.deletedGames || []) ||
+    (value.deletedGames || []).length > 50000
+  )
+    throw Error("Invalid deleted game index in backup.");
+  const deletedGames = (value.deletedGames || []).map((row) => ({
+    id: sessionId(row.id),
+    tournamentId: String(row.tournamentId || "").slice(0, 100),
+    deletedAt: Number(row.deletedAt) || Date.now(),
+  }));
+  return { sessions, drafts, workspace: w, tournaments, trash, deletedGames };
 }
 export class Backups {
   constructor(store) {
@@ -130,6 +217,10 @@ export class Backups {
   async read(name) {
     if (!(await this.list()).includes(name)) throw Error("Backup not found.");
     return readFile(path.join(this.directory, name));
+  }
+  async remove(name) {
+    if (!(await this.list()).includes(name)) throw Error("Backup not found.");
+    await unlink(path.join(this.directory, name));
   }
   close() {
     clearInterval(this.timer);

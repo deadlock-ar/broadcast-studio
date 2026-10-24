@@ -1,4 +1,5 @@
 import { draftPriority, itemPriority } from "../src/analytics.js";
+import { inTournament } from "./tournaments.mjs";
 export function reportOutput(store, channel, heroes, items) {
   const settings = store.workspace.reports || {},
     mode = {
@@ -10,12 +11,15 @@ export function reportOutput(store, channel, heroes, items) {
     .list()
     .filter(
       (d) =>
+        inTournament(d, store) &&
         !d.excluded &&
-        (settings.selectedDrafts || []).includes(d.id) &&
-        (!settings.tournament || settings.tournament === d.tournament),
+        (settings.selectedDrafts || []).includes(d.id),
     );
   const all = [...store.sessions.values()]
-    .filter((s) => !["replay", "rehearsal"].includes(s.mode))
+    .filter(
+      (s) =>
+        inTournament(s, store) && !["replay", "rehearsal"].includes(s.mode),
+    )
     .map((s) => ({
       id: s.id,
       tournament: s.tournament || "",
@@ -27,7 +31,6 @@ export function reportOutput(store, channel, heroes, items) {
   const games = all.filter(
     (g) =>
       (settings.selectedGames || []).includes(g.id) &&
-      (!settings.tournament || settings.tournament === g.tournament) &&
       (mode === "mvp"
         ? g.ended
         : settings.includePartial || (g.ended && g.fromStart)),
@@ -36,6 +39,17 @@ export function reportOutput(store, channel, heroes, items) {
     (settings.comparisonGames || []).includes(g.id),
   );
   const title = settings.titles?.[mode] || "";
+  if (mode === "mvp" && settings.mvpSource === "manual") {
+    const player = settings.manualMvp;
+    return {
+      mode,
+      title,
+      player,
+      visible: Boolean(
+        player?.name?.trim() && heroes.some((h) => h.id === player.heroId),
+      ),
+    };
+  }
   if (mode === "heroes")
     return {
       mode,

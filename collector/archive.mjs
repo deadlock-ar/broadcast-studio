@@ -21,7 +21,15 @@ export class Archive {
     if (!d.snapshot?.steps.some((s) => s.heroId)) return null;
     let id = d.archiveId;
     // Live draft code is stable across reconnects and service restarts.
-    if (d.mode === "live") id = `statlocker:${d.code}`;
+    if (d.mode === "live")
+      id =
+        this.list().find(
+          (record) =>
+            record.source === "live" &&
+            record.code === d.code &&
+            (!w.activeTournamentId ||
+              record.tournamentId === w.activeTournamentId),
+        )?.id || `statlocker:${w.activeTournamentId || "legacy"}:${d.code}`;
     else if (!id || newDraft) id = `manual:${randomUUID()}`;
     const old = this.store.db
       .prepare("SELECT value FROM drafts WHERE id=?")
@@ -40,6 +48,7 @@ export class Archive {
         label || previous.label || `${w.config.round} · Game ${w.config.game}`,
       ).slice(0, 120),
       tournament: previous.tournament || w.config.event,
+      tournamentId: previous.tournamentId || w.activeTournamentId,
       config: previous.completed ? previous.config : structuredClone(w.config),
       snapshot: structuredClone(d.snapshot),
       selections: draftSelections(d.snapshot),

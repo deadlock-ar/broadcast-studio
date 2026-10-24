@@ -1,3 +1,4 @@
+import { tournamentHeaders } from "./tournament-context.js";
 export const COLLECTOR_ORIGIN = "http://127.0.0.1:8766";
 export function enqueueCollectorState(queue, value, now, delay) {
   const next = { at: now + delay, value };
@@ -23,7 +24,10 @@ export async function collectorRequest(path, id, value, signal) {
       ? {}
       : {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...tournamentHeaders(),
+          },
           body: JSON.stringify(value),
         }),
   });

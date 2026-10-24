@@ -22,6 +22,23 @@ export function cleanReportSettings(value = {}) {
     mvpPlayerId: /^\d{1,10}$/.test(value.mvpPlayerId || "")
       ? value.mvpPlayerId
       : "",
+    mvpSource: value.mvpSource === "manual" ? "manual" : "recorded",
+    manualMvp: {
+      name: String(value.manualMvp?.name || "").slice(0, 48),
+      heroId: Number.isSafeInteger(value.manualMvp?.heroId)
+        ? value.manualMvp.heroId
+        : null,
+      ...Object.fromEntries(
+        ["kills", "deaths", "assists", "damage", "souls"].map((key) => [
+          key,
+          Number.isSafeInteger(value.manualMvp?.[key]) &&
+          value.manualMvp[key] >= 0 &&
+          value.manualMvp[key] <= 9999999999
+            ? value.manualMvp[key]
+            : null,
+        ]),
+      ),
+    },
     includeZero: value.includeZero !== false,
     includePartial: value.includePartial === true,
   };

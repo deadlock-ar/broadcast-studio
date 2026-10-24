@@ -2,6 +2,18 @@
 
 A shared tournament broadcast dashboard in the community’s parchment and olive identity. Railway hosts the website, Statlocker connection, password-protected controls, reports and persistent SQLite workspace. The observer companion reads a growing local Deadlock recording on whichever PC is observing and sends normalized statistics outward over HTTPS. OBS URLs stay the same when observers change.
 
+## Tournament selection and data management
+
+The selector above every admin tab creates or loads the current tournament for all admins. Each tournament retains its own draft board, match collection, branding and scores, report selections, manual MVP and published-output selection. New recordings and draft archives receive a stable tournament ID; changing a tournament name does not move its records. Existing archives are assigned using their saved event labels on first upgrade.
+
+Stop active recording/relay collection before switching tournaments. Reconnect a live draft after loading its tournament. The permanent OBS URLs follow the current tournament, so switch during a scene break. Late observer updates and stale admin edits are rejected rather than applied to another tournament.
+
+**Data library** lists games, drafts, tournaments, Trash and backups. Games and drafts can be filtered to the current tournament or shown across all tournaments. Deleting a tournament includes its games and drafts; select another tournament first. Deletion removes records from report selections and on-air outputs, and sends them to Trash. Restore retains the data without republishing it. Series scores remain operator controlled when records are deleted or restored. Permanent deletion requires typing `DELETE`; independent backup copies may still contain the data. Deleted recording IDs cannot silently resume as new games.
+
+Backups include all tournament workspaces and recoverable deleted records. Old backups remain supported. The Data library also provides backup download/restore and explicit removal of recovery files; the automatic daily file may be recreated on the next backup cycle.
+
+In **Tournament reports → Series MVP**, choose **Enter manually** to set the player name, hero, kills, deaths, assists, damage and souls without collecting a game. These values are shared, saved for that tournament and used by the existing preview, PNG export and Series MVP OBS URL. Blank statistics remain unknown. The scoreboard, hero-priority and Series MVP graphic designs are unchanged in this update, pending a separate design discussion.
+
 ## Observer workflow
 
 1. Open **Live desk** in the hosted studio. Download and extract the observer ZIP on the observer PC, then open **Start-Observer.cmd**. The official Windows x64 Node.js 24.19.0 runtime and pinned parser are bundled. No installation or administrator access is needed. Packaging verifies the official runtime against its pinned SHA-256.
