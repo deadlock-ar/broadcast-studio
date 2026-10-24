@@ -21,6 +21,7 @@ import "./ProductionStudio.css";
 import { useWorkspace, useWorkspaceField } from "./workspace-context.js";
 import { diffFields } from "./workspace-model.js";
 import { cleanSettings } from "../collector/model.mjs";
+import ObserverControls from "./ObserverControls.jsx";
 
 const roster = {
   ...Object.fromEntries(
@@ -116,6 +117,34 @@ export function Hud({
                     );
                   })}
               </div>
+              {session?.status === "live" &&
+                now -
+                  (delayed ? session.settings?.delayMs || 0 : 0) -
+                  session.updatedAt <
+                  10000 && (
+                  <>
+                    {p.buffs !== null && p.buffs !== undefined && (
+                      <span
+                        className="hud-permanent"
+                        title={`Permanent buffs: ${p.buffs}`}
+                        aria-label={`${p.name}: ${p.buffs} permanent buffs`}
+                      >
+                        {p.buffs}
+                      </span>
+                    )}
+                    <div className="hud-bridges">
+                      {(p.bridgeBuffs || []).map((b) => (
+                        <span
+                          key={b.id}
+                          className={`hud-bridge ${b.label}`}
+                          title={`${b.label} bridge buff${b.remaining !== null ? ` · ${Math.ceil(b.remaining)}s at source` : ""}`}
+                        >
+                          {b.label[0]}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
             </div>
           )),
       )}
@@ -231,6 +260,51 @@ export function Scoreboard({ result }) {
               : "Reviewed broadcast capture"}
           </span>
         </footer>
+      </section>
+    </div>
+  );
+}
+export function SeriesMvp({ result }) {
+  if (!result) return null;
+  const p = result.player,
+    hero = roster[p.heroId];
+  return (
+    <div className="production-canvas mvp-canvas">
+      <section className="mvp-card">
+        <header>
+          <img src="/logo.png" alt="Deadlock AR" />
+          <span>{result.title}</span>
+          <strong>SERIES MVP</strong>
+        </header>
+        <div className="mvp-content">
+          {hero && (
+            <img
+              className="mvp-portrait"
+              src={hero.gloatImage || hero.image}
+              alt={hero.name}
+            />
+          )}
+          <div>
+            <span className="eyebrow">MOST VALUABLE PLAYER</span>
+            <h1 dir="auto">{p.name}</h1>
+            <p>{result.games} games in this series</p>
+            <div className="mvp-totals">
+              <strong>
+                {p.kills} / {p.deaths} / {p.assists}
+                <small>KILLS / DEATHS / ASSISTS</small>
+              </strong>
+              <strong>
+                {displayNumber(p.damage)}
+                <small>HERO DAMAGE</small>
+              </strong>
+              <strong>
+                {displayNumber(p.souls)}
+                <small>SOULS</small>
+              </strong>
+            </div>
+          </div>
+        </div>
+        <footer>DEADLOCK AR · COMMUNITY TOURNAMENTS</footer>
       </section>
     </div>
   );
@@ -366,7 +440,7 @@ export default function ProductionStudio({ active, config }) {
         <div>
           <span className="eyebrow">FROM FIRST FIGHT TO FINAL SCORE</span>
           <h1>
-            Live stats · Deadem<span>✦</span>
+            Live desk<span>✦</span>
           </h1>
           <p>
             Custom collector: live stats, permanent buffs, ultimate indicators
@@ -388,7 +462,7 @@ export default function ProductionStudio({ active, config }) {
           </h2>
           <p>
             {shared ? (
-              "The collector runs on the hosted studio. No software is needed on the streaming PC. Check the connection or retry in a moment."
+              "The studio runs on Railway. Run the observer companion on the PC recording the game."
             ) : (
               <>
                 Open <strong>Start-Collector.cmd</strong> on the broadcast PC
@@ -409,81 +483,85 @@ export default function ProductionStudio({ active, config }) {
           <p>{healthError}</p>
         </div>
       )}
-      <section className="production-card collector-connect">
-        <div>
-          <span className="eyebrow">GAME CONNECTION</span>
-          <h2>Bring the match into the studio.</h2>
-          <p>
-            {health?.running
-              ? `Collecting match ${health.activeId}`
-              : "Enter the match ID, or rehearse with a finished replay."}
-          </p>
-        </div>
-        <form onSubmit={start}>
-          <label>
-            Match ID
-            <input
-              name="id"
-              placeholder="120901644"
-              inputMode="numeric"
-              required
-            />
-          </label>
-          <label>
-            Source
-            <select value={mode} onChange={(e) => setMode(e.target.value)}>
-              <option value="live">Live broadcast</option>
-              <option value="replay">Replay rehearsal</option>
-            </select>
-          </label>
-          {mode === "replay" && (
-            <>
-              <label>
-                Speed
-                <select name="speed" defaultValue="16">
-                  <option value="1">1×</option>
-                  <option value="4">4×</option>
-                  <option value="16">16×</option>
-                  <option value="32">32×</option>
-                </select>
-              </label>
-              <label>
-                Start at (minutes)
-                <input
-                  type="number"
-                  name="from"
-                  min="0"
-                  max="120"
-                  defaultValue="5"
-                />
-              </label>
-            </>
-          )}
-          <button
-            className="button primary"
-            disabled={!health || busy || health.running}
-          >
-            Start collector
-          </button>
-          {health?.running && (
+      {shared && <ObserverControls active={active} />}
+      <details className="relay-fallback">
+        <summary>Delayed relay / replay fallback</summary>
+        <section className="production-card collector-connect">
+          <div>
+            <span className="eyebrow">GAME CONNECTION</span>
+            <h2>Bring the match into the studio.</h2>
+            <p>
+              {health?.running
+                ? `Collecting match ${health.activeId}`
+                : "Enter the match ID, or rehearse with a finished replay."}
+            </p>
+          </div>
+          <form onSubmit={start}>
+            <label>
+              Match ID
+              <input
+                name="id"
+                placeholder="120901644"
+                inputMode="numeric"
+                required
+              />
+            </label>
+            <label>
+              Source
+              <select value={mode} onChange={(e) => setMode(e.target.value)}>
+                <option value="live">Valve relay (delayed)</option>
+                <option value="replay">Replay rehearsal</option>
+              </select>
+            </label>
+            {mode === "replay" && (
+              <>
+                <label>
+                  Speed
+                  <select name="speed" defaultValue="16">
+                    <option value="1">1×</option>
+                    <option value="4">4×</option>
+                    <option value="16">16×</option>
+                    <option value="32">32×</option>
+                  </select>
+                </label>
+                <label>
+                  Start at (minutes)
+                  <input
+                    type="number"
+                    name="from"
+                    min="0"
+                    max="120"
+                    defaultValue="5"
+                  />
+                </label>
+              </>
+            )}
             <button
-              type="button"
-              className="button secondary"
-              disabled={busy}
-              onClick={() => action("stop")}
+              className="button primary"
+              disabled={!health || busy || health.running}
             >
-              Stop
+              Start collector
             </button>
-          )}
-          <details>
-            <summary>Have the Valve broadcast URL?</summary>
-            <input
-              name="broadcastUrl"
-              placeholder="http://dist1-ord1.steamcontent.com/tv/MATCH_ID_TOKEN"
-            />
-          </details>
-        </form>
-      </section>
+            {health?.running && (
+              <button
+                type="button"
+                className="button secondary"
+                disabled={busy}
+                onClick={() => action("stop")}
+              >
+                Stop
+              </button>
+            )}
+            <details>
+              <summary>Have the Valve broadcast URL?</summary>
+              <input
+                name="broadcastUrl"
+                placeholder="http://dist1-ord1.steamcontent.com/tv/MATCH_ID_TOKEN"
+              />
+            </details>
+          </form>
+        </section>
+      </details>
       <div className="production-toolbar">
         <label>
           Saved games
@@ -667,7 +745,7 @@ export default function ProductionStudio({ active, config }) {
                     </label>
                   ))}
                   <label>
-                    Added video delay (seconds)
+                    Additional graphics delay (seconds)
                     <input
                       name="delay"
                       type="number"
@@ -682,10 +760,10 @@ export default function ProductionStudio({ active, config }) {
                   </button>
                 </form>
                 <p>
-                  Added delay affects every collector OBS view. If the game
-                  video arrives before the data, delay the video in OBS. Short
-                  hit badges fade after 1.6 seconds; validated effect badges
-                  disappear when the effect is removed.
+                  This setting delays graphics in the collector OBS views. If
+                  the game video arrives before the data, delay the video in
+                  OBS. Short hit badges fade after 1.6 seconds; validated effect
+                  badges disappear when the effect is removed.
                 </p>
                 <details className="hud-order-controls">
                   <summary>Match portrait order to the game</summary>
@@ -743,11 +821,12 @@ export default function ProductionStudio({ active, config }) {
               <details className="production-coverage">
                 <summary>Ultimate detection coverage</summary>
                 <p>
-                  Damage hits are detected when the broadcast reports the
-                  ultimate's exact ability ID. Self buffs and utility ultimates
-                  do not produce enemy-hit badges. Lasting effects are enabled
-                  for the four replay-verified abilities below; other effects
-                  need per-ability validation.
+                  Damage hits use ability IDs as candidates. Graves summon hits
+                  are suppressed because a second-ability zombie can report the
+                  ultimate ID. Self buffs and utility ultimates do not produce
+                  enemy-hit badges. Lasting effects are enabled for the four
+                  replay-verified abilities below; other effects need
+                  per-ability validation.
                 </p>
                 <div>
                   {catalog.map((a) => (

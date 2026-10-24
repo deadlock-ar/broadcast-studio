@@ -27,6 +27,7 @@ collector/*.dem*
 
 runtime/
 .dlar-cloud/
+.dlar-observer/
 .env
 .env.*
 *.sqlite

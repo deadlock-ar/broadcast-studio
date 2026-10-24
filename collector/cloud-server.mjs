@@ -6,8 +6,12 @@ import { BroadcastDatabase } from "./database.mjs";
 import { AdminAuth } from "./auth.mjs";
 import { CollectorEngine } from "./engine.mjs";
 import { SharedFeeds } from "./feeds.mjs";
+import { Archive } from "./archive.mjs";
+import { Publisher } from "./publisher.mjs";
+import { Backups, exportBackup, prepareRestore } from "./backups.mjs";
 import {
   matchId,
+  sessionId,
   broadcastUrl,
   cleanSettings,
   publishResult,
@@ -39,14 +43,14 @@ function json(res, code, data) {
   });
   res.end(JSON.stringify(data));
 }
-async function body(req) {
+async function body(req, limit = 2000000) {
   if (!req.headers["content-type"]?.startsWith("application/json"))
     throw Error("JSON request required.");
   const chunks = [];
   let size = 0;
   for await (const chunk of req) {
     size += chunk.length;
-    if (size > 2000000) throw Error("Request too large.");
+    if (size > limit) throw Error("Request too large.");
     chunks.push(chunk);
   }
   return JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}");
@@ -67,14 +71,15 @@ export async function createBroadcastServer(options = {}) {
       : `http://127.0.0.1:${port}`);
   const hosted = Boolean(
     process.env.PORT ||
-    process.env.RAILWAY_PROJECT_ID ||
-    process.env.DLAR_CLOUD === "1" ||
-    options.hosted,
+      process.env.RAILWAY_PROJECT_ID ||
+      process.env.DLAR_CLOUD === "1" ||
+      options.hosted,
   );
   const password = options.password ?? process.env.ADMIN_PASSWORD;
   const trusted = !hosted && !password;
   const store = new BroadcastDatabase(directory);
   await store.load();
+  store.archive = new Archive(store);
   let auth;
   try {
     auth = new AdminAuth(
@@ -90,6 +95,11 @@ export async function createBroadcastServer(options = {}) {
   const catalog = JSON.parse(
     await readFile(new URL("./data/ultimates.json", import.meta.url), "utf8"),
   );
+  const heroIds = new Set(
+    JSON.parse(
+      await readFile(new URL("../src/heroes.json", import.meta.url), "utf8"),
+    ).map((h) => h.id),
+  );
   const clients = new Set();
   let lastBroadcast = 0,
     pendingBroadcast = null;
@@ -104,6 +114,8 @@ export async function createBroadcastServer(options = {}) {
       return {
         visible: w.scoreboard.visible,
         scoreboard: store.sessions.get(w.scoreboard.matchId)?.published || null,
+        kind: w.scoreboard.kind || "scoreboard",
+        mvp: w.scoreboard.mvp || null,
       };
     // Exclude archived/published copies and branding images from frequent live messages.
     const light = s
@@ -173,6 +185,8 @@ export async function createBroadcastServer(options = {}) {
       }, 100);
   });
   const feeds = new SharedFeeds(store, changed);
+  const publisher = new Publisher(store, changed, collector);
+  const backups = new Backups(store);
   function events(req, res, client, initial) {
     res.writeHead(200, {
       "Content-Type": "text/event-stream",
@@ -198,9 +212,15 @@ export async function createBroadcastServer(options = {}) {
     try {
       const url = new URL(req.url, origin),
         method = req.method;
+      const nativePublisher = [
+        "/api/publisher/pair",
+        "/api/publisher/begin",
+        "/api/publisher/ingest",
+      ].includes(url.pathname);
       if (
         ["POST", "PUT", "PATCH", "DELETE"].includes(method) &&
-        req.headers.origin !== origin
+        req.headers.origin !== origin &&
+        !(nativePublisher && !req.headers.origin)
       ) {
         json(res, 403, {
           error: "Open the admin dashboard on its configured website address.",
@@ -209,6 +229,19 @@ export async function createBroadcastServer(options = {}) {
       }
       if (url.pathname === "/healthz") {
         json(res, 200, { ok: true });
+        return;
+      }
+      if (nativePublisher && method === "POST") {
+        const p = url.pathname.endsWith("/pair")
+          ? null
+          : publisher.authenticate(req);
+        const value = await body(req);
+        const result = url.pathname.endsWith("/pair")
+          ? publisher.pair(value, req.socket.remoteAddress)
+          : url.pathname.endsWith("/begin")
+            ? publisher.begin(p, value)
+            : publisher.ingest(p, value);
+        json(res, 200, result);
         return;
       }
       if (url.pathname === "/api/auth" && method === "GET") {
@@ -255,12 +288,173 @@ export async function createBroadcastServer(options = {}) {
             "Content-Disposition",
             'attachment; filename="deadlock-ar-broadcast-backup.json"',
           );
-          json(res, 200, {
-            version: 1,
-            exportedAt: new Date().toISOString(),
-            workspace: store.workspace,
-            matches: [...store.sessions.values()],
+          json(res, 200, exportBackup(store));
+          return;
+        }
+        if (url.pathname === "/api/backups" && method === "GET") {
+          json(res, 200, { files: await backups.list() });
+          return;
+        }
+        if (url.pathname === "/api/backups/file" && method === "GET") {
+          const name = url.searchParams.get("name"),
+            data = await backups.read(name);
+          res.writeHead(200, {
+            "Content-Type": "application/gzip",
+            "Content-Disposition": `attachment; filename="${name}"`,
           });
+          res.end(data);
+          return;
+        }
+        if (url.pathname === "/api/backup/restore" && method === "POST") {
+          if (
+            collector.worker ||
+            [...store.sessions.values()].some(
+              (s) =>
+                !s.result &&
+                s.publisher?.lease &&
+                Date.now() - s.publisher.lastSeen < 15000,
+            )
+          )
+            throw Error("Stop live collection before restoring a backup.");
+          const prepared = prepareRestore(await body(req, 64000000), store);
+          await backups.write();
+          feeds.stop();
+          store.db.exec("BEGIN IMMEDIATE");
+          try {
+            for (const s of prepared.sessions) await store.save(s);
+            for (const d of prepared.drafts)
+              store.db
+                .prepare("INSERT OR REPLACE INTO drafts VALUES (?,?)")
+                .run(d.id, JSON.stringify(d));
+            store.write("workspace", prepared.workspace);
+            store.db.exec("COMMIT");
+          } catch (e) {
+            store.db.exec("ROLLBACK");
+            throw e;
+          }
+          for (const s of prepared.sessions) store.sessions.set(s.id, s);
+          store.workspace = prepared.workspace;
+          changed();
+          json(res, 200, {
+            restored: true,
+            matches: prepared.sessions.length,
+            drafts: prepared.drafts.length,
+          });
+          return;
+        }
+        if (url.pathname === "/api/publisher/status" && method === "GET") {
+          json(res, 200, { publishers: publisher.list() });
+          return;
+        }
+        if (url.pathname === "/api/publisher/code" && method === "POST") {
+          json(res, 200, publisher.issue(await body(req)));
+          return;
+        }
+        if (url.pathname === "/api/publisher/revoke" && method === "POST") {
+          const v = await body(req);
+          publisher.revoke(v.id);
+          json(res, 200, { ok: true });
+          return;
+        }
+        if (url.pathname === "/api/analytics" && method === "GET") {
+          json(res, 200, {
+            drafts: store.archive.list(),
+            games: [...store.sessions.values()]
+              .filter((s) => s.items || s.result)
+              .map((s) => ({
+                id: s.id,
+                label: s.label || s.id,
+                tournament: s.tournament || s.published?.event || "",
+                ended: Boolean(s.result),
+                mode: s.mode,
+                updatedAt: s.updatedAt,
+                players: s.result?.match.players || [],
+                purchases: [],
+                ...s.items,
+              })),
+          });
+          return;
+        }
+        if (url.pathname === "/api/analytics/mvp" && method === "POST") {
+          const v = await body(req);
+          if (!Array.isArray(v.ids) || !v.ids.length || v.ids.length > 100)
+            throw Error("Choose completed games for this series.");
+          const games = [...new Set(v.ids)].map((id) =>
+            store.sessions.get(sessionId(id)),
+          );
+          if (
+            games.some(
+              (s) =>
+                !s?.result || s.mode === "rehearsal" || s.mode === "replay",
+            )
+          )
+            throw Error("Choose completed tournament games.");
+          const appearances = games.flatMap((s) =>
+            s.result.match.players.filter((p) => p.id === v.playerId),
+          );
+          if (!appearances.length)
+            throw Error("Choose a player from these games.");
+          const p = appearances[0],
+            totals = Object.fromEntries(
+              ["damage", "souls", "kills", "deaths", "assists"].map((k) => [
+                k,
+                appearances.reduce((sum, p) => sum + (p[k] || 0), 0),
+              ]),
+            );
+          store.workspace.scoreboard.mvp = {
+            player: {
+              id: p.id,
+              name: games[0].settings.names[p.id] || p.name,
+              heroId: p.heroId,
+              ...totals,
+            },
+            title: String(v.title || store.workspace.config.event).slice(0, 80),
+            gameIds: games.map((s) => s.id),
+            games: appearances.length,
+            publishedAt: Date.now(),
+          };
+          store.workspace.scoreboard.kind = "mvp";
+          store.workspace.revision++;
+          store.saveWorkspace();
+          changed("scoreboard");
+          json(res, 200, { ok: true });
+          return;
+        }
+        if (url.pathname === "/api/scoreboard/show" && method === "POST") {
+          const v = await body(req);
+          store.workspace.scoreboard.kind =
+            v.kind === "mvp" ? "mvp" : "scoreboard";
+          store.workspace.revision++;
+          store.saveWorkspace();
+          changed("scoreboard");
+          json(res, 200, { ok: true });
+          return;
+        }
+        if (url.pathname === "/api/analytics/draft" && method === "POST") {
+          const v = await body(req);
+          const result = v.id
+            ? store.archive.update(v.id, v)
+            : store.archive.capture({ force: true, label: v.label });
+          store.saveWorkspace();
+          json(res, 200, result);
+          return;
+        }
+        if (url.pathname === "/api/analytics/review" && method === "POST") {
+          const v = await body(req),
+            s = store.sessions.get(sessionId(v.gameId));
+          if (!s?.items) throw Error("Purchase history not found.");
+          const row = s.items.purchases.find((p) => p.id === v.purchaseId);
+          if (!row || !["confirmed", "refunded"].includes(v.status))
+            throw Error("Choose a purchase and its result.");
+          const correction = {
+            status: v.status,
+            evidence: "Operator review",
+            reviewedAt: Date.now(),
+          };
+          Object.assign(row, correction);
+          s.itemReviews = { ...s.itemReviews, [row.id]: correction };
+          await store.save(s);
+          json(res, 200, { ok: true });
           return;
         }
         if (url.pathname === "/api/workspace" && method === "GET") {
@@ -280,6 +474,8 @@ export async function createBroadcastServer(options = {}) {
             if (next.deadem.id && !store.sessions.has(next.deadem.id))
               throw Error("Choose a saved or collected game.");
             store.applyPatch(v.id, next);
+            store.archive.capture();
+            store.saveWorkspace();
             changed();
           }
           json(res, 200, store.workspace);
@@ -296,10 +492,7 @@ export async function createBroadcastServer(options = {}) {
           if (draft.mode === "live")
             throw Error("Switch to manual mode before editing picks.");
           const step = draft.snapshot.steps.find((s) => s.id === v.stepId);
-          if (
-            !step ||
-            (v.heroId !== null && !catalog.some((h) => h.heroId === v.heroId))
-          )
+          if (!step || (v.heroId !== null && !heroIds.has(v.heroId)))
             throw Error("Choose a valid hero slot.");
           if (
             v.heroId &&
@@ -309,6 +502,7 @@ export async function createBroadcastServer(options = {}) {
           )
             throw Error("That hero is already selected.");
           step.heroId = v.heroId;
+          store.archive.capture();
           store.workspace.revision++;
           store.saveWorkspace();
           changed("draft");
@@ -332,6 +526,13 @@ export async function createBroadcastServer(options = {}) {
             cloud: true,
             activeId: collector.activeId,
             running: Boolean(collector.worker),
+            observer:
+              publisher
+                .list()
+                .find(
+                  (p) =>
+                    p.activeGame === store.workspace.deadem.id && !p.revoked,
+                ) || null,
             catalog,
             games: [...store.sessions.values()].map((s) => ({
               id: s.id,
@@ -344,6 +545,17 @@ export async function createBroadcastServer(options = {}) {
           return;
         }
         if (url.pathname === "/api/collector/start" && method === "POST") {
+          if (
+            [...store.sessions.values()].some(
+              (s) =>
+                !s.result &&
+                s.publisher?.lease &&
+                Date.now() - s.publisher.lastSeen < 15000,
+            )
+          )
+            throw Error(
+              "Disconnect the observer companion before starting a relay source.",
+            );
           const v = await body(req),
             id = matchId(v.id),
             mode = v.mode === "replay" ? "replay" : "live";
@@ -369,7 +581,7 @@ export async function createBroadcastServer(options = {}) {
           json(res, 200, { stopped: true });
           return;
         }
-        const id = matchId(url.searchParams.get("match")),
+        const id = sessionId(url.searchParams.get("match")),
           s = store.sessions.get(id);
         if (!s) {
           json(res, 404, { error: "This game has not been collected." });
@@ -400,6 +612,7 @@ export async function createBroadcastServer(options = {}) {
           publishResult(s, await body(req));
           await store.save(s);
           store.workspace.scoreboard.matchId = id;
+          store.workspace.scoreboard.kind = "scoreboard";
           store.workspace.revision++;
           store.saveWorkspace();
           changed("scoreboard");
@@ -408,6 +621,10 @@ export async function createBroadcastServer(options = {}) {
         }
         if (url.pathname === "/api/collector/verify" && method === "POST") {
           await body(req);
+          if (id.startsWith("local-"))
+            throw Error(
+              "This recording has no verified numeric match ID. Its captured final result is retained.",
+            );
           if (!s.result)
             throw Error("Wait for a game-over signal before verifying.");
           const upstream = await fetch(
@@ -491,6 +708,9 @@ export async function createBroadcastServer(options = {}) {
   });
   server.requestTimeout = 20000;
   const shutdown = async () => {
+    backups.close();
+    await backups.write();
+    publisher.close();
     feeds.stop();
     await collector.stop();
     if (pendingBroadcast) clearTimeout(pendingBroadcast);
@@ -504,6 +724,7 @@ export async function createBroadcastServer(options = {}) {
     store,
     collector,
     feeds,
+    publisher,
     shutdown,
     origin,
     host: hosted ? "0.0.0.0" : "127.0.0.1",

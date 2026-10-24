@@ -7,6 +7,11 @@ export function matchId(value) {
     throw Error("Enter a numeric match ID.");
   return id;
 }
+export function sessionId(value) {
+  const id = String(value ?? '');
+  if (/^local-[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(id)) return id;
+  return matchId(id);
+}
 export function broadcastUrl(value, id) {
   if (!value) return null;
   const url = new URL(value);
@@ -35,7 +40,7 @@ export function completeRoster(players) {
 export function emptySession(id, mode = "live") {
   return {
     version: 1,
-    id: matchId(id),
+    id: sessionId(id),
     mode,
     provider: "deadem",
     status: "connecting",

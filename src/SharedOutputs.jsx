@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useWorkspace } from "./workspace-context.js";
 import { OUTPUTS } from "./workspace-model.js";
+import BackupControls from "./BackupControls.jsx";
 const labels = {
   draft: "Draft",
   "live-events": "Deadlock API stats",
@@ -75,9 +76,7 @@ export default function SharedOutputs() {
         Close unused OBS browser sources and dashboard tabs between events so
         the service can sleep.
       </p>
-      <a className="button secondary" href="/api/backup" download>
-        Download workspace and results backup
-      </a>
+      <BackupControls />
     </section>
   );
 }

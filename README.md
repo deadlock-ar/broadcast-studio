@@ -1,6 +1,46 @@
 # Deadlock AR — Broadcast Studio
 
-A shared tournament broadcast dashboard in the community’s parchment and olive identity. One Railway service hosts the website, Statlocker spectator connection, Deadlock API adapter, Deadem collector and persistent SQLite workspace. Streamers only add Browser Sources in OBS.
+A shared tournament broadcast dashboard in the community’s parchment and olive identity. Railway hosts the website, Statlocker connection, password-protected controls, reports and persistent SQLite workspace. The observer companion reads a growing local Deadlock recording on whichever PC is observing and sends normalized statistics outward over HTTPS. The five OBS URLs stay the same when observers change.
+
+## Observer workflow
+
+1. Open **Live desk** in the hosted studio. Download and extract the observer ZIP on the observer PC, then open **Start-Observer.cmd**. First run downloads the official portable Node.js 24.19.0 runtime, verifies its SHA-256 and installs the pinned parser. No administrator access is needed.
+2. Create a pairing code in Live desk. Enter it and the studio website address in the companion. The single-use code expires after five minutes. The companion stores a scoped publisher credential locally; it never needs the admin password. **Disconnect computer** revokes it.
+3. Join the custom lobby’s spectator slot before the host starts the game. The host must enable cheats for recording. Prepare a new recording in the companion and enter its fresh `record ...` command in Deadlock’s console before the countdown.
+4. Keep the companion open. It waits for the file, sends player statistics, permanent pickups, bridge buffs, purchase history and supported ultimate indicators, and retries temporary network interruptions. Use **Resume previous recording** after a companion restart. File replacement/truncation fails explicitly rather than mixing games.
+5. After the match ends, enter `stop` in Deadlock. A real game-over signal saves final results; stopping or losing the file does not invent a final result. Review and publish the scoreboard in Live desk.
+
+One publisher is active at a time. Switching recordings fences the previous process. A local UUID identifies the game before a numeric Valve match ID exists. Replay/relay collection remains an explicit fallback in Live desk; it cannot run alongside the observer and does not automatically replace it.
+
+The companion uses the same pinned Deadem 4.0.2 decoder with a client-demo adapter for clear/create ordering and entity baseline updates. Demofusion is not required for this integration. The adapter uses private parser internals and intentionally stops on unsupported formats. Validate new game/parser versions before an event.
+
+## Drafts and tournament images
+
+The current catalogue has 44 selectable heroes, including Violet and Nurse Harrow, with normal/gloat/critical portraits and selection voices. Portraits and the new voices are bundled with the site. Refresh with `npm run update:heroes`; new selection voices are resolved from VLViewer’s versioned manifest rather than guessed filenames.
+
+Manual drafts use the supplied 18-step competitive three-ban sequence. Live drafts follow the source’s received order. The opening ban round contains two bans per side; Hidden King’s first pick and both Archmother opening picks receive the first-round marker. Historical archives preserve their source order and rule identifier.
+
+Draft selections are saved as they arrive. Reconnecting a Statlocker code updates its existing archive. Use **Start next manual draft** to archive the old board and clear it for another game. In **Tournament reports**, select drafts and export the hero-priority PNG. Select completed games for item reports and optional comparison cohorts. Mid-game/incomplete recordings are excluded by default.
+
+Purchase reports count transaction events, not inventory snapshots. Duplicate ability-change/purchase notifications are reconciled. A full return is cancelled using refund eligibility or an exact full-cost currency receipt; a later partial sale retains the purchase. Returns without enough source evidence are flagged for operator review and block export. Retained pending purchases are confirmed at recorded game end. Components are counted when bought, not again when consumed by an upgrade. Buying the upgrade itself is a separate purchase. Bot IDs are synthetic rehearsal identities, never substituted for real account IDs.
+
+Series MVP combines selected ended-game totals, lets the operator choose a player, exports a PNG and publishes the card through the existing scoreboard URL. Publishing another match result switches that URL back to the scoreboard.
+
+## Synchronization and acceptance checks
+
+The recording source removes the Valve relay’s source delay; it does not guarantee a fixed end-to-end delay. The saved player-slot capture produced 1,519 complete 12-player samples with the integrated reader. A staged growing-file replay produced 1,447 samples before writing finished. These tests recovered four permanent buffs, bridge-buff presence, and two full item refunds. They did not validate a tournament spectator’s visibility of every item transaction or measure video synchronization.
+
+Before a tournament, run one full 12-player custom-lobby spectator recording from countdown through game over. Check both teams’ purchases/refunds/sales, all buff indicators, final totals, restart recovery and a caster’s received video. A player-slot success is not proof of spectator coverage. Unknown values remain unknown. Catalogue ultimate IDs are candidates, not universal proof of provenance: Graves’ ambiguous second-ability zombie damage is suppressed. Four lasting-effect mappings were replay-verified; new effects still need ability-specific validation.
+
+Delay observer gameplay video and game audio together **before** adding the graphics, then send that combined view to the remote casters. Add their returning microphones in the final production mix. Compare source game clocks and measure the actual setup. **Additional graphics delay** only delays graphics and cannot compensate for late data. OBS’s whole-stream delay alone does not change alignment between layers. Preserve the opening by beginning capture and recording before the match starts.
+
+Recorded console entries provide a partial audit only. They cannot prove that every player’s console commands or cheat use were captured. This implementation uses neither process-memory hooks nor injection.
+
+## Backups and recovery
+
+All admins share SQLite on Railway’s `/data` persistent volume. **OBS outputs** offers a full JSON backup and daily compressed recovery files. The daily file is refreshed every minute; 14 days are retained on the same volume. Download a copy outside Railway for independent recovery. Credentials and active publisher leases are excluded from exported backups.
+
+Stop collection, choose a JSON or `.json.gz` backup, review its game/draft counts and click **Restore this backup**. Matching archives and controls are restored; unrelated saved games remain. The current state is backed up before restoring. Observer PCs must pair again if their original credential was lost; backup imports never create publisher access.
 
 ## Permanent OBS outputs
 

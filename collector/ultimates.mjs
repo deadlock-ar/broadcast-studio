@@ -3,6 +3,9 @@ import { playerFor } from "./extract.mjs";
 
 export function ultimateHit(demo, damage, catalog) {
   const ability = catalog.find((a) => a.id === damage.abilityId);
+  // Player-confirmed 2026-10-24 regression: a second-ability zombie reports
+  // Graves' ultimate ID even while the ultimate is locked. Never show that hit.
+  if (damage.abilityId === 4110547059) return null;
   if (
     !ability ||
     !(

@@ -18,6 +18,7 @@ import "./App.css";
 import StatPanels from "./StatPanels";
 import ProductionStudio from "./ProductionStudio";
 import SharedOutputs from "./SharedOutputs.jsx";
+import Analytics from "./Analytics.jsx";
 import { useWorkspace, useWorkspaceField } from "./workspace-context.js";
 
 const roster = Object.fromEntries(heroes.map((h) => [h.id, h]));
@@ -554,7 +555,7 @@ export default function App() {
   const [toast, setToast] = useState("");
   const [activity, setActivity] = useState([]);
   const [tab, setTab] = useState(
-    ["stats", "live", "outputs"].includes(params.get("tab"))
+    ["stats", "live", "outputs", "analytics"].includes(params.get("tab"))
       ? params.get("tab")
       : "studio",
   );
@@ -896,7 +897,7 @@ export default function App() {
             onClick={() => setTab("live")}
           >
             <Icon name="play" />
-            Deadem stats<span>03</span>
+            Live desk<span>03</span>
           </button>
           <button
             className={tab === "settings" ? "selected" : ""}
@@ -909,6 +910,15 @@ export default function App() {
             <Icon name="help" />
             Setup guide
           </button>
+          {cloud && (
+            <button
+              className={tab === "analytics" ? "selected" : ""}
+              onClick={() => setTab("analytics")}
+            >
+              <Icon name="settings" />
+              Tournament reports
+            </button>
+          )}
           {cloud && (
             <button
               className={tab === "outputs" ? "selected" : ""}
@@ -956,10 +966,11 @@ export default function App() {
           </span>
         </header>
         <div
-          className={`workspace-content${tab === "stats" ? " stats-tab" : tab === "live" ? " production-tab" : tab === "outputs" ? " outputs-tab" : ""}`}
+          className={`workspace-content${tab === "stats" ? " stats-tab" : tab === "live" ? " production-tab" : tab === "outputs" ? " outputs-tab" : tab === "analytics" ? " analytics-tab" : ""}`}
         >
           <StatPanels config={config} active={tab === "stats"} />
           <ProductionStudio config={config} active={tab === "live"} />
+          {cloud && <Analytics config={config} active={tab === "analytics"} />}
           {cloud && <SharedOutputs />}
           <div className="page-heading">
             <div>

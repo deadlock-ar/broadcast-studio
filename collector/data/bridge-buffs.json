@@ -1,0 +1,12 @@
+{
+  "source": "https://github.com/SteamTracking/GameTracking-Deadlock/blob/master/game/citadel/pak01_dir/scripts/misc.vdata",
+  "sourceBlobSha": "898850af5f9818df02385bf6a32c1e9cbe93bd20",
+  "hashMethod": "Murmur2, seed 0x31415926, UTF-8 class_name/subclass_name; compared with locally saved asset definitions.",
+  "checkedOn": "2026-10-24",
+  "entries": [
+    { "id": 2161948557, "type": "gun_powerup_pickup", "label": "Gun", "duration": 160 },
+    { "id": 2661205816, "type": "survival_powerup_pickup", "label": "Survival", "duration": 160 },
+    { "id": 323340124, "type": "casting_powerup_pickup", "label": "Casting", "duration": 160 },
+    { "id": 1166470543, "type": "movement_powerup_pickup", "label": "Movement", "duration": 160 }
+  ]
+}

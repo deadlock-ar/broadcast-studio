@@ -10,14 +10,15 @@ export function accountId(value) {
     return null;
   }
 }
-export function playerFor(demo, entity) {
+export function playerFor(demo, entity, includeBots = false) {
   if (!entity) return null;
   const controller =
     entity.class.name === "CCitadelPlayerPawn"
       ? demo.getEntityByHandle(entity.getField("m_hController"))
       : entity;
   if (controller?.class.name !== "CCitadelPlayerController") return null;
-  const id = accountId(controller.getField("m_steamID"));
+  const slot = controller.getField('m_unLobbyPlayerSlot');
+  const id = accountId(controller.getField("m_steamID")) || (includeBots && Number.isInteger(slot) && slot >= 1 && slot <= 12 ? String(4000000000 + slot) : null);
   const team = controller.getField("m_iTeamNum");
   const heroId = controller.getField("m_nHeroID");
   if (!id || !heroId || ![2, 3].includes(team)) return null;
@@ -37,6 +38,7 @@ export function readFrame(
   serverTick,
   endObserved = false,
   forcedWinner = null,
+  options = {},
 ) {
   const table = demo.stringTableContainer.getByType(
     StringTableType.ACTIVE_MODIFIERS,
@@ -59,7 +61,7 @@ export function readFrame(
   for (const controller of demo.getEntitiesByClassName(
     "CCitadelPlayerController",
   )) {
-    const identity = playerFor(demo, controller);
+    const identity = playerFor(demo, controller, options.includeBots);
     if (!identity) continue;
     const { controller: ignored, ...player } = identity;
     void ignored;

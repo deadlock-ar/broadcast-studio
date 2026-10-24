@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import App from "./App.jsx";
-import { Hud, Scoreboard } from "./ProductionStudio.jsx";
+import { Hud, Scoreboard, SeriesMvp } from "./ProductionStudio.jsx";
 import { StatGraphic } from "./StatPanels.jsx";
 import ultimateCatalog from "../collector/data/ultimates.json";
 import {
@@ -234,7 +234,11 @@ function CloudBroadcast({ channel }) {
   return (
     <BroadcastFrame>
       {visible === false ? null : channel === "scoreboard" ? (
-        <Scoreboard result={value?.scoreboard} />
+        value?.kind === "mvp" ? (
+          <SeriesMvp result={value.mvp} />
+        ) : (
+          <Scoreboard result={value?.scoreboard} />
+        )
       ) : channel === "ultimates" ? (
         <Hud
           session={error ? null : session}

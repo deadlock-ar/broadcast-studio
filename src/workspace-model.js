@@ -1,5 +1,6 @@
 import { cleanConfig, cleanSnapshot, makeDemo } from "./draft.js";
-import { cleanPanel, parseMatchId } from "./stats.js";
+import { cleanPanel } from "./stats.js";
+import { sessionId } from "../collector/model.mjs";
 
 export const OUTPUTS = {
   draft: "/obs/draft",
@@ -139,7 +140,7 @@ export function patchWorkspace(state, operations) {
     next[key].panel = cleanPanel(next[key].panel);
     next[key].visible = next[key].visible === true;
   }
-  next.deadem.id = next.deadem.id ? parseMatchId(next.deadem.id) : "";
+  next.deadem.id = next.deadem.id ? sessionId(next.deadem.id) : "";
   next.deadem.hudVisible = next.deadem.hudVisible === true;
   next.scoreboard.visible = next.scoreboard.visible === true;
   next.apiStats.time =

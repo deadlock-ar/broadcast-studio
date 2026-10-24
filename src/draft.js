@@ -123,7 +123,7 @@ export function teamSlots(snapshot, team, type) {
   const steps = (snapshot?.steps || []).filter(
     (s) => s.teamNumber === team && s.selectionType === type,
   );
-  const minimum = type === "pick" ? 6 : 2;
+  const minimum = type === "pick" ? 6 : 3;
   return Array.from(
     { length: Math.max(minimum, steps.length) },
     (_, i) =>
@@ -136,25 +136,29 @@ export function teamSlots(snapshot, team, type) {
   );
 }
 
+// Competitive three-ban order. Teams denote lobby sides, not pick order.
+export const DRAFT_RULE = "competitive-3ban-2026-10";
+export const DRAFT_ORDER = [
+  [1, "ban"],
+  [2, "ban"],
+  [1, "ban"],
+  [2, "ban"],
+  [1, "pick"],
+  [2, "pick"],
+  [2, "pick"],
+  [1, "pick"],
+  [2, "pick"],
+  [1, "pick"],
+  [2, "ban"],
+  [1, "ban"],
+  [2, "pick"],
+  [1, "pick"],
+  [1, "pick"],
+  [2, "pick"],
+  [1, "pick"],
+  [2, "pick"],
+];
 export function makeDemo() {
-  const order = [
-    [1, "ban"],
-    [2, "ban"],
-    [1, "pick"],
-    [2, "pick"],
-    [2, "pick"],
-    [1, "pick"],
-    [1, "pick"],
-    [2, "pick"],
-    [2, "ban"],
-    [1, "ban"],
-    [2, "pick"],
-    [1, "pick"],
-    [1, "pick"],
-    [2, "pick"],
-    [2, "pick"],
-    [1, "pick"],
-  ];
   const heroes = [2, 3, 6, 4, 7, 1, 13, 15, 10, 16, 12, 17];
   return {
     draftCode: "DEMO",
@@ -162,7 +166,7 @@ export function makeDemo() {
     currentStepIndex: 12,
     teams: [],
     currentTimer: null,
-    steps: order.map(([teamNumber, selectionType], i) => ({
+    steps: DRAFT_ORDER.map(([teamNumber, selectionType], i) => ({
       id: `demo-${i}`,
       selectionNumber: i + 1,
       teamNumber,

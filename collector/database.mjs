@@ -1,7 +1,7 @@
 import { DatabaseSync } from "node:sqlite";
 import { mkdir, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
-import { applyInterruption, matchId } from "./model.mjs";
+import { applyInterruption, matchId, sessionId } from "./model.mjs";
 import { initialWorkspace } from "../src/workspace-model.js";
 
 export class BroadcastDatabase {
@@ -58,7 +58,7 @@ export class BroadcastDatabase {
   async save(s) {
     this.db
       .prepare("INSERT OR REPLACE INTO matches VALUES (?,?)")
-      .run(matchId(s.id), JSON.stringify(s));
+      .run(sessionId(s.id), JSON.stringify(s));
   }
   read(key) {
     const row = this.db

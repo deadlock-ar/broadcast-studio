@@ -4,6 +4,7 @@ collector/node_modules
 dist
 .dlar-collector
 .dlar-cloud
+.dlar-observer
 .env
 .env.*
 *.local

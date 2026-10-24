@@ -31,6 +31,8 @@ export class SharedFeeds {
       mode === "live" ? parseDraftCode(value.code || "") : "";
     this.draft?.();
     this.draft = null;
+    this.store.archive?.capture();
+    if (mode !== 'live' && (value.newDraft || d.mode !== mode)) d.archiveId = null;
     if (mode === "live") {
       const code = selectedCode;
       if (d.code !== code) d.snapshot = blankDraft();
@@ -44,6 +46,7 @@ export class SharedFeeds {
           },
           onSnapshot: (snapshot) => {
             d.snapshot = snapshot;
+            this.store.archive?.capture();
             this.update("draft");
             if (snapshot.status === "COMPLETED")
               queueMicrotask(() => {
@@ -64,6 +67,7 @@ export class SharedFeeds {
       );
     } else {
       if (mode === "demo") d.snapshot = makeDemo();
+      else if (value.newDraft) d.snapshot = blankDraft();
       else if (d.mode === "demo") d.snapshot = blankDraft();
       else d.snapshot = { ...d.snapshot, draftCode: "", status: "WAITING" };
       Object.assign(d, {
