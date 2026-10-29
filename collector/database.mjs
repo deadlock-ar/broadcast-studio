@@ -3,6 +3,7 @@ import { mkdir, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { applyInterruption, matchId, sessionId } from "./model.mjs";
 import { initialWorkspace } from "../src/workspace-model.js";
+import { cleanMatchOverlay } from "../src/match-overlay.js";
 
 export class BroadcastDatabase {
   constructor(directory) {
@@ -37,6 +38,9 @@ export class BroadcastDatabase {
     }
     this.workspace = this.read("workspace") || initialWorkspace();
     this.workspace.reports ||= initialWorkspace().reports;
+    this.workspace.matchOverlay = cleanMatchOverlay(
+      this.workspace.matchOverlay,
+    );
     this.workspace.draft.status = {
       state: "idle",
       message: this.workspace.draft.code
@@ -112,6 +116,7 @@ export class BroadcastDatabase {
       "apiStats",
       "deadem",
       "scoreboard",
+      "matchOverlay",
       "reports",
     ])
       Object.assign(this.workspace[key], next[key]);
