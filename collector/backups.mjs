@@ -13,6 +13,7 @@ import { initialWorkspace } from "../src/workspace-model.js";
 import { cleanPanel } from "../src/stats.js";
 import { sessionId, cleanSettings, applyInterruption } from "./model.mjs";
 import { cleanReportSettings } from "../src/analytics.js";
+import { cleanMatchOverlay } from "../src/match-overlay.js";
 
 export function exportBackup(store) {
   store.tournaments?.saveActive();
@@ -74,6 +75,7 @@ export function prepareRestore(value, store) {
     source = value.workspace;
   w.config = cleanConfig(source.config);
   w.reports = cleanReportSettings(source.reports);
+  w.matchOverlay = cleanMatchOverlay(source.matchOverlay);
   w.draft = {
     ...w.draft,
     mode: "manual",

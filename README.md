@@ -66,6 +66,35 @@ All admins share SQLite on Railway’s `/data` persistent volume. **OBS outputs*
 
 Stop collection, choose a JSON or `.json.gz` backup, review its game/draft counts and click **Restore this backup**. Matching archives and controls are restored; unrelated saved games remain. The current state is backed up before restoring. Observer PCs must pair again if their original credential was lost; backup imports never create publisher access.
 
+## Compact match overlay
+
+Open **Match overlay** for the cream-and-olive in-game banner. Its permanent
+OBS URL is **/obs/match-overlay**. Use a **1920 × 102** Browser Source at its
+original size; a full 1920 × 1080 source also works with transparent space below.
+The banner retains the compact half-height design and a 35px transparent live
+hero-HUD region. It does not draw the game's player portraits or player names.
+The center stays empty until an operator uploads their own logo.
+
+The default links follow the current tournament's displayed team names,
+draft bans, broadcast series scores and event name. Statlocker and manual
+draft updates use the same shared feed. Clearing a ban or starting another
+draft clears the corresponding banner slot immediately. Banned heroes use
+the bundled native critical-health (hurt) artwork. Publishing a winning result
+also refreshes the linked score boxes in already-open OBS sources.
+
+Choose **Best of 1** for one fillable score box per team, **Best of 3** for two,
+or follow the existing broadcast format. Linked BO5/BO7 formats remain supported.
+Choose a team-name font from Bodoni, Oswald, Georgia, Arial or Times New Roman.
+The two custom fonts are bundled with their open-font licenses in public/fonts.
+
+Turn off an individual link to edit names, bans, score boxes or the event name
+independently. Switching to manual retains the currently displayed values.
+Manual overlay edits do not change the source draft or global branding. The
+same controls also manage tournament subtitles, sponsors, logos, team accents
+and on-air visibility. Settings are shared between admins, saved per tournament,
+included in backups and restored after restart. Changing tournaments keeps the
+same OBS URL and shows the selected tournament's overlay.
+
 ## Permanent OBS outputs
 
 | Output                         | Path               |
@@ -78,6 +107,7 @@ Stop collection, choose a JSON or `.json.gz` backup, review its game/draft count
 | Hero priority                  | /obs/hero-priority |
 | Top items                      | /obs/top-items     |
 | Series MVP                     | /obs/series-mvp    |
+| Compact match overlay          | /obs/match-overlay |
 
 Copy the full URLs from **OBS outputs**. Add each source at **1920 × 1080**. Match IDs, branding, statistics and HUD calibration are stored on the server; changing them does not change the URLs. The scoreboard follows the latest explicitly published result, even after another game is selected. Hide/show controls are shared.
 

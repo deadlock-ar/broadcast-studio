@@ -4,6 +4,7 @@ import { OUTPUTS } from "./workspace-model.js";
 import BackupControls from "./BackupControls.jsx";
 const labels = {
   draft: "Draft",
+  "match-overlay": "Match overlay",
   "live-events": "Deadlock API stats",
   deadem: "Live stats panel",
   scoreboard: "Post-match scoreboard",
@@ -37,6 +38,7 @@ export default function SharedOutputs() {
             <article className="production-card cloud-output-row" key={key}>
               <div>
                 <h2>{labels[key]}</h2>
+                {key === "match-overlay" && <p>1920 × 102 · transparent</p>}
                 <input
                   aria-label={`${labels[key]} permanent OBS URL`}
                   value={url}
@@ -70,9 +72,10 @@ export default function SharedOutputs() {
         })}
       {notice && <p role="status">{notice}</p>}
       <p>
-        Add each link as a 1920 × 1080 OBS Browser Source. Enable “Control audio
-        via OBS” for the draft. The scoreboard follows the latest published
-        result; the other outputs follow their current dashboard settings.
+        Add the match overlay as a 1920 × 102 OBS Browser Source; use 1920 ×
+        1080 for the other sources. Enable “Control audio via OBS” for the
+        draft. The scoreboard follows the latest published result; the other
+        outputs follow their current dashboard settings.
       </p>
       <p>
         {shared?.connected

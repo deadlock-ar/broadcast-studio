@@ -21,6 +21,7 @@ import {
   publishResult,
 } from "./model.mjs";
 import { normalizeMetadata, playersAt } from "../src/stats.js";
+import { resolveMatchOverlay } from "../src/match-overlay.js";
 import {
   patchWorkspace,
   applyOperations,
@@ -125,6 +126,7 @@ export async function createBroadcastServer(options = {}) {
         report: reportOutput(store, channel, reportHeroes, reportItems),
       };
     if (channel === "draft") return { config: w.config, draft: w.draft };
+    if (channel === "match-overlay") return { overlay: resolveMatchOverlay(w) };
     if (channel === "live-events")
       return { config: w.config, apiStats: w.apiStats };
     if (channel === "scoreboard")
@@ -187,11 +189,12 @@ export async function createBroadcastServer(options = {}) {
       const relevant =
         section === "workspace" ||
         (section === "draft" &&
-          ["draft", "hero-priority"].includes(c.channel)) ||
+          ["draft", "hero-priority", "match-overlay"].includes(c.channel)) ||
         (section === "reports" &&
           ["hero-priority", "top-items", "series-mvp"].includes(c.channel)) ||
         (section === "apiStats" && c.channel === "live-events") ||
-        (section === "scoreboard" && c.channel === "scoreboard") ||
+        (section === "scoreboard" &&
+          ["scoreboard", "match-overlay"].includes(c.channel)) ||
         (section === "collector" &&
           ["deadem", "ultimates"].includes(c.channel));
       if (relevant) send(c, output(c.channel));
