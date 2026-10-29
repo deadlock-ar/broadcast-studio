@@ -18,6 +18,7 @@ import "./App.css";
 import "./FeedbackUpdates.css";
 import StatPanels from "./StatPanels";
 import ProductionStudio from "./ProductionStudio";
+import MatchOverlayControls from "./MatchOverlayControls.jsx";
 import SharedOutputs from "./SharedOutputs.jsx";
 import Analytics from "./Analytics.jsx";
 import TournamentSwitcher from "./TournamentSwitcher.jsx";
@@ -573,7 +574,7 @@ export default function App() {
   const [toast, setToast] = useState("");
   const [activity, setActivity] = useState([]);
   const [tab, setTab] = useState(
-    ["stats", "live", "outputs", "analytics", "data"].includes(
+    ["stats", "live", "overlay", "outputs", "analytics", "data"].includes(
       params.get("tab"),
     )
       ? params.get("tab")
@@ -922,6 +923,13 @@ export default function App() {
             Live desk<span>02</span>
           </button>
           <button
+            className={tab === "overlay" ? "selected" : ""}
+            onClick={() => setTab("overlay")}
+          >
+            <Icon name="studio" />
+            Match overlay
+          </button>
+          <button
             className={tab === "settings" ? "selected" : ""}
             onClick={() => setTab("settings")}
           >
@@ -1000,7 +1008,7 @@ export default function App() {
         <div
           inert={shared?.changingTournament || undefined}
           aria-busy={shared?.changingTournament || undefined}
-          className={`workspace-content${tab === "stats" ? " stats-tab" : tab === "live" ? " production-tab" : tab === "outputs" ? " outputs-tab" : tab === "analytics" ? " analytics-tab" : tab === "data" ? " data-tab" : tab === "settings" ? " settings-only" : ""}`}
+          className={`workspace-content${tab === "stats" ? " stats-tab" : tab === "live" ? " production-tab" : tab === "overlay" ? " overlay-tab" : tab === "outputs" ? " outputs-tab" : tab === "analytics" ? " analytics-tab" : tab === "data" ? " data-tab" : tab === "settings" ? " settings-only" : ""}`}
         >
           <StatPanels
             key={shared?.data.activeTournamentId}
@@ -1011,6 +1019,13 @@ export default function App() {
             key={shared?.data.activeTournamentId}
             config={config}
             active={tab === "live"}
+          />
+          <MatchOverlayControls
+            key={shared?.data.activeTournamentId}
+            config={config}
+            snapshot={snapshot}
+            active={tab === "overlay"}
+            onOpenDraft={() => setTab("studio")}
           />
           {cloud && (
             <Analytics

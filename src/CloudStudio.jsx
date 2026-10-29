@@ -16,6 +16,7 @@ import { WorkspaceContext, workspaceRequest } from "./workspace-context.js";
 import "./CloudStudio.css";
 import ReportCanvas from "./ReportCanvas.jsx";
 import { setTournamentContext } from "./tournament-context.js";
+import MatchOverlay from "./MatchOverlay.jsx";
 
 function WorkspaceProvider({ initial, children, logout }) {
   const canonical = useRef(initial),
@@ -238,6 +239,12 @@ function CloudBroadcast({ channel }) {
       </WorkspaceContext.Provider>
     );
   }
+  if (channel === "match-overlay")
+    return (
+      <BroadcastFrame>
+        <MatchOverlay state={value?.overlay} />
+      </BroadcastFrame>
+    );
   const result = value?.apiStats?.result,
     session = value?.session;
   const match =

@@ -2,9 +2,11 @@ import { cleanConfig, cleanSnapshot, makeDemo } from "./draft.js";
 import { cleanPanel } from "./stats.js";
 import { sessionId } from "../collector/model.mjs";
 import { cleanReportSettings } from "./analytics.js";
+import { cleanMatchOverlay } from "./match-overlay.js";
 
 export const OUTPUTS = {
   draft: "/obs/draft",
+  "match-overlay": "/obs/match-overlay",
   "live-events": "/obs/live-events",
   deadem: "/obs/deadem",
   scoreboard: "/obs/scoreboard",
@@ -55,6 +57,7 @@ export function initialWorkspace() {
       hudVisible: true,
     },
     scoreboard: { matchId: "", visible: true },
+    matchOverlay: cleanMatchOverlay(),
     reports: cleanReportSettings(),
   };
 }
@@ -130,6 +133,7 @@ export function patchWorkspace(state, operations) {
     const [section, key] = op.path || [];
     const valid =
       section === "config" ||
+      section === "matchOverlay" ||
       section === "reports" ||
       (section === "draft" &&
         key === "snapshot" &&
@@ -144,6 +148,7 @@ export function patchWorkspace(state, operations) {
   const next = applyOperations(state, operations);
   next.config = cleanConfig(next.config);
   next.reports = cleanReportSettings(next.reports);
+  next.matchOverlay = cleanMatchOverlay(next.matchOverlay);
   next.draft.snapshot = cleanSnapshot(next.draft.snapshot);
   for (const key of ["apiStats", "deadem"]) {
     next[key].panel = cleanPanel(next[key].panel);
