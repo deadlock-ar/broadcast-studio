@@ -1,0 +1,224 @@
+.bracket-screen {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at top right, #60714c88, transparent 58%),
+    linear-gradient(135deg, #1b2b23, #111c18);
+  color: #f4eedf;
+  font-family: "Inter", Arial, sans-serif;
+}
+.bracket-screen::before {
+  content: "";
+  position: absolute;
+  inset: 30px;
+  border: 1px solid #c8c4a330;
+  z-index: -1;
+  pointer-events: none;
+}
+.bracket-screen.is-transparent {
+  background: transparent;
+}
+.bracket-screen.is-transparent::before {
+  display: none;
+}
+.bracket-screen-heading {
+  position: absolute;
+  left: 72px;
+  right: 72px;
+  top: 56px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-bottom: 1px solid #b1bb9450;
+  padding-bottom: 27px;
+  text-shadow: 0 2px 6px #0007;
+}
+.bracket-screen-kicker {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: #c1cda8;
+}
+.bracket-screen-heading h1 {
+  font:
+    52px/1.14 Georgia,
+    serif;
+  letter-spacing: -1px;
+  margin: 10px 0 0;
+  max-width: 1360px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bracket-screen-format {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding-bottom: 4px;
+  font-size: 17px;
+  color: #d3d9bf;
+}
+.bracket-screen-format strong {
+  padding: 12px 17px;
+  border: 1px solid #b2c08e70;
+  font-size: 17px;
+  letter-spacing: 2px;
+}
+.bracket-screen-round h2 {
+  position: absolute;
+  top: 173px;
+  margin: 0;
+  color: #c7d1b4;
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 1px 4px #000b;
+}
+.bracket-screen-connectors {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.bracket-screen-connectors path {
+  fill: none;
+  stroke: #aebc8870;
+  stroke-width: 2;
+}
+.bracket-screen-match {
+  position: absolute;
+  border: 1px solid #aab98d70;
+  background: #203228;
+  box-shadow: 0 3px 12px #0003;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.bracket-screen-match.is-on-air {
+  outline: 2px solid #d3ad5f;
+  outline-offset: 3px;
+}
+.bracket-screen-team {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 14px;
+  min-width: 0;
+  color: #dddccf;
+  font-size: 21px;
+}
+.bracket-screen-team + .bracket-screen-team {
+  border-top: 1px solid #8c9c732a;
+}
+.bracket-screen-team.is-winner {
+  background: #d9dfbb;
+  color: #273620;
+}
+.bracket-screen-team.is-empty {
+  color: #95a18e;
+}
+.bracket-screen-team img,
+.bracket-screen-team-mark {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  object-fit: contain;
+}
+.bracket-screen-team-mark {
+  display: grid;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.bracket-screen-team-name {
+  min-width: 0;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bracket-screen-team strong {
+  width: 30px;
+  text-align: center;
+  font-size: 23px;
+  font-variant-numeric: tabular-nums;
+}
+.bracket-screen-winner-mark {
+  font-size: 16px;
+  margin-right: -6px;
+}
+.bracket-screen.is-dense .bracket-screen-team {
+  font-size: 17px;
+  padding: 1px 9px;
+  gap: 8px;
+}
+.bracket-screen.is-dense .bracket-screen-team img,
+.bracket-screen.is-dense .bracket-screen-team-mark {
+  height: 18px;
+  width: 18px;
+  flex-basis: 18px;
+  font-size: 7px;
+}
+.bracket-screen.is-dense .bracket-screen-team strong {
+  font-size: 17px;
+}
+.bracket-screen-footer {
+  position: absolute;
+  bottom: 47px;
+  left: 72px;
+  right: 72px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  color: #b3bf9a;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-shadow: 0 1px 4px #000b;
+}
+.bracket-screen-footer > span:last-child {
+  margin-left: auto;
+}
+.bracket-screen-footer strong {
+  font:
+    25px Georgia,
+    serif;
+  color: #e1d6a5;
+  letter-spacing: 0;
+  max-width: 800px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.bracket-screen-empty {
+  position: absolute;
+  inset: 200px 72px 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #ced7bb;
+}
+.bracket-screen-empty > span {
+  font-size: 70px;
+  color: #a6b77f;
+}
+.bracket-screen-empty h2 {
+  font:
+    39px Georgia,
+    serif;
+  margin: 24px 0 12px;
+}
+.bracket-screen-empty p {
+  color: #aeba9d;
+  font-size: 20px;
+}

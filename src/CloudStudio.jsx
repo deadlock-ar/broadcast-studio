@@ -17,6 +17,7 @@ import "./CloudStudio.css";
 import ReportCanvas from "./ReportCanvas.jsx";
 import { setTournamentContext } from "./tournament-context.js";
 import MatchOverlay from "./MatchOverlay.jsx";
+import BracketScreen from "./BracketScreen.jsx";
 
 function WorkspaceProvider({ initial, children, logout }) {
   const canonical = useRef(initial),
@@ -243,6 +244,12 @@ function CloudBroadcast({ channel }) {
     return (
       <BroadcastFrame>
         <MatchOverlay state={value?.overlay} />
+      </BroadcastFrame>
+    );
+  if (channel === "bracket")
+    return (
+      <BroadcastFrame>
+        <BracketScreen bracket={value?.bracket} />
       </BroadcastFrame>
     );
   const result = value?.apiStats?.result,

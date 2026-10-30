@@ -5,6 +5,7 @@ import BackupControls from "./BackupControls.jsx";
 const labels = {
   draft: "Draft",
   "match-overlay": "Match overlay",
+  bracket: "Tournament bracket",
   "live-events": "Deadlock API stats",
   deadem: "Live stats panel",
   scoreboard: "Post-match scoreboard",

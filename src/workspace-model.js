@@ -3,10 +3,12 @@ import { cleanPanel } from "./stats.js";
 import { sessionId } from "../collector/model.mjs";
 import { cleanReportSettings } from "./analytics.js";
 import { cleanMatchOverlay } from "./match-overlay.js";
+import { cleanBracket } from "./bracket.js";
 
 export const OUTPUTS = {
   draft: "/obs/draft",
   "match-overlay": "/obs/match-overlay",
+  bracket: "/obs/bracket",
   "live-events": "/obs/live-events",
   deadem: "/obs/deadem",
   scoreboard: "/obs/scoreboard",
@@ -58,6 +60,7 @@ export function initialWorkspace() {
     },
     scoreboard: { matchId: "", visible: true },
     matchOverlay: cleanMatchOverlay(),
+    bracket: cleanBracket(),
     reports: cleanReportSettings(),
   };
 }

@@ -49,6 +49,53 @@
   max-width: 500px;
   color: #85452d;
 }
+.tournament-switcher .tournament-create > form {
+  position: fixed;
+  inset: 8vh auto auto max(12px, calc(50vw - 440px));
+  width: min(880px, calc(100vw - 24px));
+  max-height: 84vh;
+  overflow: auto;
+  z-index: 30;
+}
+.tournament-create fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.tournament-switcher .tournament-create label {
+  min-width: 0;
+}
+.tournament-create-rosters h3 {
+  margin-bottom: 8px;
+}
+.tournament-switcher .tournament-create-rosters p {
+  color: #69725b;
+  max-width: none;
+  margin-bottom: 16px;
+}
+.tournament-create-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.tournament-switcher .tournament-create-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.6;
+}
+.tournament-create-check input {
+  width: auto;
+  margin: 4px 0 0;
+}
+@media (max-width: 640px) {
+  .tournament-create-options {
+    grid-template-columns: 1fr;
+  }
+}
 .workspace-content.data-tab > :not(.data-library) {
   display: none;
 }

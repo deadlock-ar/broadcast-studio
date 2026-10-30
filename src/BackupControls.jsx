@@ -58,9 +58,9 @@ export default function BackupControls({ allowDelete = false }) {
       <h2>Saved results and backups</h2>
       <p>
         The Railway volume holds the shared workspace, drafts, purchase
-        histories and reviewed results. A daily recovery file is refreshed every
-        minute; the latest 14 days are kept on that volume. Download a copy to
-        keep it outside Railway.
+        histories, reviewed results, brackets and saved team/player records. A
+        daily recovery file is refreshed every minute; the latest 14 days are
+        kept on that volume. Download a copy to keep it outside Railway.
       </p>
       <a className="button secondary" href="/api/backup" download>
         Download current backup ↓
@@ -149,6 +149,8 @@ export default function BackupControls({ allowDelete = false }) {
             {pending.drafts?.length || 0} drafts. This replaces shared controls
             and matching archive entries; other saved games remain. Stop live
             collection first. Paired-PC credentials are not restored.
+            {pending.rosterLibrary &&
+              ` Saved rosters: ${pending.rosterLibrary.teams?.length || 0} teams and ${pending.rosterLibrary.players?.length || 0} players will be merged into the library.`}
           </p>
           <button className="button primary" disabled={busy} onClick={restore}>
             Restore this backup

@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { initialWorkspace } from "../src/workspace-model.js";
 import { cleanMatchOverlay } from "../src/match-overlay.js";
+import { cleanBracket } from "../src/bracket.js";
+import { prepareTournamentBracket } from "./bracket-service.mjs";
 
 const sections = [
   "config",
@@ -10,6 +12,7 @@ const sections = [
   "scoreboard",
   "apiStats",
   "matchOverlay",
+  "bracket",
 ];
 export const inTournament = (record, store) =>
   !store.workspace.activeTournamentId ||
@@ -37,6 +40,7 @@ export class Tournaments {
         .map((row) => {
           const r = JSON.parse(row.value);
           r.state.matchOverlay = cleanMatchOverlay(r.state.matchOverlay);
+          r.state.bracket = cleanBracket(r.state.bracket);
           return [r.id, r];
         }),
     );
@@ -45,6 +49,7 @@ export class Tournaments {
   }
   put(record) {
     record.state.matchOverlay = cleanMatchOverlay(record.state.matchOverlay);
+    record.state.bracket = cleanBracket(record.state.bracket);
     this.store.db
       .prepare("INSERT OR REPLACE INTO tournaments VALUES (?,?)")
       .run(record.id, JSON.stringify(record));
@@ -133,9 +138,10 @@ export class Tournaments {
         { status: 409 },
       );
   }
-  create(name) {
+  create(options) {
     this.assertIdle();
-    name = nameOf(name);
+    if (typeof options === "string") options = { name: options };
+    let name = nameOf(options?.name);
     if (
       [...this.records.values()].some(
         (r) => r.name.toLocaleLowerCase() === name.toLocaleLowerCase(),
@@ -146,6 +152,7 @@ export class Tournaments {
       );
     const state = initialWorkspace();
     state.config.event = name;
+    state.bracket = prepareTournamentBracket(options, this.store.rosterLibrary);
     const r = {
       id: randomUUID(),
       name,
@@ -171,6 +178,7 @@ export class Tournaments {
     for (const key of sections)
       w[key] = structuredClone(r.state[key] || initialWorkspace()[key]);
     w.matchOverlay = cleanMatchOverlay(w.matchOverlay);
+    w.bracket = cleanBracket(w.bracket);
     w.activeTournamentId = id;
     w.revision++;
     w.draft.status = {
