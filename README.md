@@ -112,11 +112,47 @@ default row fits the existing 1920 × 102 source. If moved lower, use the source
 height shown beside the permanent URL, or a 1920 × 1080 source. Source changes
 and tournament switches clear the previous roster instead of keeping old names.
 
+## Brackets and reusable rosters
+
+Open **Bracket** to manage a single-elimination tournament for 2–32 teams.
+The **New tournament** form can include team names and up to six optional
+players per team, with names and Steam accounts. Choose whether to save these
+records for later tournaments. **Data library → Teams & players** also saves
+individual players independently of a team and edits existing saved rosters.
+SteamID64 strings, numeric account IDs and numeric Steam profile URLs are
+accepted; vanity profile URLs require their numeric profile ID.
+
+Arrange the teams in seed order, choose **By seed**, **Random draw** or
+**Manual pairings**, then generate the bracket. Manual pairing matches adjacent
+entries (1–2, 3–4, and so on). Byes advance automatically. Series formats BO1,
+BO3, BO5 and BO7 are supported. Replacing a draw or changing its entrants after
+results requires an explicit reset in the interface.
+
+Use **Use this match on broadcast** before the series to load its team names,
+logos, format and score into the broadcast controls. Confirm and publish each
+completed game from **Live desk**. The bracket counts that game once and
+advances the series winner only after the required wins. Replays, rehearsal
+games, unrelated teams and duplicate captures cannot award bracket wins.
+Editing an overlay score box does not finalize a bracket result. Manual bracket
+scores and winners are also available; correcting an earlier winner resets the
+affected downstream matches. Republishing an already-applied game with a
+different winner asks the operator to correct that bracket result manually.
+
+The permanent **/obs/bracket** Browser Source uses **1920 × 1080**. Enable
+**Transparent background** to retain only the bracket, cards and text over the
+scene below. Show/hide, results and tournament selection update the same URL.
+Public bracket output contains team names, logos and results, with player
+records and Steam accounts kept in the admin library. Brackets are saved per
+tournament; the reusable team/player library is shared across tournaments.
+Both are retained on the existing persistent volume and included in backups.
+Restoring an older backup preserves the existing reusable library.
+
 ## Permanent OBS outputs
 
 | Output                         | Path               |
 | ------------------------------ | ------------------ |
 | Draft                          | /obs/draft         |
+| Tournament bracket             | /obs/bracket       |
 | Deadlock API stats             | /obs/live-events   |
 | Deadem stats                   | /obs/deadem        |
 | Reviewed post-match scoreboard | /obs/scoreboard    |
@@ -174,7 +210,7 @@ Restarting restores saved screens, selected game and published result. Active fe
 
 Download **workspace and results backup** from OBS outputs after each event. It includes workspace configuration and captures, excluding passwords and login sessions. Retain independent copies alongside Railway volume backups. Legacy collector JSON captures placed in the data directory are imported once and preserved. A full backup restore currently requires server access.
 
-Do not use multiple replicas with this SQLite deployment. Horizontal scaling would need a shared database and collector coordination. Brackets and highlights remain future roadmap work.
+Do not use multiple replicas with this SQLite deployment. Horizontal scaling would need a shared database and collector coordination. Caster holding screens, player introduction banners and highlights remain future roadmap work.
 
 ## Local development and rehearsal
 
