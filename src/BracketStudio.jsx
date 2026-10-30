@@ -414,12 +414,145 @@ function MatchEditor({
   );
 }
 
+function RoundFormatControls({ state, rounds, disabled, onAction }) {
+  const [draft, setDraft] = useState(null);
+  const revision = useRef(null);
+  const current = Object.fromEntries(
+    rounds.map((round) => [
+      round.id,
+      round.seriesFormat ||
+        state.roundFormats?.[round.id] ||
+        state.seriesFormat,
+    ]),
+  );
+  const values = draft || current;
+  const locked = (round) =>
+    state.matches.some(
+      (match) =>
+        `r${match.round + 1}` === round.id &&
+        match.status !== "bye" &&
+        (match.scores.some(Boolean) ||
+          match.games.length > 0 ||
+          match.status === "complete"),
+    );
+  const dirty =
+    draft !== null && JSON.stringify(values) !== JSON.stringify(current);
+  const edit = (next) => {
+    if (revision.current === null) revision.current = state.revision;
+    setDraft(next);
+  };
+  const editable = rounds.some((round) => !locked(round));
+  return (
+    <section className="brk-card brk-round-formats">
+      <div className="brk-card-head">
+        <div>
+          <h2>Round formats</h2>
+          <p>
+            Choose the best of X for each round without creating a new draw.
+          </p>
+        </div>
+        <button
+          className="button secondary"
+          disabled={disabled || !editable}
+          onClick={() =>
+            edit(
+              Object.fromEntries(
+                rounds.map((round, index) => [
+                  round.id,
+                  locked(round)
+                    ? values[round.id]
+                    : index === rounds.length - 1
+                      ? "BO3"
+                      : "BO1",
+                ]),
+              ),
+            )
+          }
+        >
+          BO1 rounds, BO3 final
+        </button>
+      </div>
+      <div className="brk-round-format-grid">
+        {rounds.map((round) => (
+          <label key={round.id}>
+            {round.name}
+            <select
+              aria-label={`${round.name} format`}
+              value={values[round.id]}
+              disabled={disabled || locked(round)}
+              onChange={(event) =>
+                edit({ ...values, [round.id]: event.target.value })
+              }
+            >
+              {["BO1", "BO3", "BO5", "BO7"].map((format) => (
+                <option key={format} value={format}>
+                  {format}
+                </option>
+              ))}
+            </select>
+            {locked(round) && <small>Results entered · format locked</small>}
+          </label>
+        ))}
+      </div>
+      <p className="brk-help">
+        Rounds with recorded results keep their format. You can still change
+        unplayed later rounds.
+      </p>
+      <div className="brk-inline-actions">
+        {dirty && (
+          <button
+            className="brk-text-button"
+            disabled={disabled}
+            onClick={() => {
+              setDraft(null);
+              revision.current = null;
+            }}
+          >
+            Discard format edits
+          </button>
+        )}
+        <button
+          className="button primary"
+          disabled={disabled || !dirty}
+          onClick={async () => {
+            const saved = await onAction(
+              "bracket/formats",
+              {
+                roundFormats: values,
+                expectedRevision: revision.current,
+              },
+              "Round formats saved. The draw and existing results are kept.",
+            );
+            if (saved) {
+              setDraft(null);
+              revision.current = null;
+            }
+          }}
+        >
+          Save round formats
+        </button>
+      </div>
+    </section>
+  );
+}
+
 export default function BracketStudio({ active }) {
   const shared = useWorkspace();
   const state = cleanBracket(shared?.data?.bracket);
   const publicView = bracketOutput(state, {
     title: shared?.data?.config?.event,
   });
+  const roundFormats = [
+    ...new Set(
+      publicView.rounds.map(
+        (round) => round.seriesFormat || state.seriesFormat,
+      ),
+    ),
+  ];
+  const formatSummary =
+    roundFormats.length > 1
+      ? "Mixed round formats"
+      : roundFormats[0] || state.seriesFormat;
   const [draft, setDraft] = useState(null);
   const draftRevision = useRef(null);
   const [library, setLibrary] = useState({ teams: [], players: [] });
@@ -428,7 +561,14 @@ export default function BracketStudio({ active }) {
   const [notice, setNotice] = useState("");
   const [saveToLibrary, setSaveToLibrary] = useState(false);
   const [seeding, setSeeding] = useState(state.seeding || "seeded");
-  const [seriesFormat, setSeriesFormat] = useState(state.seriesFormat || "BO3");
+  const [seriesFormat, setSeriesFormat] = useState(
+    state.matches.length ? state.seriesFormat : "BO1",
+  );
+  const [finalFormat, setFinalFormat] = useState(
+    state.matches.length
+      ? publicView.rounds.at(-1)?.seriesFormat || state.seriesFormat
+      : "BO3",
+  );
   const [replace, setReplace] = useState(false);
   const [replaceEntrants, setReplaceEntrants] = useState(false);
   const [scale, setScale] = useState(0.5);
@@ -463,7 +603,7 @@ export default function BracketStudio({ active }) {
     return () => observer.disconnect();
   }, [active]);
   async function action(path, value = {}, message = "Saved.") {
-    if (disabled) return;
+    if (disabled) return false;
     setBusy(true);
     setNotice("");
     try {
@@ -472,7 +612,7 @@ export default function BracketStudio({ active }) {
         expectedRevision:
           path === "bracket/entrants" && draftRevision.current !== null
             ? draftRevision.current
-            : state.revision,
+            : (value.expectedRevision ?? state.revision),
       });
       if (path === "bracket/entrants") {
         setDraft(null);
@@ -482,8 +622,10 @@ export default function BracketStudio({ active }) {
       setReplace(false);
       setReplaceEntrants(false);
       setNotice(message);
+      return true;
     } catch (error) {
       setNotice(error.message);
+      return false;
     } finally {
       setBusy(false);
     }
@@ -496,7 +638,7 @@ export default function BracketStudio({ active }) {
   const generate = () =>
     action(
       "bracket/generate",
-      { seeding, seriesFormat, resetConfirmed: replace },
+      { seeding, seriesFormat, finalFormat, resetConfirmed: replace },
       "Bracket generated. Choose the first match to prepare the broadcast.",
     );
   const saveEntrants = (resetConfirmed = false) =>
@@ -535,7 +677,7 @@ export default function BracketStudio({ active }) {
             <h2>Bracket preview</h2>
             <p>
               {state.matches.length
-                ? `${state.entrants.length} teams · Single elimination · ${state.seriesFormat}`
+                ? `${state.entrants.length} teams · Single elimination · ${formatSummary}`
                 : "Your generated bracket will appear here."}
             </p>
           </div>
@@ -623,6 +765,18 @@ export default function BracketStudio({ active }) {
           </a>
         </div>
       </section>
+      {!!publicView.rounds.length && (
+        <RoundFormatControls
+          state={state}
+          rounds={publicView.rounds.filter((round) =>
+            round.matches.some(
+              (match) => match.required !== false && match.status !== "bye",
+            ),
+          )}
+          disabled={disabled}
+          onAction={action}
+        />
+      )}
       <section className="brk-card">
         <div className="brk-card-head">
           <div>
@@ -735,12 +889,26 @@ export default function BracketStudio({ active }) {
             </select>
           </label>
           <label>
-            Match series
+            Early rounds
             <select
               aria-label="Bracket match series"
               value={seriesFormat}
               disabled={disabled}
               onChange={(event) => setSeriesFormat(event.target.value)}
+            >
+              <option value="BO1">Best of 1</option>
+              <option value="BO3">Best of 3</option>
+              <option value="BO5">Best of 5</option>
+              <option value="BO7">Best of 7</option>
+            </select>
+          </label>
+          <label>
+            Final
+            <select
+              aria-label="Bracket final series"
+              value={finalFormat}
+              disabled={disabled}
+              onChange={(event) => setFinalFormat(event.target.value)}
             >
               <option value="BO1">Best of 1</option>
               <option value="BO3">Best of 3</option>
@@ -821,23 +989,43 @@ export default function BracketStudio({ active }) {
             bracket stays consistent.
           </p>
           <div className="brk-round-editors">
-            {publicView.rounds.map((round) => (
-              <section className="brk-round-editor" key={round.id}>
-                <h3>{round.name}</h3>
-                <div>
-                  {round.matches.map((match) => (
-                    <MatchEditor
-                      key={`${match.id}:${match.teams.map((team) => team?.id || "").join(":")}:${state.seriesFormat}:${match.scores?.join(":")}:${match.winnerId || ""}`}
-                      match={match}
-                      seriesFormat={state.seriesFormat}
-                      activeMatchId={state.activeMatchId}
-                      disabled={disabled}
-                      onAction={action}
-                    />
-                  ))}
-                </div>
-              </section>
-            ))}
+            {publicView.rounds
+              .filter((round) =>
+                round.matches.some(
+                  (match) => match.required !== false && match.status !== "bye",
+                ),
+              )
+              .map((round) => (
+                <section className="brk-round-editor" key={round.id}>
+                  <h3>
+                    {round.name}{" "}
+                    <span className="brk-round-format-label">
+                      {round.seriesFormat || state.seriesFormat}
+                    </span>
+                  </h3>
+                  <div>
+                    {round.matches
+                      .filter(
+                        (match) =>
+                          match.required !== false && match.status !== "bye",
+                      )
+                      .map((match) => (
+                        <MatchEditor
+                          key={`${match.id}:${match.teams.map((team) => team?.id || "").join(":")}:${match.seriesFormat || round.seriesFormat || state.seriesFormat}:${match.scores?.join(":")}:${match.winnerId || ""}`}
+                          match={match}
+                          seriesFormat={
+                            match.seriesFormat ||
+                            round.seriesFormat ||
+                            state.seriesFormat
+                          }
+                          activeMatchId={state.activeMatchId}
+                          disabled={disabled}
+                          onAction={action}
+                        />
+                      ))}
+                  </div>
+                </section>
+              ))}
           </div>
         </section>
       )}

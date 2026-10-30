@@ -78,6 +78,17 @@
   letter-spacing: 2px;
   text-shadow: 0 1px 4px #000b;
 }
+.bracket-screen-round-format {
+  display: inline-block;
+  margin-left: 14px;
+  padding: 4px 7px;
+  border: 1px solid #b2c08e50;
+  color: #d8dfc5;
+  font-size: 11px;
+  line-height: 1;
+  vertical-align: 1px;
+  letter-spacing: 1px;
+}
 .bracket-screen-connectors {
   position: absolute;
   inset: 0;
@@ -156,19 +167,19 @@
   font-size: 16px;
   margin-right: -6px;
 }
-.bracket-screen.is-dense .bracket-screen-team {
+.bracket-screen-match.is-dense .bracket-screen-team {
   font-size: 17px;
   padding: 1px 9px;
   gap: 8px;
 }
-.bracket-screen.is-dense .bracket-screen-team img,
-.bracket-screen.is-dense .bracket-screen-team-mark {
+.bracket-screen-match.is-dense .bracket-screen-team img,
+.bracket-screen-match.is-dense .bracket-screen-team-mark {
   height: 18px;
   width: 18px;
   flex-basis: 18px;
   font-size: 7px;
 }
-.bracket-screen.is-dense .bracket-screen-team strong {
+.bracket-screen-match.is-dense .bracket-screen-team strong {
   font-size: 17px;
 }
 .bracket-screen-footer {

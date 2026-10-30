@@ -19,6 +19,31 @@ export function winsRequired(format) {
   return { BO1: 1, BO3: 2, BO5: 3, BO7: 4 }[format] || 2;
 }
 
+const roundKey = (round) =>
+  Number.isInteger(round) && round >= 0 && round < 5
+    ? `r${round + 1}`
+    : typeof round === "string" && /^r[1-5]$/.test(round)
+      ? round
+      : "";
+
+function cleanRoundFormats(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  return Object.fromEntries(
+    Object.entries(value).filter(
+      ([key, format]) => roundKey(key) && formats.includes(format),
+    ),
+  );
+}
+
+export function bracketRoundFormat(state, round) {
+  const override = state?.roundFormats?.[roundKey(round)];
+  return formats.includes(override)
+    ? override
+    : formats.includes(state?.seriesFormat)
+      ? state.seriesFormat
+      : "BO3";
+}
+
 function entrant(value) {
   const team = value && typeof value === "object" ? value : {};
   return {
@@ -84,7 +109,8 @@ function propagate(state, previous = []) {
       const id = `r${round + 1}-m${index + 1}`;
       const old = saved.get(id);
       const valid = ready && samePair(old?.teamIds, teamIds);
-      const needed = winsRequired(state.seriesFormat);
+      const seriesFormat = bracketRoundFormat(state, round);
+      const needed = winsRequired(seriesFormat);
       let scores = valid
         ? [integer(old.scores?.[0], needed), integer(old.scores?.[1], needed)]
         : [0, 0];
@@ -116,6 +142,8 @@ function propagate(state, previous = []) {
         id,
         round,
         index,
+        seriesFormat,
+        required: matchHasOpponents(state.slots, round, index),
         teamIds,
         scores,
         winnerId,
@@ -152,6 +180,7 @@ export function cleanBracket(value = {}) {
     seriesFormat: formats.includes(value.seriesFormat)
       ? value.seriesFormat
       : "BO3",
+    roundFormats: cleanRoundFormats(value.roundFormats),
     seeding: methods.includes(value.seeding) ? value.seeding : "seeded",
     entrants,
     slots,
@@ -242,6 +271,49 @@ export function bracketMatch(state, id) {
   return cleanBracket(state).matches.find((match) => match.id === id) || null;
 }
 
+function matchHasOpponents(slots, round, index) {
+  const half = 2 ** round;
+  const start = index * half * 2;
+  return (
+    slots.slice(start, start + half).some(Boolean) &&
+    slots.slice(start + half, start + half * 2).some(Boolean)
+  );
+}
+
+export function bracketMatchRequired(state, id) {
+  return bracketMatch(state, id)?.required === true;
+}
+
+export function setBracketFormats(value, roundFormats) {
+  if (
+    !roundFormats ||
+    typeof roundFormats !== "object" ||
+    Array.isArray(roundFormats) ||
+    Object.entries(roundFormats).some(
+      ([key, format]) => !roundKey(key) || !formats.includes(format),
+    )
+  )
+    throw Error("Choose BO1, BO3, BO5 or BO7 for each bracket round.");
+  const state = cleanBracket(value);
+  const next = { ...state, roundFormats: cleanRoundFormats(roundFormats) };
+  for (const match of state.matches) {
+    const changed =
+      bracketRoundFormat(state, match.round) !==
+      bracketRoundFormat(next, match.round);
+    if (
+      changed &&
+      match.status !== "bye" &&
+      (match.scores.some(Boolean) ||
+        match.games.length ||
+        match.status === "complete")
+    )
+      throw Error(
+        "This round already has results. Clear its results before changing its match format.",
+      );
+  }
+  return cleanBracket(next);
+}
+
 function readyMatch(state, id) {
   const match = state.matches.find((item) => item.id === id);
   if (!match) throw Error("Bracket match not found.");
@@ -262,7 +334,7 @@ export function setBracketResult(value, matchId, result = {}) {
     match.games = [];
     return cleanBracket(state);
   }
-  const needed = winsRequired(state.seriesFormat);
+  const needed = winsRequired(match.seriesFormat);
   const hasWinner = Object.hasOwn(result, "winnerId");
   const winnerId = hasWinner ? result.winnerId : null;
   if (winnerId !== null && !match.teamIds.includes(winnerId))
@@ -339,10 +411,13 @@ export function bracketOutput(value, { title = "Tournament bracket" } = {}) {
   const rounds = Array.from({ length: count }, (_, round) => ({
     id: `r${round + 1}`,
     name: roundName(round, count),
+    seriesFormat: bracketRoundFormat(state, round),
     matches: state.matches
       .filter((match) => match.round === round)
       .map((match) => ({
         id: match.id,
+        seriesFormat: match.seriesFormat,
+        required: match.required,
         teams: match.teamIds.map((id) => teams.get(id) || null),
         scores: match.scores,
         winnerId: match.winnerId,

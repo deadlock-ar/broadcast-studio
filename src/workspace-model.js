@@ -36,6 +36,7 @@ export function initialWorkspace() {
     config: cleanConfig(),
     draft: {
       code: "",
+      bracketMatchId: "",
       mode: "manual",
       snapshot: blankDraft(),
       status: { state: "idle", message: "Connect a draft or use manual mode." },
