@@ -8,6 +8,9 @@ import {
   bracketMatch,
   bracketOutput,
   winsRequired,
+  bracketRoundFormat,
+  setBracketFormats,
+  bracketMatchRequired,
 } from "../src/bracket.js";
 
 const teams = (count) =>
@@ -268,4 +271,158 @@ test("older and corrupt settings normalize safely without trusting stale bracket
   assert.equal(cleaned.visible, false);
   assert.equal(cleaned.transparent, true);
   assert.deepEqual(cleanBracket(cleaned), cleaned);
+});
+
+test("round formats allow BO1 early rounds and a BO3 final for manual and recorded results", () => {
+  let bracket = generateBracket(teams(4), {
+    seeding: "manual",
+    seriesFormat: "BO1",
+    roundFormats: { r2: "BO3" },
+  });
+  assert.equal(bracketRoundFormat(bracket, 0), "BO1");
+  assert.equal(bracketRoundFormat(bracket, "r2"), "BO3");
+  assert.equal(bracketMatch(bracket, "r1-m1").seriesFormat, "BO1");
+  assert.equal(bracketMatch(bracket, "r2-m1").seriesFormat, "BO3");
+  bracket = recordBracketGame(bracket, {
+    matchId: "r1-m1",
+    gameId: "100",
+    winnerId: "team-1",
+  });
+  assert.equal(bracketMatch(bracket, "r1-m1").status, "complete");
+  assert.deepEqual(bracketMatch(bracket, "r1-m1").scores, [1, 0]);
+  bracket = setBracketResult(bracket, "r1-m2", { winnerId: "team-3" });
+  assert.deepEqual(bracketMatch(bracket, "r1-m2").scores, [1, 0]);
+  bracket = recordBracketGame(bracket, {
+    matchId: "r2-m1",
+    gameId: "101",
+    winnerId: "team-1",
+  });
+  assert.equal(bracketMatch(bracket, "r2-m1").status, "ready");
+  assert.equal(bracketOutput(bracket).champion, null);
+  bracket = recordBracketGame(bracket, {
+    matchId: "r2-m1",
+    gameId: "102",
+    winnerId: "team-1",
+  });
+  assert.equal(bracketOutput(bracket).champion.id, "team-1");
+  const output = bracketOutput(bracket);
+  assert.deepEqual(
+    output.rounds.map((round) => round.seriesFormat),
+    ["BO1", "BO3"],
+  );
+  assert.equal(output.rounds[1].matches[0].seriesFormat, "BO3");
+});
+
+test("editing an unplayed later round preserves the draw and already completed earlier results", () => {
+  let bracket = generateBracket(teams(8), { seriesFormat: "BO1" });
+  bracket = setBracketResult(bracket, "r1-m1", { winnerId: "team-1" });
+  const before = structuredClone(bracket);
+  bracket = setBracketFormats(bracket, { r3: "BO3" });
+  assert.deepEqual(bracket.slots, before.slots);
+  assert.deepEqual(bracket.entrants, before.entrants);
+  assert.deepEqual(
+    bracket.matches.filter((match) => match.round < 2),
+    before.matches.filter((match) => match.round < 2),
+  );
+  assert.equal(bracketMatch(bracket, "r3-m1").seriesFormat, "BO3");
+  assert.equal(bracketMatch(bracket, "r1-m1").winnerId, "team-1");
+  assert.deepEqual(cleanBracket(bracket), bracket);
+});
+
+test("played round format changes require results to be cleared and cannot silently change winners", () => {
+  const initial = generateBracket(teams(4), {
+    seeding: "manual",
+    seriesFormat: "BO3",
+  });
+  const recorded = recordBracketGame(initial, {
+    matchId: "r1-m1",
+    gameId: "100",
+    winnerId: "team-1",
+  });
+  assert.throws(
+    () => setBracketFormats(recorded, { r1: "BO1" }),
+    /already has results/,
+  );
+  const completed = setBracketResult(initial, "r1-m1", { winnerId: "team-1" });
+  assert.throws(
+    () => setBracketFormats(completed, { r1: "BO5" }),
+    /already has results/,
+  );
+  assert.deepEqual(
+    setBracketFormats(completed, { r1: "BO3" }).matches,
+    completed.matches,
+  );
+  let cleared = setBracketResult(recorded, "r1-m1", { clear: true });
+  cleared = setBracketFormats(cleared, { r1: "BO1" });
+  assert.equal(bracketMatch(cleared, "r1-m1").seriesFormat, "BO1");
+  assert.deepEqual(cleared.processedGameIds, ["100"]);
+  assert.deepEqual(
+    recordBracketGame(cleared, {
+      matchId: "r1-m1",
+      gameId: "100",
+      winnerId: "team-1",
+    }),
+    cleared,
+  );
+});
+
+test("byes do not lock round formats and legacy settings retain their original match format", () => {
+  const byes = generateBracket(teams(3), { seriesFormat: "BO1" });
+  const changed = setBracketFormats(byes, { r1: "BO3", r2: "BO5" });
+  assert.equal(bracketMatch(changed, "r1-m1").status, "bye");
+  assert.equal(bracketRoundFormat(changed, 0), "BO3");
+  const legacy = generateBracket(teams(4), { seriesFormat: "BO5" });
+  delete legacy.roundFormats;
+  const normalized = cleanBracket(legacy);
+  assert.deepEqual(normalized.roundFormats, {});
+  assert.ok(normalized.matches.every((match) => match.seriesFormat === "BO5"));
+});
+
+test("format override validation rejects invalid changes while cleanup safely normalizes old data", () => {
+  const bracket = generateBracket(teams(4));
+  for (const invalid of [
+    null,
+    [],
+    { r0: "BO1" },
+    { r6: "BO3" },
+    { r1: "BO9" },
+    { final: "BO3" },
+  ])
+    assert.throws(() => setBracketFormats(bracket, invalid), /Choose BO1/);
+  const cleaned = cleanBracket({
+    ...bracket,
+    roundFormats: { r1: "BO1", r2: "BO9", r6: "BO3", evil: "BO7" },
+  });
+  assert.deepEqual(cleaned.roundFormats, { r1: "BO1" });
+  assert.equal(bracketRoundFormat(cleaned, "r2"), "BO3");
+});
+
+test("only actual contests are required, including future empty branches in manually padded draws", () => {
+  for (const seeding of ["seeded", "manual"]) {
+    for (let count = 2; count <= 32; count++) {
+      const bracket = generateBracket(teams(count), { seeding });
+      assert.equal(
+        bracket.matches.filter((match) => match.required).length,
+        count - 1,
+        `${seeding} draw with ${count} teams`,
+      );
+      const projected = bracketOutput(bracket).rounds.flatMap(
+        (round) => round.matches,
+      );
+      assert.equal(
+        projected.filter((match) => match.required).length,
+        count - 1,
+      );
+      assert.ok(
+        bracket.matches
+          .filter((match) => match.status === "bye")
+          .every((match) => !match.required),
+      );
+    }
+  }
+  const manual = generateBracket(teams(6), { seeding: "manual" });
+  assert.equal(bracketMatch(manual, "r2-m2").status, "waiting");
+  assert.equal(bracketMatchRequired(manual, "r2-m2"), false);
+  assert.equal(bracketMatchRequired(manual, "r3-m1"), true);
+  assert.equal(bracketMatchRequired(manual, "unknown"), false);
 });
