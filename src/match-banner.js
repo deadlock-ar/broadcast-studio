@@ -32,7 +32,7 @@ function scaffold(root) {
 </defs>
 <!-- Compress the ornament geometry only. Text, portraits and logos retain
      their natural proportions in the compact layout below. -->
-<g transform="scale(1 .5)" clip-path="url(#${key}-outline)">
+<g class="banner-art" transform="scale(1 .5)" clip-path="url(#${key}-outline)">
  <path fill="url(#${key}-forest)" d="M0 12H2048V143H0Z"/>
  <path d="M0 13H2048M0 141H145Q154 141 165 135Q172 130 180 130H489" fill="none" stroke="#c3c5ad" stroke-width="2"/>
  <path d="M2048 141H1902Q1894 141 1884 135Q1878 130 1868 130H1562" fill="none" stroke="#c3c5ad" stroke-width="2"/>
@@ -89,10 +89,12 @@ function scaffold(root) {
 <g class="score-boxes score-boxes-left"></g><g class="score-boxes score-boxes-right"></g>
 <!-- The center remains blank until the user uploads their own logo. -->
 <g class="custom-crest" style="display:none"><image x="970" y="14" width="108" height="42" preserveAspectRatio="xMidYMid meet"/></g>
-</svg>`;
+</svg><div class="match-player-names" aria-label="Player names in live topbar order"></div>`;
 
   const updateSize = () => {
-    const width = root.getBoundingClientRect().width;
+    // The studio and OBS frame already scale the 1920px canvas. Use layout
+    // width here so the HUD baseline is not scaled a second time.
+    const width = root.clientWidth;
     root.style.setProperty("--banner-baseline", (width * 71) / 2048 + "px");
   };
   if (typeof ResizeObserver !== "undefined") {
@@ -117,7 +119,7 @@ function fitText(text, content, maximum, fontSize) {
     let actual = 0;
     try {
       actual = text.getComputedTextLength();
-    } catch (_) {
+    } catch {
       /* Hidden preview. */
     }
     if (actual > maximum) {
@@ -189,6 +191,7 @@ function bans(group, selections, heroes, side, key) {
       fill: "#31412a",
       stroke: hero ? "#a9b695" : "#526447",
       "stroke-width": 0.8,
+      class: "ban-plate",
     }).forEach(([attr, value]) => plate.setAttribute(attr, value));
     groupSlot.appendChild(plate);
     if (hero && imageSource(hero.portrait)) {
@@ -301,6 +304,15 @@ export function renderMatchBanner(root, state, heroes) {
     MATCH_OVERLAY_FONTS.find((item) => item.id === state.font) ||
     MATCH_OVERLAY_FONTS[0];
   root.style.setProperty("--match-team-font", font.family);
+  const backgroundOpacity = Number(state.backgroundOpacity ?? 100);
+  root.style.setProperty(
+    "--match-background-opacity",
+    String(
+      Number.isFinite(backgroundOpacity)
+        ? Math.max(0, Math.min(100, backgroundOpacity)) / 100
+        : 1,
+    ),
+  );
 
   fitText(
     query(".team-left"),
@@ -355,6 +367,11 @@ export function renderMatchBanner(root, state, heroes) {
     .forEach((el) => el.setAttribute("fill", color(right.accent, "#5f8de7")));
   bans(query(".bans-left"), left.bans, heroes, 0, root.__bannerKey);
   bans(query(".bans-right"), right.bans, heroes, 1, root.__bannerKey);
+  renderPlayerNames(
+    query(".match-player-names"),
+    state.playerNames,
+    state.teams,
+  );
   const requested = state.hudHeight == null ? 35 : Number(state.hudHeight);
   const hudHeight = Number.isFinite(requested)
     ? Math.max(0, Math.min(70, requested))
@@ -368,4 +385,37 @@ export function renderMatchBanner(root, state, heroes) {
     heroWindow: query(".match-hero-window"),
     hudHeight,
   };
+}
+
+function renderPlayerNames(container, settings, teams = []) {
+  container.replaceChildren();
+  container.hidden = settings?.enabled !== true;
+  if (container.hidden) return;
+  const layout = settings.layout;
+  if (!layout) return;
+  for (const team of [0, 1]) {
+    for (const [slot, player] of (settings.teams?.[team] || [])
+      .slice(0, 6)
+      .entries()) {
+      const box = document.createElement("div");
+      box.className = "match-player-name";
+      box.dataset.playerId = player.id;
+      box.dataset.team = String(team);
+      box.dataset.slot = String(slot);
+      box.style.left = `${layout.x + (team * 6 + slot) * (layout.width + layout.gap) + team * layout.teamGap}px`;
+      box.style.top = `${layout.y}px`;
+      box.style.width = `${layout.width}px`;
+      box.style.height = `${layout.height}px`;
+      box.style.fontSize = `${layout.fontSize}px`;
+      box.style.setProperty(
+        "--name-accent",
+        color(teams?.[team]?.accent, team === 0 ? "#e49d21" : "#5f8de7"),
+      );
+      box.title = safeText(player.name);
+      const label = document.createElement("span");
+      label.textContent = safeText(player.name);
+      box.appendChild(label);
+      container.appendChild(box);
+    }
+  }
 }

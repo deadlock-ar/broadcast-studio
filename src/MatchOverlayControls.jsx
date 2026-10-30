@@ -8,6 +8,7 @@ import {
   MATCH_OVERLAY_FONTS,
 } from "./match-overlay.js";
 import { useWorkspace, useWorkspaceField } from "./workspace-context.js";
+import { useCollector } from "./use-collector.js";
 import "./MatchOverlayControls.css";
 
 const roster = Object.fromEntries(heroes.map((hero) => [hero.id, hero]));
@@ -156,7 +157,14 @@ export default function MatchOverlayControls({
     draft: { ...shared?.data?.draft, snapshot },
     matchOverlay: settings,
   };
-  const resolved = resolveMatchOverlay(workspace);
+  const { session } = useCollector(shared?.data?.deadem?.id, active);
+  const resolved = resolveMatchOverlay(workspace, session);
+  const sourceHeight = Math.max(
+    102,
+    settings.playerNames.enabled
+      ? settings.playerNames.layout.y + settings.playerNames.layout.height
+      : 0,
+  );
   const readOnly = Boolean(shared?.readOnly || shared?.changingTournament);
   const [guide, setGuide] = useState(false);
   const [picker, setPicker] = useState(null);
@@ -205,10 +213,10 @@ export default function MatchOverlayControls({
     }));
   const toggleLink = (key, linked) =>
     update((current) => {
-      const displayed = resolveMatchOverlay({
-        ...workspace,
-        matchOverlay: current,
-      });
+      const displayed = resolveMatchOverlay(
+        { ...workspace, matchOverlay: current },
+        session,
+      );
       let next = current;
       if (!linked) {
         if (key === "event")
@@ -297,6 +305,30 @@ export default function MatchOverlayControls({
   const showPicker = (teamIndex, slot) => {
     if (!readOnly && !settings.links.bans) setPicker({ teamIndex, slot });
   };
+  const updatePlayerName = (player, teamIndex, slot, name) =>
+    update((current) => {
+      const next = { ...current.playerNames };
+      if (player.id.startsWith("manual-")) {
+        next.manual = next.manual.map((team, index) =>
+          index === teamIndex
+            ? team.map((value, position) => (position === slot ? name : value))
+            : team,
+        );
+      } else {
+        next.overrides = { ...next.overrides };
+        if (name.trim()) next.overrides[player.id] = name;
+        else delete next.overrides[player.id];
+      }
+      return { ...current, playerNames: next };
+    });
+  const updateNameLayout = (key, value) =>
+    update((current) => ({
+      ...current,
+      playerNames: {
+        ...current.playerNames,
+        layout: { ...current.playerNames.layout, [key]: value },
+      },
+    }));
 
   return (
     <section className="match-overlay-controls" hidden={!active}>
@@ -335,11 +367,14 @@ export default function MatchOverlayControls({
         <div
           className="mo-preview"
           ref={previewRef}
-          style={{ height: 102 * previewScale }}
+          style={{ height: sourceHeight * previewScale }}
         >
           <div
             className="mo-preview-stage"
-            style={{ transform: `scale(${previewScale})` }}
+            style={{
+              transform: `scale(${previewScale})`,
+              height: sourceHeight,
+            }}
           >
             <MatchOverlay state={resolved} guide={guide} />
             {!resolved.visible && (
@@ -350,7 +385,9 @@ export default function MatchOverlayControls({
           </div>
         </div>
         <div className="mo-preview-footer">
-          <p>1920 × 102 source · transparent · {resolved.format}</p>
+          <p>
+            1920 × {sourceHeight} source · transparent · {resolved.format}
+          </p>
           <label className="mo-switch">
             <input
               type="checkbox"
@@ -367,7 +404,8 @@ export default function MatchOverlayControls({
           <div>
             <h2>Permanent OBS source</h2>
             <p>
-              Add this once as a Browser Source, with width 1920 and height 102.
+              Add this once as a Browser Source, with width 1920 and height{" "}
+              {sourceHeight}.
             </p>
           </div>
         </div>
@@ -596,6 +634,34 @@ export default function MatchOverlayControls({
               </div>
             </div>
             <div className="mo-section">
+              <label className="mo-opacity-control">
+                <span className="mo-range-heading">
+                  Background opacity
+                  <output>{settings.backgroundOpacity}%</output>
+                </span>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  step={1}
+                  value={settings.backgroundOpacity}
+                  aria-label="Background opacity"
+                  aria-valuetext={`${settings.backgroundOpacity}% opaque`}
+                  onChange={(event) =>
+                    update({ backgroundOpacity: Number(event.target.value) })
+                  }
+                />
+                <span className="mo-range-scale">
+                  <span>Transparent</span>
+                  <span>Solid</span>
+                </span>
+              </label>
+              <p>
+                Lower this to soften the banner colors. Names, scores, and hero
+                portraits stay sharp. Try 85–90% to start.
+              </p>
+            </div>
+            <div className="mo-section">
               <div className="mo-section-head">
                 <h3>Tournament</h3>
                 {linkSwitch("event", "Follow event name")}
@@ -749,6 +815,171 @@ export default function MatchOverlayControls({
             </div>
           </section>
         </div>
+        <section className="mo-card mo-player-names">
+          <div className="mo-card-head">
+            <div>
+              <h2>Player name boxes</h2>
+              <p>
+                Clean labels under the banner, lined up with the game’s hero
+                portraits.
+              </p>
+            </div>
+            <label className="mo-switch">
+              <input
+                type="checkbox"
+                checked={settings.playerNames.enabled}
+                onChange={(event) =>
+                  update((current) => ({
+                    ...current,
+                    playerNames: {
+                      ...current.playerNames,
+                      enabled: event.target.checked,
+                    },
+                  }))
+                }
+              />
+              Show player name boxes
+            </label>
+          </div>
+          {settings.playerNames.enabled && (
+            <>
+              <p className="mo-linked-note">
+                {resolved.playerNames.source === "manual"
+                  ? "Enter names below while waiting for game information. Once players arrive from Live stats, their names and portrait order are used automatically."
+                  : "Names follow the current game and the portrait order set in Live stats. A custom name stays with its player when you swap positions."}{" "}
+                <a href="/?tab=live">Open Live stats ↗</a>
+              </p>
+              <div className="mo-player-teams">
+                {resolved.playerNames.teams.map((players, teamIndex) => (
+                  <div key={teamIndex} className="mo-player-team">
+                    <h3>{resolved.teams[teamIndex].name}</h3>
+                    {players.map((player, slot) => {
+                      const hero = roster[player.heroId];
+                      const manualSlot = player.id.startsWith("manual-");
+                      const hasOverride = Object.hasOwn(
+                        settings.playerNames.overrides,
+                        player.id,
+                      );
+                      const label = `${teamIndex === 0 ? "Left" : "Right"} player ${slot + 1} name`;
+                      return (
+                        <div className="mo-player-row" key={player.id}>
+                          <span
+                            className="mo-player-portrait"
+                            aria-hidden="true"
+                          >
+                            {hero ? <img src={hero.image} alt="" /> : slot + 1}
+                          </span>
+                          <label>
+                            <span className="mo-player-label">
+                              <span>
+                                Position {slot + 1}
+                                {hero ? ` · ${hero.name}` : ""}
+                              </span>
+                              {hasOverride && (
+                                <span className="mo-custom-name">Custom</span>
+                              )}
+                            </span>
+                            <input
+                              aria-label={label}
+                              value={player.name}
+                              placeholder={
+                                manualSlot
+                                  ? "Enter player name"
+                                  : "Live player name"
+                              }
+                              maxLength={48}
+                              onChange={(event) =>
+                                updatePlayerName(
+                                  player,
+                                  teamIndex,
+                                  slot,
+                                  event.target.value,
+                                )
+                              }
+                            />
+                            {!manualSlot && (
+                              <span className="mo-player-source">
+                                Live name:{" "}
+                                {player.sourceName || "Waiting for name"}
+                              </span>
+                            )}
+                          </label>
+                          {!manualSlot && (
+                            <button
+                              className="mo-text-button mo-reset-name"
+                              disabled={!hasOverride}
+                              aria-label={`Use live name for ${teamIndex === 0 ? "left" : "right"} player ${slot + 1}`}
+                              onClick={() =>
+                                updatePlayerName(player, teamIndex, slot, "")
+                              }
+                            >
+                              Use live
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+              <details className="mo-name-placement">
+                <summary>Adjust name box placement</summary>
+                <p>
+                  Match the row to your game view. Positions use a 1920 px wide
+                  canvas.
+                </p>
+                <div className="mo-placement-grid">
+                  {[
+                    ["x", "Left position", 0, 1919],
+                    ["y", "Top position", 0, 1058],
+                    ["width", "Box width", 24, 250],
+                    ["height", "Box height", 12, 70],
+                    ["gap", "Gap between players", 0, 80],
+                    ["teamGap", "Extra gap between teams", 0, 500],
+                    ["fontSize", "Name text size", 8, 30],
+                  ].map(([key, label, min, max]) => (
+                    <label key={key}>
+                      {label}
+                      <input
+                        key={settings.playerNames.layout[key]}
+                        aria-label={`Player name ${label.toLowerCase()}`}
+                        type="number"
+                        min={min}
+                        max={max}
+                        step={1}
+                        defaultValue={settings.playerNames.layout[key]}
+                        onBlur={(event) => {
+                          if (event.target.value !== "")
+                            updateNameLayout(key, Number(event.target.value));
+                          else
+                            event.target.value =
+                              settings.playerNames.layout[key];
+                        }}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") event.currentTarget.blur();
+                        }}
+                      />
+                    </label>
+                  ))}
+                </div>
+                <button
+                  className="mo-text-button"
+                  onClick={() =>
+                    update((current) => ({
+                      ...current,
+                      playerNames: {
+                        ...current.playerNames,
+                        layout: cleanMatchOverlay().playerNames.layout,
+                      },
+                    }))
+                  }
+                >
+                  Reset name box placement
+                </button>
+              </details>
+            </>
+          )}
+        </section>
       </fieldset>
 
       {picker && !readOnly && (

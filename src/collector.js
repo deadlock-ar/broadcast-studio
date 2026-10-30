@@ -1,4 +1,5 @@
 import { tournamentHeaders } from "./tournament-context.js";
+export { liveRoster } from "./roster-order.js";
 export const COLLECTOR_ORIGIN = "http://127.0.0.1:8766";
 export function enqueueCollectorState(queue, value, now, delay) {
   const next = { at: now + delay, value };
@@ -72,13 +73,4 @@ export function visibleUltimateBadges(session, now) {
     if (!unique.has(key) || item.kind === "effect") unique.set(key, item);
   }
   return [...unique.values()];
-}
-export function liveRoster(session) {
-  const order = session?.settings?.hudOrder || [];
-  const position = (p) =>
-    order.includes(p.id) ? order.indexOf(p.id) : 100 + p.slot;
-  return [...(session?.match?.players || [])].sort(
-    (a, b) =>
-      a.team - b.team || position(a) - position(b) || a.id.localeCompare(b.id),
-  );
 }
