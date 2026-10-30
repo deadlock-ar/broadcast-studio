@@ -1,4 +1,11 @@
 export const STATS_KEY = "dlar-stat-panels-v1";
+export function metricSupported(metric, match) {
+  return (
+    match?.mode !== "live" ||
+    METRICS[metric]?.live === true ||
+    ["deadem", "local-client-demo"].includes(match?.provider)
+  );
+}
 export const API_ROOT = "https://api.deadlock-api.com";
 export const METRICS = {
   damage: {
@@ -61,11 +68,18 @@ export function cleanPanel(value = {}) {
       "bottom-left",
       "bottom-right",
       "center",
+      "custom",
     ].includes(v.position)
       ? v.position
       : "bottom-right",
     theme: v.theme === "ink" ? "ink" : "parchment",
-    scale: [0.8, 1, 1.2].includes(Number(v.scale)) ? Number(v.scale) : 1,
+    scale: Number.isFinite(Number(v.scale))
+      ? Math.max(0.25, Math.min(2, Number(v.scale)))
+      : 1,
+    x: Math.max(0, Math.min(1919, Number(v.x) || 0)),
+    y: Math.max(0, Math.min(1079, Number(v.y) || 0)),
+    width: Math.max(240, Math.min(1880, Number(v.width) || 640)),
+    fontSize: Math.max(12, Math.min(36, Number(v.fontSize) || 18)),
     title: text(v.title, 64),
     teamNames: [
       text(v.teamNames?.[0]) || "Amber",

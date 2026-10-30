@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import { useWorkspace, useWorkspaceField } from "./workspace-context.js";
 import heroes from "./heroes.json";
 import { useMatchStats } from "./use-match-stats";
 import {
   STATS_KEY,
   METRICS,
+  metricSupported,
   cleanPanel,
   clock,
   displayNumber,
@@ -49,7 +51,7 @@ function useStageScale() {
   }, []);
   return [ref, scale];
 }
-function StatGraphic({
+export function StatGraphic({
   match,
   panel,
   time,
@@ -62,22 +64,27 @@ function StatGraphic({
   const metric = METRICS[panel.metric],
     max = Math.max(1, ...rows.map((p) => p[panel.metric] || 0));
   const live = match?.mode === "live",
-    unsupported = live && !metric.live;
+    unsupported = !metricSupported(panel.metric, match);
   const recorded = match?.mode === "finished" && time < match.duration;
   const stateLabel =
-    status === "disconnected"
-      ? "OFFLINE"
-      : status === "error"
-        ? "FEED ERROR"
-        : status === "ended"
-          ? "FEED ENDED"
-          : stale
-            ? "DELAYED"
-            : live
-              ? "LIVE · DELAY POSSIBLE"
-              : recorded
-                ? `RECORDED · ${clock(time)}`
-                : "FINAL";
+    status === "loading" || status === "connecting"
+      ? "CONNECTING"
+      : status === "finished" &&
+          ["deadem", "local-client-demo"].includes(match?.provider)
+        ? "CAPTURED"
+        : status === "disconnected"
+          ? "OFFLINE"
+          : status === "error"
+            ? "FEED ERROR"
+            : status === "ended"
+              ? "FEED ENDED"
+              : stale
+                ? "DELAYED"
+                : live
+                  ? "LIVE · DELAY POSSIBLE"
+                  : recorded
+                    ? `RECORDED · ${clock(time)}`
+                    : "FINAL";
   const row = (p, rank) => (
     <div
       className={`stat-player stat-team-${p.team}`}
@@ -107,7 +114,20 @@ function StatGraphic({
     <div className={`stat-canvas ${visible ? "" : "stat-hidden"}`}>
       <section
         className={`stat-box stat-theme-${panel.theme} stat-layout-${panel.layout} stat-position-${panel.position}`}
-        style={{ "--panel-scale": panel.scale }}
+        style={{
+          "--panel-scale": panel.scale,
+          "--panel-width": `${panel.width}px`,
+          "--stat-font-size": `${panel.fontSize}px`,
+          ...(panel.position === "custom"
+            ? {
+                left: panel.x,
+                top: panel.y,
+                right: "auto",
+                bottom: "auto",
+                transformOrigin: "top left",
+              }
+            : {}),
+        }}
         aria-label={`${metric.label} broadcast panel`}
       >
         <header className="stat-box-header">
@@ -122,8 +142,8 @@ function StatGraphic({
         </header>
         {unsupported ? (
           <div className="stat-broadcast-empty">
-            Live permanent-buff counting is not implemented. Use a finished
-            match.
+            Use Live desk for Deadem permanent-buff panels, or load a finished
+            match here.
           </div>
         ) : rows.length ? (
           panel.layout === "teams" ? (
@@ -168,6 +188,7 @@ function useStaleFeed(result) {
   );
 }
 export default function StatPanels({ config, active }) {
+  const shared = useWorkspace();
   const [initial] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem(STATS_KEY) || "{}");
@@ -175,15 +196,19 @@ export default function StatPanels({ config, active }) {
       return {};
     }
   });
-  const [panel, setPanel] = useState(() => cleanPanel(initial.panel));
+  const [panel, setPanel] = useWorkspaceField(
+    ["apiStats", "panel"],
+    cleanPanel(initial.panel),
+  );
   const [input, setInput] = useState(initial.id || "120513539");
   const [sourceMode, setSourceMode] = useState("finished"),
-    [source, setSource] = useState(null);
-  const [time, setTime] = useState(null),
-    [shown, setShown] = useState(true),
+    [source, setSource] = useWorkspaceField(["apiStats", "source"], null);
+  const [time, setTime] = useWorkspaceField(["apiStats", "time"], null),
+    [shown, setShown] = useWorkspaceField(["apiStats", "visible"], true),
     [error, setError] = useState("");
   const [notice, setNotice] = useState("");
-  const result = useMatchStats(source),
+  const localResult = useMatchStats(shared ? null : source);
+  const result = shared?.data.apiStats.result || localResult,
     stale = useStaleFeed(result);
   const [stage, scale] = useStageScale();
   const match = result.match,
@@ -193,6 +218,7 @@ export default function StatPanels({ config, active }) {
   const pending = result.status === "loading";
   const unsupported = match?.mode === "live" && !METRICS[panel.metric].live;
   useEffect(() => {
+    if (shared) return;
     try {
       localStorage.setItem(
         STATS_KEY,
@@ -201,13 +227,20 @@ export default function StatPanels({ config, active }) {
     } catch {
       /* A usable OBS link can still be copied without local storage. */
     }
-  }, [panel, source?.id, initial.id]);
+  }, [shared, panel, source?.id, initial.id]);
   const update = (key, value) =>
     setPanel((p) => cleanPanel({ ...p, [key]: value }));
   const load = (e) => {
     e.preventDefault();
     try {
       const id = parseMatchId(input);
+      if (shared) {
+        shared
+          .command("live-events/start", { id, mode: sourceMode })
+          .then(() => setError(""))
+          .catch((e) => setError(e.message));
+        return;
+      }
       setSource({ id, mode: sourceMode, attempt: Date.now() });
       setTime(null);
       setError("");
@@ -216,9 +249,11 @@ export default function StatPanels({ config, active }) {
       setError(e.message);
     }
   };
-  const url = match
-    ? panelUrl(window.location.origin, match, panel, config, effectiveTime)
-    : "";
+  const url = shared
+    ? new URL("/obs/live-events", window.location.origin).href
+    : match
+      ? panelUrl(window.location.origin, match, panel, config, effectiveTime)
+      : "";
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(url);
@@ -257,9 +292,13 @@ export default function StatPanels({ config, active }) {
         <div>
           <span className="eyebrow">A STORY IN EVERY NUMBER</span>
           <h1>
-            Stat panels<span>✦</span>
+            Live stats · Deadlock API<span>✦</span>
           </h1>
-          <p>Choose the numbers. Frame the moment. Put it on stream.</p>
+          <p>
+            Alternative source for the same stat panels. Includes finished-match
+            timelines; use Deadem stats for live permanent buffs and ultimate
+            indicators.
+          </p>
         </div>
         <button className="button secondary" onClick={exportPanel}>
           Export template ↗
@@ -302,11 +341,15 @@ export default function StatPanels({ config, active }) {
               type="button"
               className="button secondary"
               onClick={() => {
-                setSource(null);
+                if (shared)
+                  shared
+                    .command("live-events/stop")
+                    .catch((e) => setError(e.message));
+                else setSource(null);
                 setNotice("Live connection stopped.");
               }}
             >
-              Disconnect preview
+              Stop API feed
             </button>
           )}
         </form>
@@ -322,16 +365,12 @@ export default function StatPanels({ config, active }) {
         </p>
         {sourceMode === "live" && (
           <p className="stats-source-note">
-            Damage, healing and net worth are connected. Live permanent-buff
-            counting is not implemented: the current player feed has no verified
-            pickup counter. A different parser still needs the same Valve
-            broadcast.{" "}
-            <a
-              href="https://github.com/demofusion/demofusion"
-              target="_blank"
-              rel="noreferrer"
-            >
-              About Demofusion ↗
+            Damage, healing and net worth are connected here. For live permanent
+            buffs, ultimate indicators, and a post-match scoreboard, use Live
+            desk with the Deadem collector. Both methods require an available
+            Valve broadcast.{" "}
+            <a href="/?tab=live" target="_blank" rel="noreferrer">
+              Open Live desk ↗
             </a>
           </p>
         )}
@@ -400,7 +439,13 @@ export default function StatPanels({ config, active }) {
               className="button secondary"
               onClick={() => setShown((v) => !v)}
             >
-              {shown ? "Hide preview" : "Show preview"}
+              {shared
+                ? shown
+                  ? "Hide on stream"
+                  : "Show on stream"
+                : shown
+                  ? "Hide preview"
+                  : "Show preview"}
             </button>
           </div>
           <div className="stats-preview-stage" ref={stage}>
@@ -558,8 +603,8 @@ export default function StatPanels({ config, active }) {
           ))}
           {unsupported && (
             <p className="stats-error">
-              Live permanent-buff counting is not implemented. Use a finished
-              match for this template. Missing counts are never shown as zero.
+              Use Live desk for Deadem permanent-buff panels, or load a finished
+              match here. Missing counts are never shown as zero.
             </p>
           )}
         </aside>
@@ -568,11 +613,15 @@ export default function StatPanels({ config, active }) {
         <section className="stats-obs-panel">
           <div>
             <span className="eyebrow">READY FOR THE DIRECTOR</span>
-            <h2>One OBS source per template.</h2>
+            <h2>
+              {shared
+                ? "One permanent API stats source."
+                : "One OBS source per template."}
+            </h2>
             <p>
-              Add this link as a 1920 × 1080 Browser Source. Show or hide it in
-              OBS with the visibility button or a hotkey. Preview controls here
-              affect this browser only.
+              {shared
+                ? "Add this permanent link at 1920 × 1080. The selected match, statistic, layout and visibility follow the shared dashboard automatically."
+                : "Add this link at 1920 × 1080. Preview controls affect this browser only."}
             </p>
             <input
               aria-label="Stat panel OBS URL"

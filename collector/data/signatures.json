@@ -1,0 +1,970 @@
+{
+  "1": [
+    {
+      "id": 491391007,
+      "name": "Napalm",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/inferno_molotov.webp"
+    },
+    {
+      "id": 3516947824,
+      "name": "Flame Dash",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/inferno_dash.webp"
+    },
+    {
+      "id": 1593133799,
+      "name": "Afterburn",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/inferno_deflect.webp"
+    },
+    {
+      "id": 1142270357,
+      "name": "Concussive Combustion",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/inferno_bomb.webp"
+    }
+  ],
+  "2": [
+    {
+      "id": 1065103387,
+      "name": "Lightning Ball",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/giga_ball.webp"
+    },
+    {
+      "id": 1074714947,
+      "name": "Static Charge",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/giga_static.webp"
+    },
+    {
+      "id": 539192269,
+      "name": "Power Surge",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/giga_chain.webp"
+    },
+    {
+      "id": 2061574352,
+      "name": "Storm Cloud",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/giga_storm.webp"
+    }
+  ],
+  "3": [
+    {
+      "id": 537527508,
+      "name": "Stake",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/hornet/vindicta_stake.webp"
+    },
+    {
+      "id": 1796564033,
+      "name": "Flight",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/hornet/vindicta_flight.webp"
+    },
+    {
+      "id": 2048438176,
+      "name": "Crow Familiar",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/hornet/hornet_crow.webp"
+    },
+    {
+      "id": 775377419,
+      "name": "Assassinate",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/hornet/hornet_assassinate.webp"
+    }
+  ],
+  "4": [
+    {
+      "id": 715325746,
+      "name": "Essence Bomb",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/spectre/blood_bomb.webp"
+    },
+    {
+      "id": 218284420,
+      "name": "Life Drain",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/spectre/life_drain.webp"
+    },
+    {
+      "id": 3230530872,
+      "name": "Malice",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/spectre/geist_dagger.webp"
+    },
+    {
+      "id": 1307289689,
+      "name": "Soul Exchange",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/spectre/blood_exchange.webp"
+    }
+  ],
+  "6": [
+    {
+      "id": 4072270083,
+      "name": "Siphon Life",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/bull_drain.webp"
+    },
+    {
+      "id": 2824119765,
+      "name": "Shoulder Charge",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/bull_charge.webp"
+    },
+    {
+      "id": 715762406,
+      "name": "Infernal Resilience",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/bull_beef.webp"
+    },
+    {
+      "id": 509856396,
+      "name": "Seismic Impact",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/bull_jump.webp"
+    }
+  ],
+  "7": [
+    {
+      "id": 1999680326,
+      "name": "Card Trick",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/wraith_card_trick.webp"
+    },
+    {
+      "id": 4147641675,
+      "name": "Project Mind",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/wraith_teleport.webp"
+    },
+    {
+      "id": 1842576017,
+      "name": "Full Auto",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/wraith_aura.webp"
+    },
+    {
+      "id": 2981692841,
+      "name": "Telekinesis",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/wraith_lift.webp"
+    }
+  ],
+  "8": [
+    {
+      "id": 3133377790,
+      "name": "Mini Turret",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/engineer_turret.webp"
+    },
+    {
+      "id": 2142734020,
+      "name": "Medicinal Specter",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/engineer_resupply.webp"
+    },
+    {
+      "id": 1725685134,
+      "name": "Spectral Wall",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/engineer_fissure_2.webp"
+    },
+    {
+      "id": 3503044146,
+      "name": "Heavy Barrage",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/engineer_rockets.webp"
+    }
+  ],
+  "10": [
+    {
+      "id": 58655583,
+      "name": "Pulse Grenade",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/chrono/chrono_time_bomb.webp"
+    },
+    {
+      "id": 1366719170,
+      "name": "Time Wall",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/chrono/chrono_time_wall.webp"
+    },
+    {
+      "id": 1128670012,
+      "name": "Kinetic Carbine",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/duo/duo_attack.webp"
+    },
+    {
+      "id": 2917891787,
+      "name": "Paradoxical Swap",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/chrono/chrono_swap.webp"
+    }
+  ],
+  "11": [
+    {
+      "id": 3760705623,
+      "name": "Kinetic Pulse",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/sumo/sumo_stomp.webp"
+    },
+    {
+      "id": 2031714424,
+      "name": "Quantum Entanglement",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/sumo/sumo_quantum.webp"
+    },
+    {
+      "id": 492030745,
+      "name": "Rejuvenating Aurora",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/sumo/sumo_pork_bun.webp"
+    },
+    {
+      "id": 249410288,
+      "name": "Singularity",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/sumo/sumo_vacuum.webp"
+    }
+  ],
+  "12": [
+    {
+      "id": 18921423,
+      "name": "Frost Grenade",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/kelvin/freezing_grenade.webp"
+    },
+    {
+      "id": 1963397252,
+      "name": "Ice Path",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/kelvin/ice_path.webp"
+    },
+    {
+      "id": 2351041382,
+      "name": "Arctic Beam",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/kelvin/ice_beam.webp"
+    },
+    {
+      "id": 3826390464,
+      "name": "Frozen Shelter",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/kelvin/frozen_shelter.webp"
+    }
+  ],
+  "13": [
+    {
+      "id": 2948410412,
+      "name": "Sleep Dagger",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/haze/haze_sleep_dagger.webp"
+    },
+    {
+      "id": 2414191464,
+      "name": "Smoke Bomb",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/haze/haze_smoke_bomb.webp"
+    },
+    {
+      "id": 1080948381,
+      "name": "Fixation",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/haze/haze_fixation.webp"
+    },
+    {
+      "id": 731943444,
+      "name": "Bullet Dance",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/haze/haze_bullet_flurry.webp"
+    }
+  ],
+  "14": [
+    {
+      "id": 1235098866,
+      "name": "Powder Keg",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/astro/holliday_powder_keg.webp"
+    },
+    {
+      "id": 2240607294,
+      "name": "Bounce Pad",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/astro/holliday_bounce_pad.webp"
+    },
+    {
+      "id": 4179229681,
+      "name": "Crackshot",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/astro/holliday_crackshot.webp"
+    },
+    {
+      "id": 3190606822,
+      "name": "Spirit Lasso",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/astro/holliday_spirit_lasso.webp"
+    }
+  ],
+  "15": [
+    {
+      "id": 3089858203,
+      "name": "Exploding Uppercut",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/bebop/bebop_uppercut.webp"
+    },
+    {
+      "id": 2521902222,
+      "name": "Sticky Bomb",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/bebop/bebop_sticky_bomb.webp"
+    },
+    {
+      "id": 1928108461,
+      "name": "Grapple Arm",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/bebop/bebop_hook.webp"
+    },
+    {
+      "id": 3832675871,
+      "name": "Hyper Beam",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/bebop/bebop_hyper_beam.webp"
+    }
+  ],
+  "16": [
+    {
+      "id": 4131517918,
+      "name": "Gloom Bombs",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/nano/nano_clustergrenade.webp"
+    },
+    {
+      "id": 1426567660,
+      "name": "Leaping Slash",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/nano/nano_dash.webp"
+    },
+    {
+      "id": 1009029159,
+      "name": "Ava",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/nano/nano_catform.webp"
+    },
+    {
+      "id": 2054144742,
+      "name": "Return to Shadows",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/nano/nano_shadow_pulse.webp"
+    }
+  ],
+  "17": [
+    {
+      "id": 548943648,
+      "name": "Charged Shot",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/archer/archer_charged_shot.webp"
+    },
+    {
+      "id": 3452399392,
+      "name": "Rain of Arrows",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/archer/archer_power_jump.webp"
+    },
+    {
+      "id": 512733154,
+      "name": "Spirit Snare",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/archer/imobolize_trap.webp"
+    },
+    {
+      "id": 3242902780,
+      "name": "Guided Owl",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/archer/archer_guided_arrow.webp"
+    }
+  ],
+  "18": [
+    {
+      "id": 1454278799,
+      "name": "Scorn",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/grappler/grappler_regen.webp"
+    },
+    {
+      "id": 2406758797,
+      "name": "Burrow",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/grappler/grappler_spin.webp"
+    },
+    {
+      "id": 1914797280,
+      "name": "Sand Blast",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/grappler/grappler_throw_sand.webp"
+    },
+    {
+      "id": 1917840730,
+      "name": "Combo",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/grappler/grappler_combo.webp"
+    }
+  ],
+  "19": [
+    {
+      "id": 2460791803,
+      "name": "Serrated Knives",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/shiv/shiv_toss.webp"
+    },
+    {
+      "id": 1458044103,
+      "name": "Slice and Dice",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/shiv/shiv_flash.webp"
+    },
+    {
+      "id": 1537272748,
+      "name": "Bloodletting",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/shiv/shiv_bloodletting.webp"
+    },
+    {
+      "id": 1835738020,
+      "name": "Killing Blow",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/shiv/shiv_killing_blow.webp"
+    }
+  ],
+  "20": [
+    {
+      "id": 4111222521,
+      "name": "Entangling Thorns",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/tengu/tengu_storm_flask.webp"
+    },
+    {
+      "id": 1531378655,
+      "name": "Kudzu Connection",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/tengu/tengu_tether.webp"
+    },
+    {
+      "id": 3642273386,
+      "name": "Stone Form",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/tengu/tengu_stone_form.webp"
+    },
+    {
+      "id": 1247583368,
+      "name": "Air Drop",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/tengu/tengu_lightning_crash.webp"
+    }
+  ],
+  "25": [
+    {
+      "id": 2656490109,
+      "name": "Alchemical Flask",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/warden/warden_crowd_control.webp"
+    },
+    {
+      "id": 2751689917,
+      "name": "Willpower",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/warden/warden_high_alert.webp"
+    },
+    {
+      "id": 1656913918,
+      "name": "Binding Word",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/warden/warden_lock_down.webp"
+    },
+    {
+      "id": 2702908623,
+      "name": "Last Stand",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/warden/warden_riot_protocol.webp"
+    }
+  ],
+  "27": [
+    {
+      "id": 3255651252,
+      "name": "Power Slash",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/yamato/yamato_power_slash.webp"
+    },
+    {
+      "id": 2566573207,
+      "name": "Flying Slash",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/yamato/yamato_flying_strike.webp"
+    },
+    {
+      "id": 2366960452,
+      "name": "Crimson Slash",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/yamato/yamato_crimson_slash.webp"
+    },
+    {
+      "id": 3319782965,
+      "name": "Shadow Transformation",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/yamato/yamato_blinding_steel.webp"
+    }
+  ],
+  "31": [
+    {
+      "id": 3561817145,
+      "name": "Ground Strike",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/lash/lash_death_slam.webp"
+    },
+    {
+      "id": 2670099061,
+      "name": "Grapple",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/lash/lash_lash.webp"
+    },
+    {
+      "id": 519124136,
+      "name": "Flog",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/lash/lash_flog.webp"
+    },
+    {
+      "id": 397010810,
+      "name": "Death Slam",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/lash/lash_counter_lash.webp"
+    }
+  ],
+  "35": [
+    {
+      "id": 3247040238,
+      "name": "Splatter",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/viscous/viscous_goo_ball.webp"
+    },
+    {
+      "id": 3788152387,
+      "name": "The Cube",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/viscous/viscous_restorative_goo.webp"
+    },
+    {
+      "id": 1020817390,
+      "name": "Puddle Punch",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/viscous/viscous_goo_punch.webp"
+    },
+    {
+      "id": 4206531918,
+      "name": "Goo Ball",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/viscous/viscous_goo_sphere.webp"
+    }
+  ],
+  "50": [
+    {
+      "id": 938149308,
+      "name": "Barrage",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/synth/synth_barrage.webp"
+    },
+    {
+      "id": 1976701714,
+      "name": "Flying Cloak",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/synth/synth_plasma_flux.webp"
+    },
+    {
+      "id": 3747867012,
+      "name": "Enchanter's Satchel",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/synth/synth_pulse.webp"
+    },
+    {
+      "id": 2954330093,
+      "name": "Affliction",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/synth/synth_affliction.webp"
+    }
+  ],
+  "52": [
+    {
+      "id": 3733594387,
+      "name": "Fire Scarabs",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/mirage/mirage_fire_beetles.webp"
+    },
+    {
+      "id": 1336069669,
+      "name": "Dust Devil",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/mirage/mirage_tornado.webp"
+    },
+    {
+      "id": 2221949202,
+      "name": "Djinn's Mark",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/mirage/mirage_sand_phantom.webp"
+    },
+    {
+      "id": 2604653402,
+      "name": "Traveler",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/mirage/mirage_teleport.webp"
+    }
+  ],
+  "58": [
+    {
+      "id": 645773760,
+      "name": "Screwjab Dagger",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/viper/viper_debuffdagger.webp"
+    },
+    {
+      "id": 3428732129,
+      "name": "Lethal Venom",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/viper/viper_venom.webp"
+    },
+    {
+      "id": 1469918191,
+      "name": "Slither",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/viper/viper_snakedash.webp"
+    },
+    {
+      "id": 1594727071,
+      "name": "Petrifying Bola",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/viper/viper_petrifybola.webp"
+    }
+  ],
+  "60": [
+    {
+      "id": 3156905386,
+      "name": "Vexing Bolt",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/magician/magician_magicbolt.webp"
+    },
+    {
+      "id": 12456023,
+      "name": "Spectral Assistant",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/magician/magician_cloneturret.webp"
+    },
+    {
+      "id": 2142213586,
+      "name": "Rabbit Hex",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/magician/magician_animalcurse.webp"
+    },
+    {
+      "id": 191022746,
+      "name": "Audience Participation",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/magician/magician_copyult.webp"
+    }
+  ],
+  "63": [
+    {
+      "id": 193508101,
+      "name": "Rake",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/vampirebat/vampirebat_rake.webp"
+    },
+    {
+      "id": 2398133749,
+      "name": "Sanguine Retreat",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/vampirebat/vampirebat_sanguine_retreat.webp"
+    },
+    {
+      "id": 1233782561,
+      "name": "Love Bites",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/vampirebat/vampirebat_love_bites.webp"
+    },
+    {
+      "id": 3379486147,
+      "name": "Nox Nostra",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/vampirebat/vampirebat_nox_nostra.webp"
+    }
+  ],
+  "64": [
+    {
+      "id": 3120550633,
+      "name": "Rend",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/drifter/drifter_claw.webp"
+    },
+    {
+      "id": 1264175662,
+      "name": "Stalker's Mark",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/drifter/drifter_stalkersmark.webp"
+    },
+    {
+      "id": 1033019133,
+      "name": "Bloodscent",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/drifter/drifter_thehunger.webp"
+    },
+    {
+      "id": 1168182161,
+      "name": "Eternal Night",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/drifter/darkness.webp"
+    }
+  ],
+  "65": [
+    {
+      "id": 911307831,
+      "name": "Consecrating Grenade",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/priest/priest_grenade.webp"
+    },
+    {
+      "id": 1764146857,
+      "name": "Gutshot",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/priest/priest_shotgun.webp"
+    },
+    {
+      "id": 11154161,
+      "name": "Hex-Lined Snap Trap",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/priest/priest_trap.webp"
+    },
+    {
+      "id": 2918874166,
+      "name": "Ira Domini",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/priest/priest_crossbow.webp"
+    }
+  ],
+  "66": [
+    {
+      "id": 2043074967,
+      "name": "Pain Battery",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/frank/frank_pain_battery.webp"
+    },
+    {
+      "id": 3727084744,
+      "name": "Jumpstart",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/frank/frank_jump_start.webp"
+    },
+    {
+      "id": 1472593493,
+      "name": "Aura of Suffering",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/frank/frank_aura_of_suffering.webp"
+    },
+    {
+      "id": 3493884851,
+      "name": "Shocking Reanimation",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/frank/frank_shocking_reanimation.webp"
+    }
+  ],
+  "67": [
+    {
+      "id": 604448162,
+      "name": "Bookwyrm",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/bookworm/bookworm_dragon.webp"
+    },
+    {
+      "id": 3553292912,
+      "name": "Plot Armor",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/bookworm/bookworm_defendandfight.webp"
+    },
+    {
+      "id": 3054993162,
+      "name": "Captivating Read",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/bookworm/bookworm_blindinglight.webp"
+    },
+    {
+      "id": 1841901343,
+      "name": "Rallying Charge",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/bookworm/bookworm_charge.webp"
+    }
+  ],
+  "69": [
+    {
+      "id": 103496908,
+      "name": "Call Bell",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/doorman/doorman_bell.webp"
+    },
+    {
+      "id": 109766091,
+      "name": "Doorway",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/doorman/doorman_doorway.webp"
+    },
+    {
+      "id": 1719512318,
+      "name": "Luggage Cart",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/doorman/doorman_luggagetrolley.webp"
+    },
+    {
+      "id": 1703045691,
+      "name": "Hotel Guest",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/doorman/doorman_elevator.webp"
+    }
+  ],
+  "72": [
+    {
+      "id": 1841661392,
+      "name": "Bashdown",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/punkgoat/goat_sigilslam.webp"
+    },
+    {
+      "id": 1792773251,
+      "name": "Rising Ram",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/punkgoat/goat_risingram.webp"
+    },
+    {
+      "id": 3296031213,
+      "name": "Blasted",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/punkgoat/goat_blasted.webp"
+    },
+    {
+      "id": 3762861984,
+      "name": "Chain Gang",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/punkgoat/goat_chaingang.webp"
+    }
+  ],
+  "76": [
+    {
+      "id": 3214055642,
+      "name": "Jar of Dead",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/necro/necro_skull.webp"
+    },
+    {
+      "id": 2001589780,
+      "name": "Grasping Hands",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/necro/necro_hands.webp"
+    },
+    {
+      "id": 629925354,
+      "name": "Essence Theft",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/necro/necro_siphon.webp"
+    },
+    {
+      "id": 4110547059,
+      "name": "Borrowed Decree",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/necro/necro_gravestone.webp"
+    }
+  ],
+  "77": [
+    {
+      "id": 725153709,
+      "name": "Disengaging Sigil",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/fencer/fencer_sigil.webp"
+    },
+    {
+      "id": 2006773718,
+      "name": "Riposte",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/fencer/fencer_riposte.webp"
+    },
+    {
+      "id": 147493976,
+      "name": "Flawless Advance",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/fencer/fencer_lungingstab.webp"
+    },
+    {
+      "id": 494112189,
+      "name": "Itani Lo Sahn",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/fencer/fencer_ult.webp"
+    }
+  ],
+  "78": [
+    {
+      "id": 2603013853,
+      "name": "Strix Salvo",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/deadpack/deadpack_salvo.webp"
+    },
+    {
+      "id": 1904698842,
+      "name": "Chimera Mk1",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/deadpack/deadpack_chimera.webp"
+    },
+    {
+      "id": 374042410,
+      "name": "Jettison Fuel",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/deadpack/deadpack_thermalmass.webp"
+    },
+    {
+      "id": 1026127931,
+      "name": "Close The Deal",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/deadpack/deadpack_flight.webp"
+    }
+  ],
+  "79": [
+    {
+      "id": 3692321247,
+      "name": "Pillow Toss",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/familiar/familiar_pillow.webp"
+    },
+    {
+      "id": 1568845221,
+      "name": "Tag Along",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/familiar/familiar_tag_along.webp"
+    },
+    {
+      "id": 536278136,
+      "name": "Lil Helpers",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/familiar/familiar_helpers.webp"
+    },
+    {
+      "id": 2396527575,
+      "name": "Naptime",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/familiar/familiar_sleep.webp"
+    }
+  ],
+  "80": [
+    {
+      "id": 1385849824,
+      "name": "Slam Fire",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/werewolf/werewolf_slamfire.webp"
+    },
+    {
+      "id": 2717130900,
+      "name": "Boot Kick",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/werewolf/werewolf_jumpback.webp"
+    },
+    {
+      "id": 3983754897,
+      "name": "Entangling Bola",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/werewolf/werewolf_bola.webp"
+    },
+    {
+      "id": 515791019,
+      "name": "Lycan Curse",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/werewolf/werewolf_lycancurse.webp"
+    }
+  ],
+  "81": [
+    {
+      "id": 3443575800,
+      "name": "Light Eater",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/unicorn/unicorn_flare.webp"
+    },
+    {
+      "id": 1950738949,
+      "name": "Dazzling Trick",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/unicorn/unicorn_shield.webp"
+    },
+    {
+      "id": 1011349580,
+      "name": "Radiant Daggers",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/unicorn/unicorn_luminousflux.webp"
+    },
+    {
+      "id": 2590796390,
+      "name": "Shining Wonder",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/unicorn/unicorn_orb.webp"
+    }
+  ],
+  "84": [
+    {
+      "id": 3002308408,
+      "name": "Scrap Grenade",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/ratking/ratking_grenade.webp"
+    },
+    {
+      "id": 3681399397,
+      "name": "Rat Swarm",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/ratking/ratking_swarm.webp"
+    },
+    {
+      "id": 690412829,
+      "name": "Royal Pestments",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/ratking/ratking_shield.webp"
+    },
+    {
+      "id": 1627989937,
+      "name": "Rule, Ratannia!",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/ratking/ratking_flag.webp"
+    }
+  ],
+  "85": [
+    {
+      "id": 4011110259,
+      "name": "Setup Bishop",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/chess/chessmaster_bishop.webp"
+    },
+    {
+      "id": 4180486641,
+      "name": "Kingside Knight",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/chess/chessmaster_knight.webp"
+    },
+    {
+      "id": 2424652896,
+      "name": "Rook Battery",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/chess/chessmaster_rook.webp"
+    },
+    {
+      "id": 1389230689,
+      "name": "Develop Queen",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/chess/chessmaster_queen.webp"
+    }
+  ],
+  "86": [
+    {
+      "id": 836615329,
+      "name": "Living Ink",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/artist/artist_livingink.webp"
+    },
+    {
+      "id": 3389503777,
+      "name": "Flow State",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/artist/artist_brush.webp"
+    },
+    {
+      "id": 3612874202,
+      "name": "Still Life",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/artist/artist_portrait.webp"
+    },
+    {
+      "id": 2516700978,
+      "name": "Abstract Landscape",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/artist/artist_landscape.webp"
+    }
+  ],
+  "87": [
+    {
+      "id": 267712790,
+      "name": "Leech Therapy",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/nurse/leech.webp"
+    },
+    {
+      "id": 3621314027,
+      "name": "Wretched Vapors",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/nurse/nurse_vapors.webp"
+    },
+    {
+      "id": 683490631,
+      "name": "Healing Needles",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/nurse/needle.webp"
+    },
+    {
+      "id": 3427093887,
+      "name": "Lurking Terrors",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/nurse/medicine_bag.webp"
+    }
+  ],
+  "88": [
+    {
+      "id": 1282689113,
+      "name": "Threadsap",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/baba/threadsap.webp"
+    },
+    {
+      "id": 3122124161,
+      "name": "Granny Long Legs",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/baba/strafing_run.webp"
+    },
+    {
+      "id": 2003165630,
+      "name": "Baba's Brew",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/baba/teapot_brew.webp"
+    },
+    {
+      "id": 299875845,
+      "name": "Feed The Birds",
+      "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/baba/pigeon_launcher.webp"
+    }
+  ]
+}

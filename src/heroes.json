@@ -4,8 +4,12 @@
     "name": "Infernus",
     "image": "/heroes/1.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/inferno_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/inferno_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/inferno_card_critical.webp",
+    "gloatImage": "/heroes/1-gloat.webp",
+    "criticalImage": "/heroes/1-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/inferno_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/inferno_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/inferno/inferno_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/inferno/inferno_select_02.mp3",
@@ -17,8 +21,12 @@
     "name": "Seven",
     "image": "/heroes/2.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/gigawatt_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/gigawatt_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/gigawatt_card_critical.webp",
+    "gloatImage": "/heroes/2-gloat.webp",
+    "criticalImage": "/heroes/2-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/gigawatt_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/gigawatt_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/gigawatt/gigawatt_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/gigawatt/gigawatt_select_02.mp3",
@@ -30,8 +38,12 @@
     "name": "Vindicta",
     "image": "/heroes/3.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/hornet_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/hornet_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/hornet_card_critical.webp",
+    "gloatImage": "/heroes/3-gloat.webp",
+    "criticalImage": "/heroes/3-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/hornet_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/hornet_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/hornet/hornet_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/hornet/hornet_select_02.mp3",
@@ -43,8 +55,12 @@
     "name": "Lady Geist",
     "image": "/heroes/4.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/spectre_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/spectre_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/spectre_card_critical.webp",
+    "gloatImage": "/heroes/4-gloat.webp",
+    "criticalImage": "/heroes/4-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/spectre_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/spectre_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/ghost/ghost_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/ghost/ghost_select_02.mp3",
@@ -56,8 +72,12 @@
     "name": "Abrams",
     "image": "/heroes/6.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bull_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bull_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bull_card_critical.webp",
+    "gloatImage": "/heroes/6-gloat.webp",
+    "criticalImage": "/heroes/6-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bull_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bull_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/atlas/atlas_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/atlas/atlas_select_02.mp3",
@@ -69,8 +89,12 @@
     "name": "Wraith",
     "image": "/heroes/7.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/wraith_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/wraith_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/wraith_card_critical.webp",
+    "gloatImage": "/heroes/7-gloat.webp",
+    "criticalImage": "/heroes/7-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/wraith_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/wraith_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/wraith/wraith_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/wraith/wraith_select_02.mp3",
@@ -82,8 +106,12 @@
     "name": "McGinnis",
     "image": "/heroes/8.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/engineer_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/engineer_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/engineer_card_critical.webp",
+    "gloatImage": "/heroes/8-gloat.webp",
+    "criticalImage": "/heroes/8-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/engineer_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/engineer_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/forge/forge_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/forge/forge_select_02.mp3",
@@ -95,8 +123,12 @@
     "name": "Paradox",
     "image": "/heroes/10.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chrono_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chrono_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chrono_card_critical.webp",
+    "gloatImage": "/heroes/10-gloat.webp",
+    "criticalImage": "/heroes/10-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chrono_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chrono_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/chrono/chrono_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/chrono/chrono_select_02.mp3",
@@ -108,8 +140,12 @@
     "name": "Dynamo",
     "image": "/heroes/11.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/sumo_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/sumo_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/sumo_card_critical.webp",
+    "gloatImage": "/heroes/11-gloat.webp",
+    "criticalImage": "/heroes/11-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/sumo_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/sumo_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/dynamo/dynamo_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/dynamo/dynamo_select_02.mp3",
@@ -121,8 +157,12 @@
     "name": "Kelvin",
     "image": "/heroes/12.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kelvin_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kelvin_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kelvin_card_critical.webp",
+    "gloatImage": "/heroes/12-gloat.webp",
+    "criticalImage": "/heroes/12-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kelvin_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kelvin_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/kelvin/kelvin_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/kelvin/kelvin_select_02.mp3",
@@ -134,8 +174,12 @@
     "name": "Haze",
     "image": "/heroes/13.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/haze_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/haze_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/haze_card_critical.webp",
+    "gloatImage": "/heroes/13-gloat.webp",
+    "criticalImage": "/heroes/13-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/haze_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/haze_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/haze/haze_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/haze/haze_select_02.mp3",
@@ -147,8 +191,12 @@
     "name": "Holliday",
     "image": "/heroes/14.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/astro_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/astro_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/astro_card_critical.webp",
+    "gloatImage": "/heroes/14-gloat.webp",
+    "criticalImage": "/heroes/14-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/astro_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/astro_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/astro/astro_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/astro/astro_select_02.mp3",
@@ -160,8 +208,12 @@
     "name": "Bebop",
     "image": "/heroes/15.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bebop_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bebop_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bebop_card_critical.webp",
+    "gloatImage": "/heroes/15-gloat.webp",
+    "criticalImage": "/heroes/15-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bebop_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bebop_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/bebop/bebop_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/bebop/bebop_select_02.mp3",
@@ -173,8 +225,12 @@
     "name": "Calico",
     "image": "/heroes/16.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nano_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nano_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nano_card_critical.webp",
+    "gloatImage": "/heroes/16-gloat.webp",
+    "criticalImage": "/heroes/16-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nano_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nano_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/nano/nano_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/nano/nano_select_02.mp3",
@@ -186,8 +242,12 @@
     "name": "Grey Talon",
     "image": "/heroes/17.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/archer_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/archer_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/archer_card_critical.webp",
+    "gloatImage": "/heroes/17-gloat.webp",
+    "criticalImage": "/heroes/17-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/archer_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/archer_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/orion/orion_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/orion/orion_select_02.mp3",
@@ -199,8 +259,12 @@
     "name": "Mo & Krill",
     "image": "/heroes/18.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/digger_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/digger_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/digger_card_critical.webp",
+    "gloatImage": "/heroes/18-gloat.webp",
+    "criticalImage": "/heroes/18-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/digger_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/digger_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/krill/krill_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/krill/krill_select_02.mp3",
@@ -212,8 +276,12 @@
     "name": "Shiv",
     "image": "/heroes/19.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/shiv_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/shiv_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/shiv_card_critical.webp",
+    "gloatImage": "/heroes/19-gloat.webp",
+    "criticalImage": "/heroes/19-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/shiv_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/shiv_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/shiv/shiv_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/shiv/shiv_select_02.mp3",
@@ -225,8 +293,12 @@
     "name": "Ivy",
     "image": "/heroes/20.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tengu_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tengu_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tengu_card_critical.webp",
+    "gloatImage": "/heroes/20-gloat.webp",
+    "criticalImage": "/heroes/20-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tengu_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tengu_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/tengu/tengu_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/tengu/tengu_select_02.mp3",
@@ -238,8 +310,12 @@
     "name": "Warden",
     "image": "/heroes/25.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/warden_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/warden_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/warden_card_critical.webp",
+    "gloatImage": "/heroes/25-gloat.webp",
+    "criticalImage": "/heroes/25-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/warden_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/warden_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/warden/warden_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/warden/warden_select_02.mp3",
@@ -251,8 +327,12 @@
     "name": "Yamato",
     "image": "/heroes/27.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/yamato_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/yamato_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/yamato_card_critical.webp",
+    "gloatImage": "/heroes/27-gloat.webp",
+    "criticalImage": "/heroes/27-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/yamato_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/yamato_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/yamato/yamato_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/yamato/yamato_select_02.mp3",
@@ -264,8 +344,12 @@
     "name": "Lash",
     "image": "/heroes/31.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/lash_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/lash_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/lash_card_critical.webp",
+    "gloatImage": "/heroes/31-gloat.webp",
+    "criticalImage": "/heroes/31-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/lash_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/lash_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/lash/lash_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/lash/lash_select_02.mp3",
@@ -277,8 +361,12 @@
     "name": "Viscous",
     "image": "/heroes/35.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/viscous_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/viscous_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/viscous_card_critical.webp",
+    "gloatImage": "/heroes/35-gloat.webp",
+    "criticalImage": "/heroes/35-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/viscous_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/viscous_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/viscous/viscous_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/viscous/viscous_select_02.mp3",
@@ -290,8 +378,12 @@
     "name": "Pocket",
     "image": "/heroes/50.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/synth_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/synth_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/synth_card_critical.webp",
+    "gloatImage": "/heroes/50-gloat.webp",
+    "criticalImage": "/heroes/50-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/synth_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/synth_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/synth/synth_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/synth/synth_select_02.mp3",
@@ -303,8 +395,12 @@
     "name": "Mirage",
     "image": "/heroes/52.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/mirage_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/mirage_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/mirage_card_critical.webp",
+    "gloatImage": "/heroes/52-gloat.webp",
+    "criticalImage": "/heroes/52-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/mirage_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/mirage_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/mirage/mirage_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/mirage/mirage_select_02.mp3",
@@ -316,8 +412,12 @@
     "name": "Vyper",
     "image": "/heroes/58.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kali_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kali_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kali_card_critical.webp",
+    "gloatImage": "/heroes/58-gloat.webp",
+    "criticalImage": "/heroes/58-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kali_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kali_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/viper/viper_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/viper/viper_select_02.mp3",
@@ -329,8 +429,12 @@
     "name": "Sinclair",
     "image": "/heroes/60.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/magician_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/magician_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/magician_card_critical.webp",
+    "gloatImage": "/heroes/60-gloat.webp",
+    "criticalImage": "/heroes/60-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/magician_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/magician_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.vlviewer.com/deadlock/audio/sha256/d3/d32962f50facb28bb01fd2a4b596fc3677fcb10e559949ecdf6bfff6220114c2.mp3"
     ]
@@ -340,8 +444,12 @@
     "name": "Mina",
     "image": "/heroes/63.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/vampirebat_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/vampirebat_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/vampirebat_card_critical.webp",
+    "gloatImage": "/heroes/63-gloat.webp",
+    "criticalImage": "/heroes/63-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/vampirebat_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/vampirebat_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/vampirebat/vampirebat_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/vampirebat/vampirebat_select_02.mp3",
@@ -353,8 +461,12 @@
     "name": "Drifter",
     "image": "/heroes/64.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/drifter_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/drifter_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/drifter_card_critical.webp",
+    "gloatImage": "/heroes/64-gloat.webp",
+    "criticalImage": "/heroes/64-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/drifter_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/drifter_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/drifter/drifter_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/drifter/drifter_select_02.mp3",
@@ -366,8 +478,12 @@
     "name": "Venator",
     "image": "/heroes/65.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/priest_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/priest_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/priest_card_critical.webp",
+    "gloatImage": "/heroes/65-gloat.webp",
+    "criticalImage": "/heroes/65-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/priest_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/priest_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/priest/priest_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/priest/priest_select_02.mp3",
@@ -379,8 +495,12 @@
     "name": "Victor",
     "image": "/heroes/66.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/frank_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/frank_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/frank_card_critical.webp",
+    "gloatImage": "/heroes/66-gloat.webp",
+    "criticalImage": "/heroes/66-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/frank_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/frank_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/frank/frank_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/frank/frank_select_02.mp3",
@@ -392,8 +512,12 @@
     "name": "Paige",
     "image": "/heroes/67.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bookworm_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bookworm_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bookworm_card_critical.webp",
+    "gloatImage": "/heroes/67-gloat.webp",
+    "criticalImage": "/heroes/67-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bookworm_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bookworm_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/bookworm/bookworm_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/bookworm/bookworm_select_02.mp3",
@@ -405,8 +529,12 @@
     "name": "The Doorman",
     "image": "/heroes/69.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/doorman_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/doorman_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/doorman_card_critical.webp",
+    "gloatImage": "/heroes/69-gloat.webp",
+    "criticalImage": "/heroes/69-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/doorman_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/doorman_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/doorman/doorman_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/doorman/doorman_select_02.mp3",
@@ -418,8 +546,12 @@
     "name": "Billy",
     "image": "/heroes/72.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/punkgoat_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/punkgoat_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/punkgoat_card_critical.webp",
+    "gloatImage": "/heroes/72-gloat.webp",
+    "criticalImage": "/heroes/72-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/punkgoat_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/punkgoat_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/punkgoat/punkgoat_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/punkgoat/punkgoat_select_02.mp3",
@@ -431,8 +563,12 @@
     "name": "Graves",
     "image": "/heroes/76.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/necro_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/necro_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/necro_card_critical.webp",
+    "gloatImage": "/heroes/76-gloat.webp",
+    "criticalImage": "/heroes/76-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/necro_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/necro_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/necro/necro_select_03.mp3",
       "https://cdn.goonlock.com/voices/vo/necro/necro_select_04.mp3",
@@ -444,8 +580,12 @@
     "name": "Apollo",
     "image": "/heroes/77.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/fencer_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/fencer_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/fencer_card_critical.webp",
+    "gloatImage": "/heroes/77-gloat.webp",
+    "criticalImage": "/heroes/77-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/fencer_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/fencer_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/fencer/fencer_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/fencer/fencer_select_02.mp3",
@@ -457,8 +597,12 @@
     "name": "Deadman Danny",
     "image": "/heroes/78.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/deadpack_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/deadpack_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/deadpack_card_critical.webp",
+    "gloatImage": "/heroes/78-gloat.webp",
+    "criticalImage": "/heroes/78-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/deadpack_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/deadpack_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.vlviewer.com/deadlock/audio/sha256/8f/8f6f56abf7b08b274dd20611e0df7e3128daf7afc92da57c8a6f1c317e3e492b.mp3"
     ]
@@ -468,8 +612,12 @@
     "name": "Rem",
     "image": "/heroes/79.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/familiar_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/familiar_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/familiar_card_critical.webp",
+    "gloatImage": "/heroes/79-gloat.webp",
+    "criticalImage": "/heroes/79-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/familiar_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/familiar_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/familiar/familiar_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/familiar/familiar_select_02.mp3",
@@ -481,8 +629,12 @@
     "name": "Silver",
     "image": "/heroes/80.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/werewolf_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/werewolf_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/werewolf_card_critical.webp",
+    "gloatImage": "/heroes/80-gloat.webp",
+    "criticalImage": "/heroes/80-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/werewolf_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/werewolf_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/werewolf/werewolf_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/werewolf/werewolf_select_02.mp3",
@@ -494,8 +646,12 @@
     "name": "Celeste",
     "image": "/heroes/81.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/unicorn_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/unicorn_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/unicorn_card_critical.webp",
+    "gloatImage": "/heroes/81-gloat.webp",
+    "criticalImage": "/heroes/81-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/unicorn_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/unicorn_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/unicorn/unicorn_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/unicorn/unicorn_select_02.mp3",
@@ -507,8 +663,12 @@
     "name": "Rat King",
     "image": "/heroes/84.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/ratking_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/ratking_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/ratking_card_critical.webp",
+    "gloatImage": "/heroes/84-gloat.webp",
+    "criticalImage": "/heroes/84-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/ratking_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/ratking_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.vlviewer.com/deadlock/audio/sha256/0a/0a414807989ef295097ebd910547ffa2eb5c96fdd553ea09d97911e50fa1ed45.mp3"
     ]
@@ -518,10 +678,50 @@
     "name": "Solomon",
     "image": "/heroes/85.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chessmaster_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chessmaster_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chessmaster_card_critical.webp",
+    "gloatImage": "/heroes/85-gloat.webp",
+    "criticalImage": "/heroes/85-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chessmaster_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chessmaster_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.vlviewer.com/deadlock/audio/sha256/6a/6aaf46f9118f554e73faf081e66552ec260194ff053f221cb3fa2900c37056b9.mp3"
+    ]
+  },
+  {
+    "id": 86,
+    "name": "Violet",
+    "image": "/heroes/86.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/artist_card.webp",
+    "gloatImage": "/heroes/86-gloat.webp",
+    "criticalImage": "/heroes/86-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/artist_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/artist_card_critical.webp"
+    },
+    "voiceLines": [
+      "/voices/86-select-1.mp3",
+      "/voices/86-select-2.mp3",
+      "/voices/86-select-3.mp3",
+      "/voices/86-select-4.mp3"
+    ]
+  },
+  {
+    "id": 87,
+    "name": "Nurse Harrow",
+    "image": "/heroes/87.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nurse_card.webp",
+    "gloatImage": "/heroes/87-gloat.webp",
+    "criticalImage": "/heroes/87-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nurse_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nurse_card_critical.webp"
+    },
+    "voiceLines": [
+      "/voices/87-select-1.mp3",
+      "/voices/87-select-2.mp3",
+      "/voices/87-select-3.mp3",
+      "/voices/87-select-4.mp3"
     ]
   },
   {
@@ -529,8 +729,12 @@
     "name": "Baba",
     "image": "/heroes/88.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/baba_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/baba_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/baba_card_critical.webp",
+    "gloatImage": "/heroes/88-gloat.webp",
+    "criticalImage": "/heroes/88-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/baba_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/baba_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.vlviewer.com/deadlock/audio/sha256/48/48151eed21b016d8b17e7198d5631b743c0903f852fcdd855b2ca2355f491e56.mp3"
     ]

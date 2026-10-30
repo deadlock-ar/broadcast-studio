@@ -1,123 +1,294 @@
-# Deadlock AR — Draft Studio
+# Deadlock AR — Broadcast Studio
 
-A refined React/Vite version of the uploaded DLAR draft prototype, using the community’s parchment and olive identity. Includes an admin studio and a separate 1920 × 1080 broadcast view.
+A shared tournament broadcast dashboard in the community’s parchment and olive identity. Railway hosts the website, Statlocker connection, password-protected controls, reports and persistent SQLite workspace. The observer companion reads a growing local Deadlock recording on whichever PC is observing and sends normalized statistics outward over HTTPS. OBS URLs stay the same when observers change.
 
-## Try the included build
+## Tournament selection and data management
 
-On Windows, extract the ZIP and double-click `START-PREVIEW.cmd` inside the project folder. Keep the terminal open, then visit **http://127.0.0.1:4173**. The script uses an installed Node.js runtime or the bundled Codex runtime on this computer. It serves only on this computer.
+The selector above every admin tab creates or loads the current tournament for all admins. Each tournament retains its own draft board, match collection, branding and scores, report selections, manual MVP and published-output selection. New recordings and draft archives receive a stable tournament ID; changing a tournament name does not move its records. Existing archives are assigned using their saved event labels on first upgrade.
 
-The ZIP includes `dist/`, so this preview needs no package installation. Choose **Load demo** to see sample hero artwork, or paste your Statlocker draft link and press **Connect draft**.
+Stop active recording/relay collection before switching tournaments. Reconnect a live draft after loading its tournament. The permanent OBS URLs follow the current tournament, so switch during a scene break. Late observer updates and stale admin edits are rejected rather than applied to another tournament.
 
-## Admin workflow
+**Data library** lists games, drafts, tournaments, Trash and backups. Games and drafts can be filtered to the current tournament or shown across all tournaments. Deleting a tournament includes its games and drafts; select another tournament first. Deletion removes records from report selections and on-air outputs, and sends them to Trash. Restore retains the data without republishing it. Series scores remain operator controlled when records are deleted or restored. Permanent deletion requires typing `DELETE`; independent backup copies may still contain the data. Deleted recording IDs cannot silently resume as new games.
 
-1. Paste a Statlocker URL such as `https://statlocker.gg/draft/VBWWGH17`. An eight-character room code also works.
-2. Edit team names, short names, logos, series scores, tournament name, round, format, and game number. Arabic names are supported.
-3. Select Full board or Lower third. Broadcast settings include transparency, bans, source team names, and the live timer.
-4. Copy the OBS URL. Add a Browser Source in OBS with width **1920** and height **1080**. Keep “Refresh browser when scene becomes active” enabled.
-5. After editing names, logos, scores, or presentation settings, copy the new URL into OBS. Draft picks and bans continue updating through Statlocker independently.
+Backups include all tournament workspaces and recoverable deleted records. Old backups remain supported. The Data library also provides backup download/restore and explicit removal of recovery files; the automatic daily file may be recreated on the next backup cycle.
 
-Logos support PNG, JPEG, and WebP files under 5 MB, resized locally to at most 256 pixels. Uploads stay in the browser and are included in the broadcast link. Use Export/Import settings to transfer branding between admins.
+In **Tournament reports → Series MVP**, choose **Enter manually** to set the player name, hero, kills, deaths, assists, damage and souls without collecting a game. These values are shared, saved for that tournament and used by the existing preview, PNG export and Series MVP OBS URL. Blank statistics remain unknown. The scoreboard, hero-priority and Series MVP graphic designs are unchanged in this update, pending a separate design discussion.
 
-Disconnect & use manual mode preserves the last live selections. Click a hero slot to choose or clear a hero. Duplicate selections are prevented. Manual broadcast URLs carry the current selections; copy a new URL after changing them. Exiting demo clears the sample selections.
+## Observer workflow
 
-## Pick effects and audio
+1. Open **Live desk** in the hosted studio. Download and extract the observer ZIP on the observer PC, then open **Start-Observer.cmd**. The official Windows x64 Node.js 24.19.0 runtime and pinned parser are bundled. No installation or administrator access is needed. Packaging verifies the official runtime against its pinned SHA-256.
+2. Create a pairing code in Live desk. Enter it and the studio website address in the companion. The single-use code expires after five minutes. The companion stores a scoped publisher credential locally; it never needs the admin password. **Disconnect computer** revokes it.
+3. Join the custom lobby’s spectator slot before the host starts the game. The host must enable cheats for recording. Prepare a new recording in the companion and enter its fresh `record ...` command in Deadlock’s console before the countdown.
+4. Keep the companion open. It waits for the file, sends player statistics, permanent pickups, bridge buffs, purchase history and supported ultimate indicators, and retries temporary network interruptions. Use **Resume previous recording** after a companion restart. File replacement/truncation fails explicitly rather than mixing games.
+5. After the match ends, enter `stop` in Deadlock. A real game-over signal saves final results; stopping or losing the file does not invent a final result. Review and publish the scoreboard in Live desk.
 
-New picks show the hero's official gloat/on-fire portrait with the approved Blue flame design at low strength **0.6**. An irregular light-blue flame and a few rising embers surround the frame. After six seconds, the flame and the gloat portrait fade together over 0.9 seconds. Both portraits stay mounted during the fade, so there is no image swap or loading flash. The renderer masks every hero portrait on the board, keeping both the selected hero's and adjacent heroes' original colors unchanged.
+One publisher is active at a time. Switching recordings fences the previous process. A local UUID identifies the game before a numeric Valve match ID exists. Replay/relay collection remains an explicit fallback in Live desk; it cannot run alongside the observer and does not automatically replace it.
 
-The flame uses the same noise field, colors, and embers as the parchment design preview. It adapts to both broadcast layouts and the scaled studio preview. Overlapping picks share one small flame texture at 30 frames per second. The effect keeps moving during the fade and stops rendering once it finishes; unmounting cancels rendering and removes the motion-preference listener. Reduced-motion preferences show a static flame. This is a web recreation: the game's original `ui_topbar_killstreak_stylized.vpcf` particle runs in the Source 2 engine.
+The companion uses the same pinned Deadem 4.0.2 decoder with a client-demo adapter for clear/create ordering and entity baseline updates. Demofusion is not required for this integration. The adapter uses private parser internals and intentionally stops on unsupported formats. Validate new game/parser versions before an event.
 
-Ban slots use critical portraits. The active team's mark and current slot pulse while its turn is active; paused and completed drafts stop the pulse. Team 2's picks, bans, and heading fill from the right. Reduced-motion preferences disable CSS animation.
+## Drafts and tournament images
 
-One genuine game selection voice line plays for each new pick. The first state after joining or reconnecting primes the draft without replaying old selections; bans and timer updates are silent. Rapid picks queue their voice lines rather than playing over each other. Settings include voice enable/disable, volume, and the on-fire effect, and are included in OBS links and settings backups.
+The current catalogue has 44 selectable heroes, including Violet and Nurse Harrow, with normal/gloat/critical portraits and selection voices. Portraits and the new voices are bundled with the site. Refresh with `npm run update:heroes`; new selection voices are resolved from VLViewer’s versioned manifest rather than guessed filenames.
 
-The studio starts muted independently of the broadcast. Choose **Load demo → Preview sound → Test pick** to test. When all demo picks are filled, Test pick resets the sample. In OBS, enable **Control audio via OBS** on the Browser Source and check its mixer level. A normal browser may require clicking **Enable sound** after its autoplay policy blocks a line; future selections then play. Old blocked lines are discarded.
+Manual drafts offer the supplied 18-step competitive three-ban sequence and the classic 16-step two-ban sequence. Changing the format archives the current board; new manual drafts and rehearsals retain that format. Live drafts follow the source’s received order. Opening-round markers follow each draft’s actual order: the three-ban format opens with two bans per side, Hidden King’s first pick and both Archmother opening picks. Historical archives preserve their source order and rule identifier.
 
-The 42 current heroes have selection clips. Normal cards are bundled; gloat and critical variants use the Deadlock API asset bucket, and voices use game-audio libraries at [Pauselock](https://pauselock.net/voicelines) and [VLViewer](https://deadlock.vlviewer.com/). These remote assets require internet access. Failed variant images fall back to the bundled normal card; failed audio clips are skipped. The hero refresh script preserves existing voice mappings and reports new heroes that need selection clips.
+Draft selections are saved as they arrive. Reconnecting a Statlocker code updates its existing archive. Use **Start next manual draft** to archive the old board and clear it for another game. In **Tournament reports**, select drafts and export the hero-priority PNG. Select completed games for item reports and optional comparison cohorts. Mid-game/incomplete recordings are excluded by default.
 
-## Stat panels
+Purchase reports count transaction events, not inventory snapshots. Duplicate ability-change/purchase notifications are reconciled. A full return is cancelled using refund eligibility or an exact full-cost currency receipt; a later partial sale retains the purchase. Returns without enough source evidence are flagged for operator review and block export. Retained pending purchases are confirmed at recorded game end. Components are counted when bought, not again when consumed by an upgrade. Buying the upgrade itself is a separate purchase. Bot IDs are synthetic rehearsal identities, never substituted for real account IDs.
 
-Open **Stat panels**, enter a Deadlock match ID, and choose **Finished match** or **Live match · beta**. Finished custom match **120513539** was verified: 12 players, 42:05 duration, 651,398 total hero damage and 322 permanent pickups. Source data comes from the [Deadlock API](https://api.deadlock-api.com/openapi.json). Profile lookup uses display names only; real names, locations, friends and other profile fields are discarded.
+Hero priority, top items and series MVP have separate permanent OBS URLs. Their previews, PNG exports and OBS sources use the same parchment/olive renderer. Series MVP uses the hero’s on-fire portrait and selected ended-game totals. These reports never replace the published match scoreboard.
 
-Templates include hero damage, permanent buffs, net worth, and hero healing. All 12 players have hero icons. Choose player boxes, two team columns, or a leaderboard; sort by value or team, set the position, size and parchment/ink theme, and override team/player display names. Settings stay in this browser; Export/Import template moves the presentation settings to another admin.
+## Updated live desk and scoreboard
 
-The broadcast graphic uses compact cards with the stat title, a short source-status label, hero portraits, player names and values. Tournament names, match IDs, repeated hero/team captions and promotional footers are omitted. At 100% on a 1920 × 1080 canvas, the 4 × 3 panel is 640 pixels wide, team columns are 600 pixels wide and the narrow leaderboard is 320 pixels wide. Names are 18 pixels and values 27–29 pixels before optional scaling. Old OBS links use the updated design automatically; their match and presentation settings still work.
+Download the updated observer ZIP (companion 0.2.0) on each observer PC. It includes all-entity parsing for held items, objective damage, the numeric match ID and four signature ability upgrades. Older saved captures cannot gain data that their companion never sent. Recognized packed ability encodings map to upgrade tiers 0–3; unfamiliar encodings stay unknown. Confirm these tiers against the game during the next spectator rehearsal.
 
-Stat panels look up the current hero catalogue through the CORS-enabled Deadlock API asset endpoint. Known heroes keep their bundled cards; newly released heroes such as Violet use the verified asset-bucket image. Failed catalogue requests fall back to bundled artwork and unknown heroes retain an explicit placeholder.
+Permanent-buff panels accept the local-recording source. Ultimate actor/victim lookup includes bot identities for custom-lobby tests and follows owner handles for summons/projectiles; the ambiguous Graves zombie ability remains suppressed. These fixes address reproducible source-filter and attribution failures, but ability-specific coverage still requires spectator recordings.
 
-Finished matches provide a recorded timeline. Damage/healing use the most recent recorded sample at or before the selected time; values are not interpolated. Permanent buffs count pickup events across all permanent types and levels, excluding temporary power-ups. Missing data shows **—**, not zero. Incomplete pickup timing stays unknown in recorded frames. The API's final top-level K/D/A takes precedence over its final sampled K/D/A.
+Panel controls restore player tiles, ranked lists, team columns, themes, width, continuous scaling, text size and exact X/Y coordinates on the 1920 × 1080 canvas. The `/obs/deadem` link is labelled **Live stats panel**. Legacy API controls are under **Broadcast settings → Optional tools**; their old URL still works.
 
-**Copy panel OBS URL** creates an independent 1920 × 1080 transparent Browser Source containing the match ID and presentation settings. OBS fetches the same match itself; it does not need this browser's local storage. A recorded timeline selection is included in the link. Copy a new link after changing its match, template, names, or presentation. Add one source for each template and toggle visibility with OBS controls or hotkeys. **Show/Hide preview controls only the studio preview.** Remote on-air switching from the dashboard is future work requiring a shared control service.
+The scoreboard shows souls, K/D/A, hero damage, objective damage and healing, held items, four ability upgrade tiers, team kill/soul totals and numeric match ID. A newly ended game adds one series point; retries, reconnects and republishing do not add another. Replay/rehearsal games do not award points. Previous finished archives are not automatically counted after upgrading.
 
-The live beta uses the hosted `GET /v1/matches/demo/live/query` SSE endpoint and a projection of `CCitadelPlayerController`. Damage, net worth, healing and K/D/A are merged from partial updates; Steam IDs are normalized to the same account IDs used by finished matches. Overlapping controller records are deduplicated. Updates are batched, stale feeds are labelled, requests are cancelled on disconnect, and failures retain the last received values. There is no automatic reconnect loop to repeatedly spectate inaccessible lobbies or exhaust the source rate limit. The API currently documents 6 match-ID resolutions/hour per IP without a key (cached spectating is reused).
+The recording has not yet demonstrated the official post-game awards message. **Verify with finished metadata** uses the captured numeric match ID, preserves recorded loadouts and imports official MVP/key-player ranks when available. Operators can choose an MVP immediately; otherwise the footer identifies explicit damage/objective/healing leaders. No calculated leader is presented as an official game award.
 
-**Live permanent-buff counting is not implemented.** Finished metadata has explicit per-player `power_up_buffs` records with permanent flags, counts and pickup timestamps. Our live query selects player-controller totals for damage, healing and souls; it has no verified equivalent for pickup counts. Raw modifier/counter arrays exist in the inspected schema, but their identities and semantics have not been validated against permanent pickups. `m_iPermanentBuffCount` on an Artist ability is not a general player counter. The Live Events service exposes orb position/active state, which alone cannot establish who collected it or a complete player total. Missing counts stay unavailable rather than zero.
+## Synchronization and acceptance checks
 
-### Live-source investigation (20 October 2026)
+The recording source removes the Valve relay’s source delay; it does not guarantee a fixed end-to-end delay. The saved player-slot capture produced 1,519 complete 12-player samples with the integrated reader. A staged growing-file replay produced 1,447 samples before writing finished. These tests recovered four permanent buffs, bridge-buff presence, and two full item refunds. They did not validate a tournament spectator’s visibility of every item transaction or measure video synchronization.
 
-- **Current transport:** browser → Deadlock API SQL query over SSE → Valve GOTV/spectator relay. The API implements this in its own `demofusion` module using Haste/DataFusion; the frontend does not run the standalone Demofusion Rust/Python library. See the [API route](https://github.com/deadlock-api/deadlock-api/blob/c085d88efb523511358eb3aa6300406fde29e187/api/src/routes/v1/matches/demo/live_query.rs) and [relay reader](https://github.com/deadlock-api/deadlock-api/blob/c085d88efb523511358eb3aa6300406fde29e187/api/src/routes/v1/matches/demo/demofusion/live.rs).
-- **Relay availability:** the API retries the initial connection for one minute. Its specific “Broadcast has not started yet” failure is read from Valve's `/sync` response. Direct checks of six URLs advertised by `/v1/matches/live/urls` returned three HTTP 200 sync responses and three HTTP 404 responses with that exact message. The URL listing may contain old matches, so this confirms relay refusal, not that every listed game is currently running or a universal Valve bug. Private/ended games, rate limits, provider errors and schema errors are different failure cases. The UI now preserves retry progress and distinguishes known failure causes.
-- **Demofusion comparison:** [standalone Demofusion](https://github.com/demofusion/demofusion/tree/72ec37c172efb2fecf7993b85c3bba8af7cc5fdf) supports replay files and live GOTV. Its `GotvSource` also needs a serving broadcast URL. Hosting it ourselves could improve control over decoding and retries and remove dependence on this hosted query service, but cannot make Valve serve a missing broadcast. It would require a persistent collector service, beyond the current static Vercel frontend.
-- **Permanent-buff feasibility:** a custom decoder may be able to reconstruct counts from raw modifier data or combat-log powerup events, if those are actually present in spectator data. Neither parser switch nor orb disappearance is a verified counter. Before enabling this, compare decoded totals for all twelve players against finished metadata on the same replay, then verify an ongoing match, including joining late and reconnecting. Demofusion is a possible development tool for that validation, not a ready-made guarantee of live buff counts. Source formats: [finished buff records and combat-log types](https://github.com/deadlock-api/deadlock-api/blob/c085d88efb523511358eb3aa6300406fde29e187/valveprotos/protos/deadlock/citadel_gcmessages_common.proto), [Live Events supported fields](https://github.com/deadlock-api/deadlock-api/blob/c085d88efb523511358eb3aa6300406fde29e187/live-events/README.md).
+Before a tournament, run one full 12-player custom-lobby spectator recording from countdown through game over. Check both teams’ purchases/refunds/sales, all buff indicators, final totals, restart recovery and a caster’s received video. A player-slot success is not proof of spectator coverage. Unknown values remain unknown. Catalogue ultimate IDs are candidates, not universal proof of provenance: Graves’ ambiguous second-ability zombie damage is suppressed. Four lasting-effect mappings were replay-verified; new effects still need ability-specific validation.
 
-This update needs no new backend or Vercel plan change. Live update delay, spectator availability for a particular tournament lobby and end-of-match behaviour still depend on an ongoing broadcast; finished results cannot establish those properties.
+Delay observer gameplay video and game audio together **before** adding the graphics, then send that combined view to the remote casters. Add their returning microphones in the final production mix. Compare source game clocks and measure the actual setup. **Additional graphics delay** only delays graphics and cannot compensate for late data. OBS’s whole-stream delay alone does not change alignment between layers. Preserve the opening by beginning capture and recording before the match starts.
 
-Tests cover the real-match totals, unknown versus zero values, historical sample selection, permanent versus temporary buffs, incomplete pickup timing, final K/D/A, Arabic OBS-link round trips, deterministic ranking, profile minimization, partial live updates, reconnection identities and SSE transport/error handling. Test fixture account IDs are anonymized to player slots.
+Recorded console entries provide a partial audit only. They cannot prove that every player’s console commands or cheat use were captured. This implementation uses neither process-memory hooks nor injection.
 
-## Existing Vercel project
+## Backups and recovery
 
-Keep the friend’s current repository and Vercel project. Review and replace the app files with this version, then push through the existing Git workflow. Use the folder containing `package.json` as the project root. The supplied `vercel.json` sets **Vite**, build command **npm run build**, and output directory **dist**. This follows [Vercel’s Vite deployment workflow](https://vercel.com/docs/frameworks/frontend/vite).
+All admins share SQLite on Railway’s `/data` persistent volume. **OBS outputs** offers a full JSON backup and daily compressed recovery files. The daily file is refreshed every minute; 14 days are retained on the same volume. Download a copy outside Railway for independent recovery. Credentials and active publisher leases are excluded from exported backups.
 
-No Vercel environment variables or backend service are required for this version. The draft view uses query parameters on `/`, so no additional SPA route rewrites are needed. Use a branch preview to test changes before merging into the production branch.
+Stop collection, choose a JSON or `.json.gz` backup, review its game/draft counts and click **Restore this backup**. Matching archives and controls are restored; unrelated saved games remain. The current state is backed up before restoring. Observer PCs must pair again if their original credential was lost; backup imports never create publisher access.
 
-## Develop and build
+## Compact match overlay
 
-Use Node.js **22.12 or newer** with npm:
+Open **Match overlay** for the cream-and-olive in-game banner. Its permanent
+OBS URL is **/obs/match-overlay**. Use a **1920 × 102** Browser Source at its
+original size; a full 1920 × 1080 source also works with transparent space below.
+The banner retains the compact half-height design and a 35px transparent live
+hero-HUD region. The game's player portraits remain visible underneath.
+The center stays empty until an operator uploads their own logo.
+
+The default links follow the current tournament's displayed team names,
+draft bans, broadcast series scores and event name. Statlocker and manual
+draft updates use the same shared feed. Clearing a ban or starting another
+draft clears the corresponding banner slot immediately. Banned heroes use
+the bundled native critical-health (hurt) artwork. Publishing a winning result
+also refreshes the linked score boxes in already-open OBS sources.
+
+Choose **Best of 1** for one fillable score box per team, **Best of 3** for two,
+or follow the existing broadcast format. Linked BO5/BO7 formats remain supported.
+Choose a team-name font from Bodoni, Oswald, Georgia, Arial or Times New Roman.
+The two custom fonts are bundled with their open-font licenses in public/fonts.
+
+Turn off an individual link to edit names, bans, score boxes or the event name
+independently. Switching to manual retains the currently displayed values.
+Manual overlay edits do not change the source draft or global branding. The
+same controls also manage tournament subtitles, sponsors, logos, team accents
+and on-air visibility. Settings are shared between admins, saved per tournament,
+included in backups and restored after restart. Changing tournaments keeps the
+same OBS URL and shows the selected tournament's overlay.
+
+**Background opacity** softens the banner artwork and name-box backgrounds
+without fading names, scores, logos or banned-hero portraits. Try 85–90% first;
+100% preserves the original appearance. The setting is saved per tournament.
+
+Enable **Player name boxes** to place six clean labels above each team's live
+hero portraits. Names follow the selected Live stats game, including its manual
+player-name edits and portrait order. Swapping heroes in Live stats moves their
+name boxes in the same update. Overlay-only custom names are keyed by player ID,
+so they move with the player; **Use live name** restores the source name. With no
+collector game selected, the loaded API stats roster is used when available.
+Without game information, fill the twelve manual name slots instead.
+
+Expand **Adjust name box placement** to align the row with your game HUD. The
+default row fits the existing 1920 × 102 source. If moved lower, use the source
+height shown beside the permanent URL, or a 1920 × 1080 source. Source changes
+and tournament switches clear the previous roster instead of keeping old names.
+
+## Brackets and reusable rosters
+
+Open **Bracket** to manage a single-elimination tournament for 2–32 teams.
+The **New tournament** form can include team names and up to six optional
+players per team, with names and Steam accounts. Choose whether to save these
+records for later tournaments. **Data library → Teams & players** also saves
+individual players independently of a team and edits existing saved rosters.
+SteamID64 strings, numeric account IDs and numeric Steam profile URLs are
+accepted; vanity profile URLs require their numeric profile ID.
+
+Arrange the teams in seed order, choose **By seed**, **Random draw** or
+**Manual pairings**, then generate the bracket. Manual pairing matches adjacent
+entries (1–2, 3–4, and so on). Byes advance automatically. Series formats BO1,
+BO3, BO5 and BO7 are supported. Replacing a draw or changing its entrants after
+results requires an explicit reset in the interface.
+
+New draws offer separate early-round and final formats, defaulting to BO1 and
+BO3. In an existing bracket, **Round formats** changes each unplayed round
+without redrawing or changing its teams. The **BO1 rounds, BO3 final** preset
+sets the common arrangement in one step. A round with recorded results keeps
+its format until those results are cleared. Each match's score limits,
+automatic advancement and prepared broadcast format follow its round.
+
+The bracket display shows real fixtures only. Teams that advance automatically
+start in their first actual match, with no team-versus-BYE cards. Internal
+advancement and saved match identities stay intact for existing tournaments.
+
+The **Draft studio** page also has a bracket-match selector. Choose a ready
+match and **Start draft for selected match** to load its names, round and
+format into a fresh manual board. An existing draft is saved first. Then
+connect that match's Statlocker room, or make picks and bans manually. The
+current live draft must be disconnected before starting a different match.
+
+Use **Use this match on broadcast** before the series to load its team names,
+logos, format and score into the broadcast controls. Confirm and publish each
+completed game from **Live desk**. The bracket counts that game once and
+advances the series winner only after the required wins. Replays, rehearsal
+games, unrelated teams and duplicate captures cannot award bracket wins.
+Editing an overlay score box does not finalize a bracket result. Manual bracket
+scores and winners are also available; correcting an earlier winner resets the
+affected downstream matches. Republishing an already-applied game with a
+different winner asks the operator to correct that bracket result manually.
+
+The permanent **/obs/bracket** Browser Source uses **1920 × 1080**. Enable
+**Transparent background** to retain only the bracket, cards and text over the
+scene below. Show/hide, results and tournament selection update the same URL.
+Public bracket output contains team names, logos and results, with player
+records and Steam accounts kept in the admin library. Brackets are saved per
+tournament; the reusable team/player library is shared across tournaments.
+Both are retained on the existing persistent volume and included in backups.
+Restoring an older backup preserves the existing reusable library.
+
+## Player introduction banners
+
+Open **Player banners** to introduce both teams on a permanent **/obs/player-banners**
+Browser Source at **1920 × 1080**. The screen contains two rows of six player
+cards, team names and a central VS. Each card shows up to three most-played
+heroes with exact tracked match counts and win rates. Optional rank badges sit
+at the bottom of each card. Background transparency and show/hide are shared.
+
+Choose **Follow broadcast teams** to use the tournament rosters matching the
+current broadcast names, including side swaps. **Choose a bracket match** follows
+that fixture's teams; **Manual rosters** lets you load saved teams or individual
+players and edit display names and Steam accounts without changing the bracket.
+Save manual edits before fetching. A blank display name uses the Steam name when
+available. Keep reusable records in **Data library → Teams & players**.
+
+Choose **Get statistics** after selecting the rosters. Cached data is reused for
+15 minutes; **Refresh statistics** requests newer data after a one-minute cooldown.
+The server batches up to twelve players, honors service retry delays and retains
+last available statistics if a refresh fails. Missing or protected profiles are
+shown as unavailable; no results or ranks are invented.
+
+Statistics come from the [Deadlock API](https://api.deadlock-api.com/docs), using
+its batch hero-stats, rank and Steam endpoints. Hero counts cover tracked normal
+matches, ranked and unranked, without a time filter. Rank means the latest
+Valve-reported badge available from the API, which may be unavailable or older
+than a player's current game. It is not a predicted rank. Numeric Steam account
+IDs, SteamID64 strings and numeric Steam profile URLs are accepted; vanity URLs
+are not supported.
+
+Settings and cached statistics are saved per tournament and included in backups.
+The public OBS projection contains display names, team branding, hero aggregates
+and optional rank artwork. Steam IDs, saved library records and service error
+details stay in the admin workspace. An OBS viewer never triggers API requests.
+
+## Permanent OBS outputs
+
+| Output                         | Path                |
+| ------------------------------ | ------------------- |
+| Draft                          | /obs/draft          |
+| Tournament bracket             | /obs/bracket        |
+| Player introductions           | /obs/player-banners |
+| Deadlock API stats             | /obs/live-events    |
+| Deadem stats                   | /obs/deadem         |
+| Reviewed post-match scoreboard | /obs/scoreboard     |
+| Ultimate indicators            | /obs/ultimates      |
+| Hero priority                  | /obs/hero-priority  |
+| Top items                      | /obs/top-items      |
+| Series MVP                     | /obs/series-mvp     |
+| Compact match overlay          | /obs/match-overlay  |
+
+Copy the full URLs from **OBS outputs**. Add each source at **1920 × 1080**. Match IDs, branding, statistics and HUD calibration are stored on the server; changing them does not change the URLs. The scoreboard follows the latest explicitly published result, even after another game is selected. Hide/show controls are shared.
+
+OBS outputs are publicly readable; dashboard controls, saved-game archives and backups require the admin password. Enable **Control audio via OBS** for draft voice lines. Existing picks establish a silent baseline when a source reconnects.
+
+## Operator workflow
+
+1. Sign in. All admins use the same workspace.
+2. Set team names, logos, series score, event and game number.
+3. In **Draft studio**, connect a Statlocker link or use manual/demo mode. The backend sends spectator messages only; decisions remain in Statlocker. Private-room passwords stay in memory, never in URLs or saved snapshots.
+4. In **Live desk**, pair the observer companion and start the local recording. The collapsed relay/replay fallback remains available for delayed collection. Legacy **API stats** is under Broadcast settings → Optional tools.
+5. Calibrate ultimate badges against the game HUD and set any additional video delay. Calibration, display names and the selected statistic are shared.
+6. After an actual game-over signal, review the captured scoreboard, optionally verify against finished metadata, then **Publish reviewed scoreboard**. Later edits and verification stay off air until you publish again.
+
+Spectator availability depends on Valve’s relay and the lobby. A cloud server cannot make an unwatchable match available. Stopping the collector or losing its connection never invents a game-over result. Last values remain saved; stale feeds are labelled and transient badges expire. Ultimate damage-hit detection uses exact ability IDs; lasting effects are enabled only for replay-verified abilities. See dashboard detection coverage and [collector documentation](collector/README.md).
+
+## Railway setup
+
+Use an independent project in your Railway workspace. Another repository in the GitHub organization can continue using a friend’s separate Railway workspace.
+
+1. Grant the Railway GitHub App access to **deadlock-ar/broadcast-studio** if needed. GitHub sign-in alone does not guarantee repository access. Preserve any existing organization repository selections.
+2. Connect the reviewed cloud branch to one service. Railway detects the root **Dockerfile**, which builds Vite and installs collector dependencies.
+3. Attach **one persistent volume at /data**. Keep exactly **one service replica** because SQLite and the collector share one process.
+4. Set the variables below. Enter the production password directly in Railway, outside GitHub and chat.
+5. Configure **/healthz**, a 60-second startup timeout, restart on failure (5 retries), and serverless sleeping. Generate a Railway HTTPS domain. Set PUBLIC_ORIGIN to that exact origin.
+6. Deploy, sign in and rehearse with a replay. Keep the existing Vercel site available until cloud verification is complete.
+
+| Variable       | Value                                                |
+| -------------- | ---------------------------------------------------- |
+| ADMIN_PASSWORD | A unique 16–512 character admin password             |
+| DLAR_DATA_DIR  | /data                                                |
+| PUBLIC_ORIGIN  | Exact HTTPS website origin, without a trailing slash |
+| NODE_ENV       | production                                           |
+| PORT           | Provided by Railway; hosted app binds to 0.0.0.0     |
+
+Without PUBLIC_ORIGIN the app uses RAILWAY_PUBLIC_DOMAIN. Use one canonical admin origin: writes from another origin are rejected. Login cookies are HttpOnly, SameSite=Strict and Secure on HTTPS. Sessions expire after seven days; changing ADMIN_PASSWORD revokes them.
+
+Trial can be used for rehearsal if its network/resource limits permit the collector. A monthly plan fee is not a cap on usage. Stop collectors/API feeds after events and close dashboard tabs and unused OBS Browser Sources so the service can sleep. Warm it up before a broadcast. An active collector intentionally keeps working.
+
+The Dockerfile defines the build. Healthchecks, sleeping and resource limits are Railway service settings rather than relying on deprecated railway.json configuration. References: [GitHub autodeploys](https://docs.railway.com/deployments/github-autodeploys), [Dockerfiles](https://docs.railway.com/builds/dockerfiles), [volumes](https://docs.railway.com/volumes), [serverless](https://docs.railway.com/deployments/serverless).
+
+## Persistence and recovery
+
+SQLite at /data/broadcast.sqlite stores branding, draft state, selected feeds, collector settings, captures and published scoreboards. Leaf-level edits merge changes to different fields. Conflicting edits to the same field are rejected and shown to the admin. Unique update IDs prevent duplicate application after retries.
+
+Restarting restores saved screens, selected game and published result. Active feeds are marked disconnected/interrupted: reconnect from the dashboard. Private Statlocker passwords are not restored. OBS clients reconnect automatically at their permanent paths.
+
+Download **workspace and results backup** from OBS outputs after each event. It includes workspace configuration and captures, excluding passwords and login sessions. Retain independent copies alongside Railway volume backups. Legacy collector JSON captures placed in the data directory are imported once and preserved. A full backup restore currently requires server access.
+
+Do not use multiple replicas with this SQLite deployment. Horizontal scaling would need a shared database and collector coordination. Caster holding screens and highlights remain future roadmap work.
+
+## Local development and rehearsal
+
+Use **Node.js 24 or newer**:
 
 ```sh
 npm ci
-npm run dev
+npm run collector:setup
 npm test
+npm run lint
 npm run build
-npm run preview:built
+npm start
 ```
 
-`npm run update:heroes` refreshes the hero catalogue and artwork from Statlocker’s current catalogue and the Deadlock API asset bucket. Rebuild after running it. The bundled catalogue contains 42 selectable heroes fetched on 14 October 2026. Unknown future hero IDs display an ID fallback until the catalogue is refreshed.
+The combined server defaults to **http://127.0.0.1:8766**. Choose another DLAR_COLLECTOR_PORT if the older collector is running. Without a password it binds to loopback only for trusted local development. Set ADMIN_PASSWORD and PUBLIC_ORIGIN to rehearse hosted login. Set DLAR_DATA_DIR to a separate test directory to isolate rehearsal data.
 
-## Statlocker adapter
+**npm run dev**, **npm run preview:built**, and the existing Vercel static deployment retain the legacy browser-local interface; they do not provide the shared backend. Their old query-string links are separate from the shared outputs. **npm run collector** starts the old local companion; **npm start** starts the combined server. Use different ports for the two.
 
-The adapter is isolated in `src/draft.js`. It connects directly to `wss://statlocker.gg/ws/draft` and sends `JOIN_DRAFT` with role `SPECTATOR`, a fresh browser session ID, and no owner token. It never sends selection, start, pause, team swap, or settings commands to Statlocker.
+## Hero and protocol maintenance
 
-It consumes `DRAFT_STATE_UPDATE` and `TIMER_UPDATE`; renders actual steps, team numbers, hero IDs, current step, and draft status; and reconnects with increasing delays capped at 30 seconds. Connection interruptions retain the previous snapshot. Switching to another room clears the previous room’s selections. Room errors stop reconnect attempts until an admin reconnects.
+**npm run update:heroes** refreshes draft hero metadata/artwork; rebuild afterward. **npm run collector:refresh** refreshes the ability catalogue. Validate newly added ultimate effects against a replay before enabling them. Unknown heroes display a fallback. Source protocol changes can require collector updates.
 
-The protocol was verified against the live room provided for this project and inspected in Statlocker’s browser client. It is not a documented public WebSocket API. [Statlocker’s public API documentation](https://statlocker.gg/api) describes HTTP API-key access. In the observed test, the HTTP lobby info endpoint returned 401, while the spectator WebSocket successfully returned the active room state. This app therefore does not depend on that HTTP lobby lookup.
+The Statlocker adapter in src/draft.js connects to wss://statlocker.gg/ws/draft with JOIN_DRAFT and the SPECTATOR role. It never sends pick, ban, start, pause or owner commands. The observed spectator protocol is not a documented public API.
 
-Passwords entered for private rooms are used only in the admin connection and kept in memory. **The OBS link currently requires a room with public spectator access.** Passwords, owner tokens, and participant session details are not exported in URLs or saved snapshots. A rematch notice asks the admin to connect the new room explicitly.
+## Validation
 
-## Storage and future work
+**npm test** covers draft transport/effects, finished stats, live events, collector extraction, buffs, ultimate filtering/expiry, delayed outputs, frozen scoreboards, shared-edit conflicts, authentication, password rotation and SQLite recovery. Lint and production build validate frontend/server sources. Hosted reachability, container startup and resource usage still need first-deployment verification.
 
-This is a browser-local admin workspace. Open broadcast tabs on the same origin in the same browser follow branding changes through browser storage. OBS uses its own browser environment, so its URL contains a copy of the branding. Other admins’ computers do not receive those branding edits automatically.
-
-A future shared version can add authenticated admin accounts, persistent match records, hosted logo uploads, and a realtime configuration channel. Keep that configuration channel separate from the Statlocker adapter so source selections and custom broadcast identity remain independent.
-
-## Verification
-
-- Production build completed successfully.
-- Fourteen automated tests cover source URL validation, Arabic branding and manual-state URL round trips, participant-data removal, dynamic ban counts, safe logo inputs, spectator-only messages, timer messages, reconnection baselines, room errors, pick-event deduplication, six-second timing, independent overlapping picks, replacement/reset cleanup, sequential audio, autoplay recovery, volume/URL persistence, and complete hero effect metadata.
-- Browser checks confirmed a live spectator state from room VBWWGH17. It was ACTIVE at the first ban, with no hero selections; no source draft decisions were changed. Changing picks and timer payloads were exercised with protocol fixtures.
-- Desktop checks covered demo artwork, Arabic names, score edits, logo upload/removal, manual hero selection, a separate broadcast view, and transparent document/body/canvas backgrounds.
-- Effect checks confirmed mirrored picks/bans and heading, critical ban portraits, muted studio preview, sound activation, and actual pick audio playback in a separate browser broadcast, including the newer Solomon voice.
-- A 390-pixel phone viewport was verified with no horizontal overflow; a full-page phone screenshot is included. OBS itself and a Vercel deployment were not tested.
-
-## Source map
-
-- `src/App.jsx`: admin UI, broadcast renderer, local settings, image uploads, and backup tools.
-- `src/draft.js`: data normalization, link encoding, room parsing, and spectator transport.
-- `src/pick-effects.js` / `src/use-pick-effects.js`: new-selection tracking, effect timing, portrait preloading, and queued voice playback.
-- `src/App.css` / `src/index.css`: layout and brand tokens.
-- `src/pick-sparks.js`: the approved Blue flame renderer, shared texture, embers, and portrait masks.
-- `src/heroes.json` / `public/heroes/`: local hero catalogue and cards.
-- `scripts/serve.mjs`: dependency-free local build preview.
-- `scripts/update-heroes.mjs`: refresh the hero assets.
-- `tests/draft.test.js`: protocol and data tests.
-
-The community logo is preserved from the uploaded project and displayed using CSS cropping. Hero artwork comes from the Deadlock API asset bucket and belongs to its respective rights holders. Inter, Cairo, and Barlow Condensed fonts are bundled locally; their OFL licenses are in `public/fonts/`.
+Hero art and voices belong to their respective rights holders. Community branding comes from the supplied project. Bundled fonts and dependencies retain their included licences.

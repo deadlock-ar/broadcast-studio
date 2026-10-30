@@ -188,7 +188,7 @@ test("template cleaning bounds strings, strips unknown fields and handles corrup
     ownerToken: "secret",
   });
   assert.equal(panel.metric, "damage");
-  assert.equal(panel.scale, 1);
+  assert.equal(panel.scale, 2);
   assert.equal(panel.theme, "parchment");
   assert.equal(panel.names[5].length, 48);
   assert.equal(panel.ownerToken, undefined);

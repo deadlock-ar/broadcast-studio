@@ -210,18 +210,19 @@ test("every current hero has gloat, critical, and genuine selection audio metada
   const heroes = JSON.parse(
     fs.readFileSync(new URL("../src/heroes.json", import.meta.url)),
   );
-  assert.ok(heroes.length >= 42);
+  assert.ok(heroes.length >= 44);
   for (const hero of heroes) {
     assert.match(
       hero.gloatImage,
-      /^https:\/\/assets-bucket\.deadlock-api\.com\/.*gloat.*webp$/,
+      /^\/heroes\/\d+-gloat\.webp$/,
     );
     assert.match(
       hero.criticalImage,
-      /^https:\/\/assets-bucket\.deadlock-api\.com\/.*critical.*webp$/,
+      /^\/heroes\/\d+-critical\.webp$/,
     );
     assert.ok(hero.voiceLines.length, hero.name + " needs a selection clip");
     for (const url of hero.voiceLines)
-      assert.match(url, /^https:\/\/cdn\.(goonlock|vlviewer)\.com\/.*\.mp3$/);
+      assert.match(url, /^(https:\/\/cdn\.(goonlock|vlviewer)\.com\/.*|\/voices\/\d+-select-\d+)\.mp3$/);
+    for(const asset of [hero.image,hero.gloatImage,hero.criticalImage,...hero.voiceLines.filter(v=>v.startsWith('/'))]) assert.ok(fs.statSync(new URL('../public'+asset,import.meta.url)).size>100,`${hero.name} missing ${asset}`);
   }
 });

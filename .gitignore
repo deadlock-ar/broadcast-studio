@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
+.dlar-collector/
+collector/*.dem*
 
 # Editor directories and files
 .vscode/*
@@ -22,3 +24,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+runtime/
+.dlar-cloud/
+.dlar-observer/
+.env
+.env.*
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal

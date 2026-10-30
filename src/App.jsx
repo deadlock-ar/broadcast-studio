@@ -15,11 +15,24 @@ import {
   teamSlots,
 } from "./draft";
 import "./App.css";
+import "./FeedbackUpdates.css";
 import StatPanels from "./StatPanels";
+import ProductionStudio from "./ProductionStudio";
+import MatchOverlayControls from "./MatchOverlayControls.jsx";
+import BracketStudio from "./BracketStudio.jsx";
+import PlayerBannersStudio from "./PlayerBannersStudio.jsx";
+import DraftMatchSelector from "./DraftMatchSelector.jsx";
+import SharedOutputs from "./SharedOutputs.jsx";
+import Analytics from "./Analytics.jsx";
+import TournamentSwitcher from "./TournamentSwitcher.jsx";
+import DataLibrary from "./DataLibrary.jsx";
+import "./TournamentTools.css";
+import { useWorkspace, useWorkspaceField } from "./workspace-context.js";
 
 const roster = Object.fromEntries(heroes.map((h) => [h.id, h]));
 const params = new URLSearchParams(window.location.search);
-const isOverlay = params.get("view") === "overlay";
+const isOverlay =
+  params.get("view") === "overlay" || window.location.pathname === "/obs/draft";
 if (isOverlay) document.documentElement.classList.add("broadcast-document");
 let saved = {};
 try {
@@ -499,21 +512,39 @@ function Modal({ title, onClose, children }) {
   );
 }
 
+function useTournamentLocal(scope, initial) {
+  const [saved, setSaved] = useState({ scope, value: initial });
+  return [
+    saved.scope === scope ? saved.value : initial,
+    (value) => setSaved({ scope, value }),
+  ];
+}
 export default function App() {
-  const [config, setConfig] = useState(initialConfig);
-  const [code, setCode] = useState(initialCode);
-  const [link, setLink] = useState(
-    initialCode ? `https://statlocker.gg/draft/${initialCode}` : "",
+  const shared = useWorkspace(),
+    cloud = Boolean(shared);
+  const [config, setConfig] = useWorkspaceField(["config"], initialConfig);
+  const [code, setCode] = useWorkspaceField(["draft", "code"], initialCode);
+  const [link, setLink] = useTournamentLocal(
+    shared?.data.activeTournamentId,
+    code ? `https://statlocker.gg/draft/${code}` : "",
   );
-  const [password, setPassword] = useState("");
-  const [activePassword, setActivePassword] = useState("");
+  const [password, setPassword] = useTournamentLocal(
+    shared?.data.activeTournamentId,
+    "",
+  );
+  const [activePassword, setActivePassword] = useTournamentLocal(
+    shared?.data.activeTournamentId,
+    "",
+  );
   const initialDemo = isOverlay
     ? params.get("demo") === "1"
     : saved.mode === "demo" && !initialCode;
-  const [mode, setMode] = useState(
+  const [mode, setMode] = useWorkspaceField(
+    ["draft", "mode"],
     initialDemo ? "demo" : initialCode ? "live" : "manual",
   );
-  const [snapshot, setSnapshot] = useState(
+  const [snapshot, setSnapshot] = useWorkspaceField(
+    ["draft", "snapshot"],
     initialDemo
       ? makeDemo()
       : isOverlay && linkedSnapshot
@@ -532,12 +563,12 @@ export default function App() {
     audioRef,
   } = usePickEffects(
     snapshot,
-    `${mode}:${code}`,
+    `${shared?.data.activeTournamentId || ""}:${mode}:${code}`,
     initialSnapshots,
     config,
     isOverlay,
   );
-  const [status, setStatus] = useState({
+  const [status, setStatus] = useWorkspaceField(["draft", "status"], {
     state: "idle",
     message: "Paste a draft link to connect.",
   });
@@ -546,7 +577,18 @@ export default function App() {
   const [toast, setToast] = useState("");
   const [activity, setActivity] = useState([]);
   const [tab, setTab] = useState(
-    params.get("tab") === "stats" ? "stats" : "studio",
+    [
+      "stats",
+      "live",
+      "overlay",
+      "bracket",
+      "banners",
+      "outputs",
+      "analytics",
+      "data",
+    ].includes(params.get("tab"))
+      ? params.get("tab")
+      : "studio",
   );
   const [guide, setGuide] = useState(false);
   const [picker, setPicker] = useState(null);
@@ -564,7 +606,7 @@ export default function App() {
     return () => observer.disconnect();
   }, []);
   useEffect(() => {
-    if (!code) return;
+    if (cloud || !code) return;
     return openDraftConnection(
       code,
       {
@@ -605,9 +647,9 @@ export default function App() {
       },
       { password: activePassword },
     );
-  }, [code, retry, activePassword]);
+  }, [cloud, code, retry, activePassword, setStatus, setSnapshot]);
   useEffect(() => {
-    if (isOverlay) return;
+    if (isOverlay || cloud) return;
     try {
       localStorage.setItem(
         STORAGE_KEY,
@@ -620,9 +662,9 @@ export default function App() {
         ),
       );
     }
-  }, [config, code, mode, snapshot]);
+  }, [cloud, config, code, mode, snapshot]);
   useEffect(() => {
-    if (!isOverlay) return;
+    if (!isOverlay || cloud) return;
     const handler = (event) => {
       if (event.key === STORAGE_KEY && event.newValue) {
         try {
@@ -637,7 +679,7 @@ export default function App() {
     };
     window.addEventListener("storage", handler);
     return () => window.removeEventListener("storage", handler);
-  }, []);
+  }, [cloud, setConfig, setSnapshot]);
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(""), 6000);
@@ -649,15 +691,27 @@ export default function App() {
       ...c,
       teams: c.teams.map((t, j) => (j === i ? { ...t, [key]: value } : t)),
     }));
-  const url = broadcastUrl(
-    config,
-    code,
-    mode === "demo",
-    window.location.origin,
-    snapshot,
-  );
+  const url = cloud
+    ? new URL("/obs/draft", window.location.origin).href
+    : broadcastUrl(
+        config,
+        code,
+        mode === "demo",
+        window.location.origin,
+        snapshot,
+      );
   const connect = (e) => {
     e.preventDefault();
+    if (shared) {
+      shared
+        .command("draft/connect", { mode: "live", code: link, password })
+        .then(() => {
+          setError("");
+          setPassword("");
+        })
+        .catch((e) => setError(e.message));
+      return;
+    }
     try {
       const nextCode = parseDraftCode(link);
       setError("");
@@ -683,6 +737,12 @@ export default function App() {
     }
   };
   const demo = () => {
+    if (shared) {
+      shared
+        .command("draft/connect", { mode: "demo" })
+        .catch((e) => setToast(e.message));
+      return;
+    }
     setCode("");
     setMode("demo");
     setSnapshot(makeDemo());
@@ -692,6 +752,12 @@ export default function App() {
     );
   };
   const manual = () => {
+    if (shared) {
+      shared
+        .command("draft/connect", { mode: "manual" })
+        .catch((e) => setToast(e.message));
+      return;
+    }
     setCode("");
     setMode("manual");
     setSnapshot((s) =>
@@ -728,6 +794,13 @@ export default function App() {
     });
   };
   const selectHero = (heroId) => {
+    if (shared) {
+      shared
+        .command("draft/manual", { stepId: picker.id, heroId })
+        .catch((e) => setToast(e.message));
+      setPicker(null);
+      return;
+    }
     setSnapshot((s) => {
       const d = s || blankDraft();
       return {
@@ -843,13 +916,47 @@ export default function App() {
             <Icon name="studio" />
             Draft studio<span>01</span>
           </button>
+          {tab === "stats" && (
+            <button
+              className={tab === "stats" ? "selected" : ""}
+              onClick={() => setTab("stats")}
+            >
+              <Icon name="settings" />
+              API stats
+            </button>
+          )}
           <button
-            className={tab === "stats" ? "selected" : ""}
-            onClick={() => setTab("stats")}
+            className={tab === "live" ? "selected" : ""}
+            onClick={() => setTab("live")}
           >
-            <Icon name="settings" />
-            Stat panels<span>02</span>
+            <Icon name="play" />
+            Live desk<span>02</span>
           </button>
+          <button
+            className={tab === "overlay" ? "selected" : ""}
+            onClick={() => setTab("overlay")}
+          >
+            <Icon name="studio" />
+            Match overlay
+          </button>
+          {cloud && (
+            <button
+              className={tab === "bracket" ? "selected" : ""}
+              onClick={() => setTab("bracket")}
+            >
+              <Icon name="studio" />
+              Bracket
+            </button>
+          )}
+          {cloud && (
+            <button
+              className={tab === "banners" ? "selected" : ""}
+              onClick={() => setTab("banners")}
+            >
+              <Icon name="studio" />
+              Player banners
+            </button>
+          )}
           <button
             className={tab === "settings" ? "selected" : ""}
             onClick={() => setTab("settings")}
@@ -861,6 +968,34 @@ export default function App() {
             <Icon name="help" />
             Setup guide
           </button>
+          {cloud && (
+            <button
+              className={tab === "analytics" ? "selected" : ""}
+              onClick={() => setTab("analytics")}
+            >
+              <Icon name="settings" />
+              Tournament reports
+            </button>
+          )}
+          {cloud && (
+            <button
+              className={tab === "outputs" ? "selected" : ""}
+              onClick={() => setTab("outputs")}
+            >
+              <Icon name="external" />
+              OBS outputs
+            </button>
+          )}
+          {cloud && (
+            <button
+              className={tab === "data" ? "selected" : ""}
+              onClick={() => setTab("data")}
+            >
+              <Icon name="settings" />
+              Data library
+            </button>
+          )}
+          {shared?.logout && <button onClick={shared.logout}>Sign out</button>}
         </nav>
         <div className="sidebar-bottom">
           <span className="sidebar-star">✦</span>
@@ -869,7 +1004,8 @@ export default function App() {
           <div className="sidebar-admin">
             <span>AR</span>
             <div>
-              Broadcast admin<small>LOCAL WORKSPACE</small>
+              Broadcast admin
+              <small>{cloud ? "SHARED WORKSPACE" : "LOCAL WORKSPACE"}</small>
             </div>
             <i />
           </div>
@@ -883,13 +1019,68 @@ export default function App() {
           </span>
           <span className="save-state">
             <Icon name="check" size={14} />
-            {saveError ? "Backup recommended" : "Saved in this browser"}
+            {cloud
+              ? shared.saving
+                ? "Saving shared changes…"
+                : !shared.connected
+                  ? "Reconnecting…"
+                  : shared.error
+                    ? "Changes need attention"
+                    : "Shared studio connected"
+              : saveError
+                ? "Backup recommended"
+                : "Saved in this browser"}
           </span>
         </header>
+        {cloud && <TournamentSwitcher />}
         <div
-          className={`workspace-content${tab === "stats" ? " stats-tab" : ""}`}
+          inert={shared?.changingTournament || undefined}
+          aria-busy={shared?.changingTournament || undefined}
+          className={`workspace-content${tab === "stats" ? " stats-tab" : tab === "live" ? " production-tab" : tab === "overlay" ? " overlay-tab" : tab === "bracket" ? " bracket-tab" : tab === "banners" ? " banners-tab" : tab === "outputs" ? " outputs-tab" : tab === "analytics" ? " analytics-tab" : tab === "data" ? " data-tab" : tab === "settings" ? " settings-only" : ""}`}
         >
-          <StatPanels config={config} active={tab === "stats"} />
+          <StatPanels
+            key={`stats:${shared?.data.activeTournamentId}`}
+            config={config}
+            active={tab === "stats"}
+          />
+          <ProductionStudio
+            key={`live:${shared?.data.activeTournamentId}`}
+            config={config}
+            active={tab === "live"}
+          />
+          <MatchOverlayControls
+            key={`overlay:${shared?.data.activeTournamentId}`}
+            config={config}
+            snapshot={snapshot}
+            active={tab === "overlay"}
+            onOpenDraft={() => setTab("studio")}
+          />
+          {cloud && (
+            <BracketStudio
+              key={`bracket:${shared.data.activeTournamentId}`}
+              active={tab === "bracket"}
+            />
+          )}
+          {cloud && (
+            <Analytics
+              key={`analytics:${shared.data.activeTournamentId}`}
+              config={config}
+              active={tab === "analytics"}
+            />
+          )}
+          {cloud && (
+            <PlayerBannersStudio
+              key={`banners:${shared.data.activeTournamentId}`}
+              active={tab === "banners"}
+            />
+          )}
+          {cloud && (
+            <DataLibrary
+              key={`data:${shared.data.activeTournamentId}`}
+              active={tab === "data"}
+            />
+          )}
+          {cloud && <SharedOutputs />}
           <div className="page-heading">
             <div>
               <span className="eyebrow">THE BROADCAST STARTS HERE</span>
@@ -913,6 +1104,16 @@ export default function App() {
               Open broadcast
             </a>
           </div>
+          {cloud && tab === "studio" && (
+            <DraftMatchSelector
+              key={`draft-match:${shared.data.activeTournamentId}`}
+              onStarted={() => {
+                setLink("");
+                setPassword("");
+                setError("");
+              }}
+            />
+          )}
           <div className="main-grid">
             <section className="preview-panel">
               <div className="panel-toolbar">
@@ -949,7 +1150,10 @@ export default function App() {
                     onSelect={
                       mode === "manual"
                         ? (slot) => {
-                            setPicker(slot);
+                            setPicker({
+                              ...slot,
+                              tournamentId: shared?.data.activeTournamentId,
+                            });
                             setSearch("");
                           }
                         : null
@@ -998,6 +1202,28 @@ export default function App() {
                 </p>
               </div>
               <form onSubmit={connect}>
+                {cloud && (
+                  <Field label="Manual draft format">
+                    <select
+                      value={snapshot.banCount || 3}
+                      disabled={mode === "live"}
+                      onChange={(e) =>
+                        shared
+                          .command("draft/rule", {
+                            banCount: Number(e.target.value),
+                          })
+                          .catch((e) => setError(e.message))
+                      }
+                    >
+                      <option value={3}>Competitive · 3 bans per team</option>
+                      <option value={2}>Classic · 2 bans per team</option>
+                    </select>
+                    <small>
+                      Changing format saves the current draft and starts an
+                      empty board. Live rooms use their own order.
+                    </small>
+                  </Field>
+                )}
                 <Field label="Statlocker draft link">
                   <input
                     type="text"
@@ -1250,6 +1476,19 @@ export default function App() {
           ) : (
             <div className="settings-grid">
               <section className="settings-panel">
+                <h2>Optional tools</h2>
+                <details>
+                  <summary>Legacy API statistics</summary>
+                  <p>The API source remains available for older workflows.</p>
+                  <button
+                    className="button secondary"
+                    onClick={() => setTab("stats")}
+                  >
+                    Open API stats
+                  </button>
+                </details>
+              </section>
+              <section className="settings-panel">
                 <h2>On-screen details</h2>
                 <Toggle
                   checked={config.transparent}
@@ -1279,9 +1518,9 @@ export default function App() {
               <section className="settings-panel">
                 <h2>Workspace backup</h2>
                 <p>
-                  Names, logos, scores, and presentation settings are saved in
-                  this browser. Keep a backup to move them to another admin’s
-                  browser.
+                  {cloud
+                    ? "Names, logos, scores and presentation are shared and saved on the server. Export settings for an additional copy. Importing replaces the shared branding."
+                    : "Settings are saved in this browser. Export a backup to move them to another browser."}
                 </p>
                 <div className="backup-actions">
                   <button className="button secondary" onClick={backup}>
@@ -1357,8 +1596,9 @@ export default function App() {
               <span className="eyebrow">READY FOR YOUR STREAM</span>
               <h2>Your broadcast, one link away.</h2>
               <p>
-                Add this URL to OBS as a 1920 × 1080 Browser Source. Generate a
-                new URL after changing branding.
+                {cloud
+                  ? "Add this permanent URL to OBS at 1920 × 1080. It follows the shared draft and branding automatically."
+                  : "Add this URL to OBS as a 1920 × 1080 Browser Source. Generate a new URL after changing branding."}
               </p>
               <input
                 className="broadcast-url"
@@ -1416,8 +1656,9 @@ export default function App() {
               <b>Set your match identity</b>
               <p>
                 Edit names, upload logos, and set the series score and round.
-                Use Load demo to check hero artwork without affecting your live
-                room.
+                {cloud
+                  ? "Load demo replaces the shared draft output with a rehearsal. All connected OBS views follow it."
+                  : "Use Load demo to check hero artwork without affecting your live room."}
               </p>
             </li>
             <li>
@@ -1432,62 +1673,63 @@ export default function App() {
             <li>
               <b>Update branding when needed</b>
               <p>
-                Draft selections update live in OBS. The URL carries a copy of
-                names, logos, and scores; copy a new URL after editing those.
-                Broadcast tabs in this browser also follow local branding
-                changes.
+                {cloud
+                  ? "All authorized admins share one workspace. Changes to names, logos, scores and presentation update the same permanent OBS links."
+                  : "The URL carries a copy of names, logos and scores. Copy a new URL after editing those."}
               </p>
             </li>
           </ol>
           <div className="guide-note">
-            This version stores settings in your browser. Shared admin accounts
-            and cross-device branding updates need a backend. The OBS link
-            currently supports rooms with public spectator access. Passwords
-            entered in the studio stay in memory and are not included in the
-            broadcast link.
+            {cloud
+              ? "Draft connections run in the cloud as spectators. Lobby passwords stay in server memory, and are never stored in the shared settings or OBS links. After a server restart, reconnect private drafts with their password."
+              : "This version stores settings in your browser. Shared control needs the hosted studio."}
           </div>
         </Modal>
       )}
-      {picker && (
-        <Modal
-          title={`Choose a hero · Team ${picker.teamNumber} ${picker.selectionType}`}
-          onClose={() => setPicker(null)}
-        >
-          <input
-            className="hero-search"
-            placeholder="Search heroes…"
-            aria-label="Search heroes"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <div className="hero-picker">
-            {heroes
-              .filter((h) =>
-                h.name.toLowerCase().includes(search.toLowerCase()),
-              )
-              .sort((a, b) => a.name.localeCompare(b.name))
-              .map((h) => {
-                const used = snapshot.steps.some(
-                  (s) => s.id !== picker.id && s.heroId === h.id,
-                );
-                return (
-                  <button
-                    key={h.id}
-                    onClick={() => selectHero(h.id)}
-                    disabled={used}
-                  >
-                    <img src={h.image} alt="" />
-                    <span>{h.name}</span>
-                    {used && <small>Already selected</small>}
-                  </button>
-                );
-              })}
-          </div>
-          <button className="button secondary" onClick={() => selectHero(null)}>
-            Clear this slot
-          </button>
-        </Modal>
-      )}
+      {picker &&
+        (!cloud || picker.tournamentId === shared.data.activeTournamentId) && (
+          <Modal
+            title={`Choose a hero · Team ${picker.teamNumber} ${picker.selectionType}`}
+            onClose={() => setPicker(null)}
+          >
+            <input
+              className="hero-search"
+              placeholder="Search heroes…"
+              aria-label="Search heroes"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div className="hero-picker">
+              {heroes
+                .filter((h) =>
+                  h.name.toLowerCase().includes(search.toLowerCase()),
+                )
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((h) => {
+                  const used = snapshot.steps.some(
+                    (s) => s.id !== picker.id && s.heroId === h.id,
+                  );
+                  return (
+                    <button
+                      key={h.id}
+                      onClick={() => selectHero(h.id)}
+                      disabled={used}
+                    >
+                      <img src={h.image} alt="" />
+                      <span>{h.name}</span>
+                      {used && <small>Already selected</small>}
+                    </button>
+                  );
+                })}
+            </div>
+            <button
+              className="button secondary"
+              onClick={() => selectHero(null)}
+            >
+              Clear this slot
+            </button>
+          </Modal>
+        )}
     </div>
   );
 }

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  /><title>Deadlock AR Observer</title>
+  <style>
+    body {
+      background: #181e19;
+      color: #eee5ce;
+      font: 16px system-ui;
+      margin: 0;
+    }
+    main {
+      max-width: 850px;
+      margin: 40px auto;
+      padding: 24px;
+    }
+    h1 {
+      font: 42px Georgia;
+    }
+    h2 {
+      font: 26px Georgia;
+    }
+    section {
+      border: 1px solid #596348;
+      background: #252d23;
+      padding: 24px;
+      margin: 20px 0;
+      border-radius: 12px;
+    }
+    label {
+      display: block;
+      margin: 14px 0;
+    }
+    input {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      background: #141b15;
+      border: 1px solid #596348;
+      border-radius: 5px;
+      color: inherit;
+      font: inherit;
+    }
+    input[type="checkbox"] {
+      width: auto;
+    }
+    button {
+      padding: 12px 18px;
+      background: #bdc99f;
+      color: #1a2419;
+      border: 0;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 4px;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: wait;
+    }
+    small,
+    p {
+      color: #b9c3ab;
+      line-height: 1.6;
+    }
+    code {
+      display: block;
+      padding: 18px;
+      background: #101810;
+      color: #e7d5a7;
+      font-size: 20px;
+      overflow-wrap: anywhere;
+    }
+    #error {
+      color: #ffc3a9;
+    }
+    pre {
+      white-space: pre-wrap;
+    }
+    a {
+      color: #c4d5a9;
+    }
+    .status {
+      font-size: 22px;
+      color: #d1e6ad;
+    }
+  </style>
+  <main>
+    <small>DEADLOCK AR / OBSERVER COMPANION</small>
+    <h1>From your game to the broadcast.</h1>
+    <p>
+      This app reads the local recording and sends statistics to your studio.
+      Keep it open on the observer’s PC.
+    </p>
+    <section id="pair">
+      <h2>1. Connect this computer</h2>
+      <p>
+        In the studio’s Live desk, create a pairing code. You only need to pair
+        this PC once.
+      </p>
+      <label
+        >Studio website<input
+          id="studio"
+          placeholder="https://your-studio.up.railway.app" /></label
+      ><label>Pairing code<input id="code" autocomplete="off" /></label
+      ><button id="pairButton">Connect computer</button>
+    </section>
+    <section>
+      <h2>2. Start a match</h2>
+      <label
+        >Deadlock recording folder<input
+          id="folder"
+          placeholder="D:\SteamLibrary\steamapps\common\Deadlock\game\citadel" /></label
+      ><label
+        >Game label<input
+          id="label"
+          placeholder="Grand final · Game 1" /></label
+      ><label
+        ><input id="fromStart" type="checkbox" checked /> I will start recording
+        before the match begins</label
+      ><button id="start">Prepare new recording</button
+      ><button id="resume">Resume previous recording</button>
+      <div id="command" hidden>
+        <p>In Deadlock’s console, enter this command:</p>
+        <code id="record"></code><button id="copy">Copy command</button>
+        <p>
+          Recording requires cheats enabled by the lobby host. Join the lobby’s
+          spectator slot before the host starts the game. After the match ends,
+          enter <b>stop</b> in Deadlock’s console.
+        </p>
+      </div>
+    </section>
+    <section>
+      <h2>3. Monitor</h2>
+      <div class="status" id="status">Starting…</div>
+      <p id="connection"></p>
+      <p id="error" role="alert"></p>
+      <pre id="data"></pre>
+      <button id="stop">Stop reader</button>
+      <p>
+        Stopping the reader does not stop Deadlock’s recording. A recording
+        ending is not treated as game over. Local journal: .dlar-observer/runs.
+        Demo console entries are a partial audit only; they cannot prove that
+        nobody used cheats.
+      </p>
+    </section>
+  </main>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let message = "";
+    async function action(route, value = {}) {
+      const r = await fetch(route, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(value),
+      });
+      const x = await r.json();
+      if (!r.ok) throw Error(x.error);
+      return x;
+    }
+    async function run(fn) {
+      document.querySelectorAll("button").forEach((b) => (b.disabled = true));
+      try {
+        message = "";
+        await fn();
+      } catch (e) {
+        message = e.message;
+      } finally {
+        document
+          .querySelectorAll("button")
+          .forEach((b) => (b.disabled = false));
+        $("error").textContent = message;
+      }
+    }
+    $("pairButton").onclick = () =>
+      run(() =>
+        action("/pair", { studio: $("studio").value, code: $("code").value }),
+      );
+    async function start(route) {
+      const x = await action(route, {
+        gameFolder: $("folder").value,
+        label: $("label").value,
+        fromStart: $("fromStart").checked,
+      });
+      $("record").textContent = x.command;
+      $("command").hidden = false;
+    }
+    $("start").onclick = () => run(() => start("/start"));
+    $("resume").onclick = () => run(() => start("/resume"));
+    $("stop").onclick = () => run(() => action("/stop"));
+    $("copy").onclick = () =>
+      navigator.clipboard.writeText($("record").textContent);
+    async function poll() {
+      try {
+        const s = await fetch("/state").then((r) => r.json());
+        if (!document.activeElement.matches("input")) {
+          if (!$("folder").value) $("folder").value = s.gameFolder;
+          if (!$("studio").value) $("studio").value = s.studio;
+        }
+        $("pair").hidden = s.paired;
+        $("status").textContent = s.status;
+        $("connection").textContent = s.paired
+          ? s.connected
+            ? "Studio connected"
+            : "Computer paired · waiting for match connection"
+          : "Pair this computer first";
+        $("error").textContent = message || s.error;
+        $("resume").hidden = !s.canResume;
+        $("data").textContent = s.data
+          ? `${s.data.players} players · game clock ${Math.floor(s.data.clock / 60)}:${String(Math.floor(s.data.clock % 60)).padStart(2, "0")} · ${s.data.bytes.toLocaleString()} bytes read\n` +
+            s.data.buffs
+              .map(
+                (p) =>
+                  `${p.name}: ${p.permanent ?? "?"} permanent buffs${p.bridge?.length ? " · " + p.bridge.map((b) => b.label).join(", ") : ""}`,
+              )
+              .join("\n")
+          : "";
+      } catch (e) {
+        $("error").textContent =
+          "Reader disconnected. Keep its console window open.";
+      }
+      setTimeout(poll, 1000);
+    }
+    poll();
+  </script>
+</html>
