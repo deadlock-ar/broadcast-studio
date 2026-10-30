@@ -262,7 +262,7 @@ Restarting restores saved screens, selected game and published result. Active fe
 
 Download **workspace and results backup** from OBS outputs after each event. It includes workspace configuration and captures, excluding passwords and login sessions. Retain independent copies alongside Railway volume backups. Legacy collector JSON captures placed in the data directory are imported once and preserved. A full backup restore currently requires server access.
 
-Do not use multiple replicas with this SQLite deployment. Horizontal scaling would need a shared database and collector coordination. Caster holding screens, player introduction banners and highlights remain future roadmap work.
+Do not use multiple replicas with this SQLite deployment. Horizontal scaling would need a shared database and collector coordination. Caster holding screens and highlights remain future roadmap work.
 
 ## Local development and rehearsal
 
