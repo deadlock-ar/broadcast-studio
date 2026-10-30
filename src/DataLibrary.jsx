@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useWorkspace, workspaceRequest } from "./workspace-context.js";
 import BackupControls from "./BackupControls.jsx";
+import RosterLibraryPanel from "./RosterLibraryPanel.jsx";
 export default function DataLibrary({ active }) {
   const shared = useWorkspace(),
     [data, setData] = useState({
@@ -67,7 +68,9 @@ export default function DataLibrary({ active }) {
           <h1>
             Data library<span>✦</span>
           </h1>
-          <p>Manage tournaments, saved games, drafts and backups.</p>
+          <p>
+            Manage tournaments, teams, players, saved games, drafts and backups.
+          </p>
         </div>
       </div>
       <div className="production-tabs">
@@ -75,6 +78,7 @@ export default function DataLibrary({ active }) {
           ["game", "Games"],
           ["draft", "Drafts"],
           ["tournament", "Tournaments"],
+          ["rosters", "Teams & players"],
           ["trash", "Trash"],
           ["backup", "Backups"],
         ].map(([id, label]) => (
@@ -96,7 +100,9 @@ export default function DataLibrary({ active }) {
           {notice}
         </p>
       )}
-      {kind === "backup" ? (
+      {kind === "rosters" ? (
+        <RosterLibraryPanel active={active} />
+      ) : kind === "backup" ? (
         <BackupControls allowDelete />
       ) : (
         <>

@@ -19,6 +19,7 @@ import "./FeedbackUpdates.css";
 import StatPanels from "./StatPanels";
 import ProductionStudio from "./ProductionStudio";
 import MatchOverlayControls from "./MatchOverlayControls.jsx";
+import BracketStudio from "./BracketStudio.jsx";
 import SharedOutputs from "./SharedOutputs.jsx";
 import Analytics from "./Analytics.jsx";
 import TournamentSwitcher from "./TournamentSwitcher.jsx";
@@ -574,9 +575,15 @@ export default function App() {
   const [toast, setToast] = useState("");
   const [activity, setActivity] = useState([]);
   const [tab, setTab] = useState(
-    ["stats", "live", "overlay", "outputs", "analytics", "data"].includes(
-      params.get("tab"),
-    )
+    [
+      "stats",
+      "live",
+      "overlay",
+      "bracket",
+      "outputs",
+      "analytics",
+      "data",
+    ].includes(params.get("tab"))
       ? params.get("tab")
       : "studio",
   );
@@ -929,6 +936,15 @@ export default function App() {
             <Icon name="studio" />
             Match overlay
           </button>
+          {cloud && (
+            <button
+              className={tab === "bracket" ? "selected" : ""}
+              onClick={() => setTab("bracket")}
+            >
+              <Icon name="studio" />
+              Bracket
+            </button>
+          )}
           <button
             className={tab === "settings" ? "selected" : ""}
             onClick={() => setTab("settings")}
@@ -1008,7 +1024,7 @@ export default function App() {
         <div
           inert={shared?.changingTournament || undefined}
           aria-busy={shared?.changingTournament || undefined}
-          className={`workspace-content${tab === "stats" ? " stats-tab" : tab === "live" ? " production-tab" : tab === "overlay" ? " overlay-tab" : tab === "outputs" ? " outputs-tab" : tab === "analytics" ? " analytics-tab" : tab === "data" ? " data-tab" : tab === "settings" ? " settings-only" : ""}`}
+          className={`workspace-content${tab === "stats" ? " stats-tab" : tab === "live" ? " production-tab" : tab === "overlay" ? " overlay-tab" : tab === "bracket" ? " bracket-tab" : tab === "outputs" ? " outputs-tab" : tab === "analytics" ? " analytics-tab" : tab === "data" ? " data-tab" : tab === "settings" ? " settings-only" : ""}`}
         >
           <StatPanels
             key={`stats:${shared?.data.activeTournamentId}`}
@@ -1027,6 +1043,12 @@ export default function App() {
             active={tab === "overlay"}
             onOpenDraft={() => setTab("studio")}
           />
+          {cloud && (
+            <BracketStudio
+              key={`bracket:${shared.data.activeTournamentId}`}
+              active={tab === "bracket"}
+            />
+          )}
           {cloud && (
             <Analytics
               key={`analytics:${shared.data.activeTournamentId}`}
