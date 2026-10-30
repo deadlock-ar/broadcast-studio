@@ -279,6 +279,7 @@ test("match overlay has a permanent public output, protected edits, and draft SS
     "series-mvp": "/obs/series-mvp",
     "match-overlay": "/obs/match-overlay",
     bracket: "/obs/bracket",
+    "player-banners": "/obs/player-banners",
   };
   assert.deepEqual(OUTPUTS, fixedOutputs);
   for (const [channel, url] of Object.entries(fixedOutputs)) {

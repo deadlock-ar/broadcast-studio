@@ -15,6 +15,7 @@ import { sessionId, cleanSettings, applyInterruption } from "./model.mjs";
 import { cleanReportSettings } from "../src/analytics.js";
 import { cleanMatchOverlay } from "../src/match-overlay.js";
 import { cleanBracket } from "../src/bracket.js";
+import { cleanPlayerBanners } from "../src/player-banners.js";
 import { cleanRosterSnapshot } from "./roster-library.mjs";
 
 export function exportBackup(store) {
@@ -84,6 +85,7 @@ export function prepareRestore(value, store) {
   w.reports = cleanReportSettings(source.reports);
   w.matchOverlay = cleanMatchOverlay(source.matchOverlay);
   w.bracket = cleanBracket(source.bracket);
+  w.playerBanners = cleanPlayerBanners(source.playerBanners);
   w.draft = {
     ...w.draft,
     mode: "manual",

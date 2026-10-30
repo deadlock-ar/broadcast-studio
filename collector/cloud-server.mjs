@@ -25,6 +25,8 @@ import { resolveMatchOverlay } from "../src/match-overlay.js";
 import { bracketOutput } from "../src/bracket.js";
 import { RosterLibrary } from "./roster-library.mjs";
 import { BracketService } from "./bracket-service.mjs";
+import { PlayerBannersService } from "./player-banners-service.mjs";
+import { playerBannersOutput } from "../src/player-banners.js";
 import {
   patchWorkspace,
   applyOperations,
@@ -89,6 +91,10 @@ export async function createBroadcastServer(options = {}) {
   await store.load();
   store.rosterLibrary = new RosterLibrary(store);
   const brackets = new BracketService(store);
+  const playerBanners = new PlayerBannersService(
+    store,
+    options.playerBannersOptions,
+  );
   store.archive = new Archive(store);
   let auth;
   try {
@@ -133,6 +139,8 @@ export async function createBroadcastServer(options = {}) {
     if (channel === "draft") return { config: w.config, draft: w.draft };
     if (channel === "bracket")
       return { bracket: bracketOutput(w.bracket, { title: w.config.event }) };
+    if (channel === "player-banners")
+      return { banners: playerBannersOutput(w) };
     if (channel === "match-overlay")
       return { overlay: resolveMatchOverlay(w, s) };
     if (channel === "live-events")
@@ -355,6 +363,7 @@ export async function createBroadcastServer(options = {}) {
             "/api/live-events/",
             "/api/roster-library/",
             "/api/bracket/",
+            "/api/player-banners/",
           ].some((prefix) => url.pathname.startsWith(prefix));
         if (scopedWrite && !req.headers["x-dlar-tournament"])
           throw Object.assign(
@@ -433,6 +442,16 @@ export async function createBroadcastServer(options = {}) {
         if (url.pathname.startsWith("/api/bracket/") && method === "POST") {
           const value = await tournamentBody(req);
           brackets.command(url.pathname.slice("/api/bracket/".length), value);
+          changed("workspace");
+          json(res, 200, store.workspace);
+          return;
+        }
+        if (
+          url.pathname === "/api/player-banners/refresh" &&
+          method === "POST"
+        ) {
+          const value = await tournamentBody(req);
+          await playerBanners.refresh(value);
           changed("workspace");
           json(res, 200, store.workspace);
           return;
@@ -1039,6 +1058,7 @@ export async function createBroadcastServer(options = {}) {
     feeds,
     publisher,
     brackets,
+    playerBanners,
     shutdown,
     origin,
     host: hosted ? "0.0.0.0" : "127.0.0.1",
