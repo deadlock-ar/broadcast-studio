@@ -92,6 +92,22 @@ test("SQLite adds defaults to an older workspace and retains new match overlay e
       before: migrated.workspace.matchOverlay.font,
       value: "arial",
     },
+    { path: ["matchOverlay", "backgroundOpacity"], before: 100, value: 85 },
+    {
+      path: ["matchOverlay", "playerNames", "enabled"],
+      before: false,
+      value: true,
+    },
+    {
+      path: ["matchOverlay", "playerNames", "overrides", "7"],
+      before: null,
+      value: "Edited player",
+    },
+    {
+      path: ["matchOverlay", "playerNames", "manual", 0, 0],
+      before: "",
+      value: "Manual player",
+    },
   ]);
   migrated.applyPatch(randomUUID(), next);
   assert.equal(migrated.workspace.matchOverlay.visible, false);
@@ -100,6 +116,16 @@ test("SQLite adds defaults to an older workspace and retains new match overlay e
   await restarted.load();
   assert.equal(restarted.workspace.matchOverlay.visible, false);
   assert.equal(restarted.workspace.matchOverlay.font, "arial");
+  assert.equal(restarted.workspace.matchOverlay.backgroundOpacity, 85);
+  assert.equal(restarted.workspace.matchOverlay.playerNames.enabled, true);
+  assert.equal(
+    restarted.workspace.matchOverlay.playerNames.overrides["7"],
+    "Edited player",
+  );
+  assert.equal(
+    restarted.workspace.matchOverlay.playerNames.manual[0][0],
+    "Manual player",
+  );
   restarted.close();
 });
 
@@ -109,6 +135,9 @@ test("tournaments isolate overlay settings and older tournament/trash snapshots 
   const first = store.workspace.activeTournamentId;
   store.workspace.matchOverlay.visible = false;
   store.workspace.matchOverlay.font = "arial";
+  store.workspace.matchOverlay.backgroundOpacity = 85;
+  store.workspace.matchOverlay.playerNames.enabled = true;
+  store.workspace.matchOverlay.playerNames.overrides["1"] = "First cup name";
   store.saveWorkspace();
   const second = store.tournaments.create("Separate cup");
   assert.deepEqual(store.workspace.matchOverlay, cleanMatchOverlay());
@@ -117,8 +146,15 @@ test("tournaments isolate overlay settings and older tournament/trash snapshots 
   store.tournaments.select(first);
   assert.equal(store.workspace.matchOverlay.visible, false);
   assert.equal(store.workspace.matchOverlay.font, "arial");
+  assert.equal(store.workspace.matchOverlay.backgroundOpacity, 85);
+  assert.equal(
+    store.workspace.matchOverlay.playerNames.overrides["1"],
+    "First cup name",
+  );
   store.tournaments.select(second.id);
   assert.equal(store.workspace.matchOverlay.font, "georgia");
+  assert.equal(store.workspace.matchOverlay.backgroundOpacity, 100);
+  assert.deepEqual(store.workspace.matchOverlay.playerNames.overrides, {});
 
   const older = store.tournaments.records.get(first);
   delete older.state.matchOverlay;
@@ -348,6 +384,7 @@ test("match overlay has a permanent public output, protected edits, and draft SS
       slot: index,
       team: index < 6 ? 0 : 1,
       heroId: 1,
+      name: `Game player ${index + 1}`,
     })),
     duration: 120,
     endObserved: true,
@@ -378,4 +415,96 @@ test("match overlay has a permanent public output, protected edits, and draft SS
     false,
     false,
   ]);
+
+  const select = {
+    id: randomUUID(),
+    operations: [
+      { path: ["deadem", "id"], before: "", value: result.id },
+      {
+        path: ["matchOverlay", "playerNames", "enabled"],
+        before: false,
+        value: true,
+      },
+      {
+        path: ["matchOverlay", "playerNames", "overrides", "1"],
+        before: null,
+        value: "Overlay player one",
+      },
+      { path: ["matchOverlay", "backgroundOpacity"], before: 100, value: 88 },
+    ],
+  };
+  assert.equal((await post("/api/workspace", select, cookie)).status, 200);
+  let names = (await nextEvent()).overlay.playerNames;
+  assert.equal(names.source, "live");
+  assert.equal(names.teams[0][0].name, "Overlay player one");
+  assert.equal(names.teams[0][0].sourceName, "Game player 1");
+  assert.equal(
+    (
+      await post(
+        "/api/collector/settings?match=123",
+        {
+          hudOrder: ["2", "1", "3", "4", "5", "6"],
+          names: { 2: "Live desk player two" },
+        },
+        cookie,
+      )
+    ).status,
+    200,
+  );
+  names = (await nextEvent()).overlay.playerNames;
+  assert.equal(names.teams[0][0].id, "2");
+  assert.equal(names.teams[0][0].name, "Live desk player two");
+  assert.equal(names.teams[0][1].id, "1");
+  assert.equal(names.teams[0][1].name, "Overlay player one");
+  assert.equal(result.settings.names["1"], undefined);
+
+  // The real collector callback must fan out roster changes as well as settings.
+  result.result.match.players[2].name = "Newest captured name";
+  app.collector.changed();
+  names = (await nextEvent()).overlay.playerNames;
+  assert.equal(names.teams[0][2].name, "Newest captured name");
+
+  // An API update is only used after the selected collector is explicitly cleared.
+  app.store.workspace.apiStats.result.match = {
+    players: [{ id: "77", team: 0, slot: 0, heroId: 3, name: "API player" }],
+  };
+  app.feeds.update("apiStats", false);
+  assert.equal((await nextEvent()).overlay.playerNames.source, "live");
+  assert.equal(
+    (
+      await post(
+        "/api/workspace",
+        {
+          id: randomUUID(),
+          operations: [{ path: ["deadem", "id"], before: "123", value: "" }],
+        },
+        cookie,
+      )
+    ).status,
+    200,
+  );
+  names = (await nextEvent()).overlay.playerNames;
+  assert.equal(names.source, "api");
+  assert.equal(names.teams[0][0].name, "API player");
+  app.store.workspace.apiStats.result.match = null;
+  app.feeds.update("apiStats", false);
+  names = (await nextEvent()).overlay.playerNames;
+  assert.equal(names.source, "manual");
+  assert.equal(names.teams[0][0].name, "");
+
+  // A selected recording from another tournament must never be exposed publicly.
+  const other = emptySession("456");
+  other.tournamentId = "different-tournament";
+  other.match = {
+    players: [
+      { id: "99", team: 0, slot: 0, heroId: 1, name: "Private other cup" },
+    ],
+  };
+  app.store.sessions.set(other.id, other);
+  app.store.workspace.deadem.id = other.id;
+  const isolated = await (
+    await fetch(base + "/api/broadcast?channel=match-overlay")
+  ).json();
+  assert.equal(isolated.overlay.playerNames.source, "manual");
+  assert.equal(JSON.stringify(isolated).includes("Private other cup"), false);
 });

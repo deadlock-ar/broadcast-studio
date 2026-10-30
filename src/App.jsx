@@ -1011,17 +1011,17 @@ export default function App() {
           className={`workspace-content${tab === "stats" ? " stats-tab" : tab === "live" ? " production-tab" : tab === "overlay" ? " overlay-tab" : tab === "outputs" ? " outputs-tab" : tab === "analytics" ? " analytics-tab" : tab === "data" ? " data-tab" : tab === "settings" ? " settings-only" : ""}`}
         >
           <StatPanels
-            key={shared?.data.activeTournamentId}
+            key={`stats:${shared?.data.activeTournamentId}`}
             config={config}
             active={tab === "stats"}
           />
           <ProductionStudio
-            key={shared?.data.activeTournamentId}
+            key={`live:${shared?.data.activeTournamentId}`}
             config={config}
             active={tab === "live"}
           />
           <MatchOverlayControls
-            key={shared?.data.activeTournamentId}
+            key={`overlay:${shared?.data.activeTournamentId}`}
             config={config}
             snapshot={snapshot}
             active={tab === "overlay"}
@@ -1029,14 +1029,14 @@ export default function App() {
           />
           {cloud && (
             <Analytics
-              key={shared.data.activeTournamentId}
+              key={`analytics:${shared.data.activeTournamentId}`}
               config={config}
               active={tab === "analytics"}
             />
           )}
           {cloud && (
             <DataLibrary
-              key={shared.data.activeTournamentId}
+              key={`data:${shared.data.activeTournamentId}`}
               active={tab === "data"}
             />
           )}

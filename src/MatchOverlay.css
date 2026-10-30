@@ -110,3 +110,53 @@
 .match-banner-scene[hidden] {
   display: none;
 }
+
+.match-banner-svg .banner-art,
+.match-banner-svg .ban-plate {
+  opacity: var(--match-background-opacity, 1);
+}
+
+.match-player-names {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.match-player-names[hidden] {
+  display: none;
+}
+
+.match-player-name {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  padding: 0 5px;
+  box-sizing: border-box;
+  color: #faf8ee;
+  font:
+    600 14px/1.15 Arial,
+    sans-serif;
+  text-shadow: 0 1px 2px #000b;
+}
+
+.match-player-name::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 3px;
+  border-top: 2px solid var(--name-accent);
+  background: #172018;
+  box-shadow: 0 1px 3px #0005;
+  opacity: var(--match-background-opacity, 1);
+}
+
+.match-player-name span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}

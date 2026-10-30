@@ -38,7 +38,12 @@ export default function SharedOutputs() {
             <article className="production-card cloud-output-row" key={key}>
               <div>
                 <h2>{labels[key]}</h2>
-                {key === "match-overlay" && <p>1920 × 102 · transparent</p>}
+                {key === "match-overlay" && (
+                  <p>
+                    1920 × 102 by default · transparent · see Match overlay for
+                    custom name-box height
+                  </p>
+                )}
                 <input
                   aria-label={`${labels[key]} permanent OBS URL`}
                   value={url}
@@ -73,9 +78,10 @@ export default function SharedOutputs() {
       {notice && <p role="status">{notice}</p>}
       <p>
         Add the match overlay as a 1920 × 102 OBS Browser Source; use 1920 ×
-        1080 for the other sources. Enable “Control audio via OBS” for the
-        draft. The scoreboard follows the latest published result; the other
-        outputs follow their current dashboard settings.
+        1080 if you move its player-name row lower, and for the other sources.
+        Enable “Control audio via OBS” for the draft. The scoreboard follows the
+        latest published result; the other outputs follow their current
+        dashboard settings.
       </p>
       <p>
         {shared?.connected

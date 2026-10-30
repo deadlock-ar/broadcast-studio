@@ -126,7 +126,8 @@ export async function createBroadcastServer(options = {}) {
         report: reportOutput(store, channel, reportHeroes, reportItems),
       };
     if (channel === "draft") return { config: w.config, draft: w.draft };
-    if (channel === "match-overlay") return { overlay: resolveMatchOverlay(w) };
+    if (channel === "match-overlay")
+      return { overlay: resolveMatchOverlay(w, s) };
     if (channel === "live-events")
       return { config: w.config, apiStats: w.apiStats };
     if (channel === "scoreboard")
@@ -192,11 +193,12 @@ export async function createBroadcastServer(options = {}) {
           ["draft", "hero-priority", "match-overlay"].includes(c.channel)) ||
         (section === "reports" &&
           ["hero-priority", "top-items", "series-mvp"].includes(c.channel)) ||
-        (section === "apiStats" && c.channel === "live-events") ||
+        (section === "apiStats" &&
+          ["live-events", "match-overlay"].includes(c.channel)) ||
         (section === "scoreboard" &&
           ["scoreboard", "match-overlay"].includes(c.channel)) ||
         (section === "collector" &&
-          ["deadem", "ultimates"].includes(c.channel));
+          ["deadem", "ultimates", "match-overlay"].includes(c.channel));
       if (relevant) send(c, output(c.channel));
     }
   }
