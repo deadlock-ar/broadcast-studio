@@ -89,6 +89,11 @@ export function prepareRestore(value, store) {
     mode: "manual",
     snapshot: cleanSnapshot(source.draft?.snapshot || w.draft.snapshot),
     archiveId: source.draft?.archiveId || null,
+    bracketMatchId: w.bracket.matches.some(
+      (match) => match.id === source.draft?.bracketMatchId,
+    )
+      ? source.draft.bracketMatchId
+      : "",
   };
   for (const k of ["deadem", "apiStats"]) {
     w[k].panel = cleanPanel(source[k]?.panel);

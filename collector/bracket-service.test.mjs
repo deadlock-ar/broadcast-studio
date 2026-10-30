@@ -8,6 +8,7 @@ import { randomUUID } from "node:crypto";
 import { createBroadcastServer } from "./cloud-server.mjs";
 import { emptySession, applyFrame } from "./model.mjs";
 import { prepareTournamentBracket } from "./bracket-service.mjs";
+import { blankDraft } from "../src/workspace-model.js";
 
 const entrants = () =>
   ["Alpha", "Beta", "Gamma", "Delta"].map((name, index) => ({
@@ -66,7 +67,7 @@ async function fixture(t) {
     value = {},
     expectedRevision = app.store.workspace.bracket.revision,
   ) => post(`/api/bracket/${action}`, { ...value, expectedRevision }, cookie);
-  const setup = async (format = "BO3") => {
+  const setup = async (format = "BO3", options = {}) => {
     const response = await post(
       "/api/tournaments/create",
       {
@@ -76,6 +77,7 @@ async function fixture(t) {
         seeding: "manual",
         seriesFormat: format,
         saveToLibrary: true,
+        ...options,
       },
       cookie,
     );
@@ -397,4 +399,219 @@ test("a tournament switch during a partial bracket request cannot edit the newly
   assert.equal(result.status, 409);
   assert.equal(app.store.workspace.activeTournamentId, second);
   assert.equal(app.store.workspace.bracket.visible, true);
+});
+
+test("round-format settings preserve the draw and completed earlier rounds while rejecting changes to played rounds", async (t) => {
+  const { app, command, setup } = await fixture(t);
+  const field = entrants();
+  field.push({ id: randomUUID(), name: "Epsilon", players: [] });
+  await setup("BO1", { entrants: field, seeding: "seeded" });
+  const before = structuredClone(app.store.workspace.bracket);
+  assert.equal(before.matches.filter((match) => match.required).length, 4);
+  assert.equal(
+    (
+      await command("formats", {
+        roundFormats: { r1: "BO1", r2: "BO1", r3: "BO3" },
+      })
+    ).status,
+    200,
+  );
+  assert.deepEqual(app.store.workspace.bracket.slots, before.slots);
+  assert.deepEqual(app.store.workspace.bracket.entrants, before.entrants);
+  const opening = app.store.workspace.bracket.matches.find(
+    (match) => match.required && match.round === 0,
+  );
+  assert.equal(
+    (
+      await command("result", {
+        matchId: opening.id,
+        winnerId: opening.teamIds[0],
+      })
+    ).status,
+    200,
+  );
+  const completed = structuredClone(app.store.workspace.bracket);
+  assert.equal(
+    (
+      await command("formats", {
+        roundFormats: { r1: "BO1", r2: "BO1", r3: "BO5" },
+      })
+    ).status,
+    200,
+  );
+  assert.deepEqual(app.store.workspace.bracket.slots, before.slots);
+  assert.deepEqual(
+    app.store.workspace.bracket.matches.filter((match) => match.round < 2),
+    completed.matches.filter((match) => match.round < 2),
+  );
+  assert.equal(app.store.workspace.bracket.matches.at(-1).seriesFormat, "BO5");
+  const protectedState = structuredClone(app.store.workspace);
+  const rejected = await command("formats", {
+    roundFormats: { r1: "BO3", r2: "BO1", r3: "BO5" },
+  });
+  assert.equal(rejected.status, 400);
+  assert.match((await rejected.json()).error, /already has results/);
+  assert.deepEqual(app.store.workspace, protectedState);
+  assert.equal(
+    (await command("formats", { roundFormats: { r3: "BO99" } })).status,
+    400,
+  );
+  assert.deepEqual(app.store.workspace, protectedState);
+});
+
+test("BO1 early rounds and a BO3 final use the right prepared format and confirmed-game threshold", async (t) => {
+  const { app, base, post, cookie, command, setup, addGame } = await fixture(t);
+  await setup("BO1", { finalFormat: "BO3" });
+  const state = app.store.workspace.bracket;
+  assert.equal(state.matches[0].seriesFormat, "BO1");
+  assert.equal(state.matches.at(-1).seriesFormat, "BO3");
+  assert.equal((await command("prepare", { matchId: "r1-m1" })).status, 200);
+  assert.equal(app.store.workspace.config.format, "BO1");
+  assert.equal(app.store.workspace.config.round, "Semifinals");
+  await addGame("310");
+  assert.equal(
+    (
+      await post(
+        "/api/collector/publish?match=310",
+        {
+          ...structuredClone(app.store.workspace.config),
+          winner: 0,
+        },
+        cookie,
+      )
+    ).status,
+    200,
+  );
+  assert.equal(app.store.workspace.bracket.matches[0].status, "complete");
+  assert.deepEqual(app.store.workspace.bracket.matches[0].scores, [1, 0]);
+  assert.equal(
+    (
+      await command("result", {
+        matchId: "r1-m2",
+        winnerId: state.entrants[2].id,
+      })
+    ).status,
+    200,
+  );
+  assert.deepEqual(app.store.workspace.bracket.matches[1].scores, [1, 0]);
+  assert.equal((await command("prepare", { matchId: "r2-m1" })).status, 200);
+  assert.equal(app.store.workspace.config.format, "BO3");
+  assert.equal(app.store.workspace.config.round, "Final");
+  for (const id of ["311", "312"]) {
+    await addGame(id);
+    assert.equal(
+      (
+        await post(
+          `/api/collector/publish?match=${id}`,
+          {
+            ...structuredClone(app.store.workspace.config),
+            winner: 0,
+          },
+          cookie,
+        )
+      ).status,
+      200,
+    );
+    const final = app.store.workspace.bracket.matches.at(-1);
+    assert.equal(final.status, id === "311" ? "ready" : "complete");
+    assert.equal(final.scores[0], id === "311" ? 1 : 2);
+    assert.equal(app.store.workspace.config.format, "BO3");
+  }
+  const output = await (
+    await fetch(base + "/api/broadcast?channel=bracket")
+  ).json();
+  assert.equal(output.bracket.champion.id, state.entrants[0].id);
+  assert.deepEqual(
+    output.bracket.rounds.map((round) => round.seriesFormat),
+    ["BO1", "BO3"],
+  );
+});
+
+test("starting a selected bracket draft archives the previous teams and selections and creates a clean board", async (t) => {
+  const { app, command, setup } = await fixture(t);
+  await setup("BO1", { finalFormat: "BO3" });
+  const workspace = app.store.workspace;
+  workspace.config.teams[0].name = "Previous left team";
+  workspace.config.teams[1].name = "Previous right team";
+  workspace.config.round = "Previous round";
+  workspace.config.game = 3;
+  Object.assign(workspace.draft, {
+    mode: "manual",
+    code: "PREVIOUS",
+    archiveId: null,
+    snapshot: blankDraft(2),
+    bracketMatchId: "previous-match",
+  });
+  workspace.draft.snapshot.steps[0].heroId = 1;
+  workspace.draft.snapshot.steps.find(
+    (step) => step.selectionType === "pick",
+  ).heroId = 6;
+  const oldDraft = structuredClone(workspace.draft.snapshot);
+  app.store.saveWorkspace();
+  assert.equal(app.store.archive.list().length, 0);
+  assert.equal(
+    (await command("prepare", { matchId: "r1-m1", startDraft: true })).status,
+    200,
+  );
+  const archived = app.store.archive.list();
+  assert.equal(archived.length, 1);
+  assert.deepEqual(archived[0].snapshot, oldDraft);
+  assert.equal(archived[0].code, "PREVIOUS");
+  assert.deepEqual(
+    archived[0].config.teams.map((team) => team.name),
+    ["Previous left team", "Previous right team"],
+  );
+  assert.equal(workspace.draft.mode, "manual");
+  assert.equal(workspace.draft.code, "");
+  assert.equal(workspace.draft.archiveId, null);
+  assert.equal(workspace.draft.bracketMatchId, "r1-m1");
+  assert.equal(workspace.bracket.activeMatchId, "r1-m1");
+  assert.equal(workspace.draft.snapshot.status, "WAITING");
+  assert.ok(
+    workspace.draft.snapshot.steps.every((step) => step.heroId === null),
+  );
+  assert.equal(
+    workspace.draft.snapshot.steps.filter(
+      (step) => step.selectionType === "ban",
+    ).length,
+    4,
+  );
+  assert.deepEqual(
+    workspace.config.teams.map((team) => team.name),
+    ["Alpha", "Beta"],
+  );
+  assert.equal(workspace.config.format, "BO1");
+});
+
+test("starting a bracket draft rejects a live draft or active observer without replacing the board", async (t) => {
+  const { app, command, setup } = await fixture(t);
+  await setup("BO1");
+  const draft = app.store.workspace.draft;
+  draft.mode = "live";
+  draft.code = "LIVE-ROOM";
+  draft.snapshot.steps[0].heroId = 1;
+  app.store.saveWorkspace();
+  const before = structuredClone(app.store.workspace);
+  const live = await command("prepare", { matchId: "r1-m1", startDraft: true });
+  assert.equal(live.status, 400);
+  assert.match((await live.json()).error, /Disconnect.*live draft/);
+  assert.deepEqual(app.store.workspace, before);
+  assert.deepEqual(app.store.archive.list(), []);
+  draft.mode = "manual";
+  const active = emptySession("399");
+  active.tournamentId = app.store.workspace.activeTournamentId;
+  active.publisher = { lease: "active-test-lease", lastSeen: Date.now() };
+  app.store.sessions.set(active.id, active);
+  const beforeCollection = structuredClone(app.store.workspace);
+  const collecting = await command("prepare", {
+    matchId: "r1-m1",
+    startDraft: true,
+  });
+  assert.equal(collecting.status, 409);
+  assert.match(
+    (await collecting.json()).error,
+    /Stop.*recording|Stop.*collection/,
+  );
+  assert.deepEqual(app.store.workspace, beforeCollection);
+  assert.deepEqual(app.store.archive.list(), []);
 });

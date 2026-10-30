@@ -39,6 +39,7 @@ export class Archive {
       ...previous,
       id,
       source: d.mode,
+      bracketMatchId: d.bracketMatchId || "",
       code: d.code,
       rule:
         d.snapshot.steps.filter((s) => s.selectionType === "ban").length === 6
