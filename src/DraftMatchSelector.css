@@ -1,0 +1,58 @@
+.draft-match-selector {
+  border: 1px solid #c7cfb6;
+  border-radius: 6px;
+  padding: 22px;
+  margin-bottom: 24px;
+  background: #e9ecdf;
+}
+.draft-match-selector h2 {
+  font:
+    25px/1.25 Georgia,
+    serif;
+  color: #303a29;
+  margin-bottom: 8px;
+}
+.draft-match-selector p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #69725c;
+}
+.draft-match-actions {
+  display: flex;
+  gap: 16px;
+  align-items: end;
+  margin-top: 17px;
+}
+.draft-match-actions label {
+  display: grid;
+  gap: 7px;
+  flex: 1;
+  font-size: 12px;
+  color: #52613f;
+  min-width: 0;
+}
+.draft-match-actions select {
+  width: 100%;
+  padding: 12px;
+  background: #fbfaf4;
+  border: 1px solid #c0c8ae;
+  border-radius: 4px;
+  color: #303a29;
+}
+.draft-match-selector a {
+  text-decoration: underline;
+}
+.draft-match-confirm {
+  margin-top: 18px;
+  border-top: 1px solid #c5cdb6;
+  padding-top: 16px;
+}
+.draft-match-confirm .button {
+  margin: 12px 12px 0 0;
+}
+@media (max-width: 900px) {
+  .draft-match-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

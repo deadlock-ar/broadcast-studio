@@ -20,6 +20,7 @@ import StatPanels from "./StatPanels";
 import ProductionStudio from "./ProductionStudio";
 import MatchOverlayControls from "./MatchOverlayControls.jsx";
 import BracketStudio from "./BracketStudio.jsx";
+import DraftMatchSelector from "./DraftMatchSelector.jsx";
 import SharedOutputs from "./SharedOutputs.jsx";
 import Analytics from "./Analytics.jsx";
 import TournamentSwitcher from "./TournamentSwitcher.jsx";
@@ -1086,6 +1087,16 @@ export default function App() {
               Open broadcast
             </a>
           </div>
+          {cloud && tab === "studio" && (
+            <DraftMatchSelector
+              key={`draft-match:${shared.data.activeTournamentId}`}
+              onStarted={() => {
+                setLink("");
+                setPassword("");
+                setError("");
+              }}
+            />
+          )}
           <div className="main-grid">
             <section className="preview-panel">
               <div className="panel-toolbar">

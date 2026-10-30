@@ -6,8 +6,11 @@ import {
   setBracketResult,
   recordBracketGame,
   bracketMatch,
+  bracketOutput,
+  setBracketFormats,
 } from "../src/bracket.js";
 import { normalizeSteamId } from "./roster-library.mjs";
+import { blankDraft } from "../src/workspace-model.js";
 
 const uuid = (value) =>
   typeof value === "string" &&
@@ -84,6 +87,17 @@ export function prepareTournamentBracket(options = {}, library) {
     seeding: options.seeding || "seeded",
     seriesFormat: options.seriesFormat || "BO3",
   };
+  if (options.finalFormat !== undefined) {
+    if (!["BO1", "BO3", "BO5", "BO7"].includes(options.finalFormat))
+      throw Error("Choose BO1, BO3, BO5 or BO7 for the final.");
+    if (entrants.length >= 2) {
+      const finalRound = `r${Math.ceil(Math.log2(entrants.length))}`;
+      settings.roundFormats = {
+        ...settings.roundFormats,
+        [finalRound]: options.finalFormat,
+      };
+    }
+  }
   const bracket =
     options.generate && entrants.length >= 2
       ? generateBracket(entrants, {
@@ -146,6 +160,7 @@ export class BracketService {
       team.score = match.scores[sides[index]];
     });
     config.game = match.scores[0] + match.scores[1] + 1;
+    config.format = match.seriesFormat;
   }
 
   commit(next, changeConfig, persist) {
@@ -166,6 +181,7 @@ export class BracketService {
       } catch (error) {
         workspace.bracket = previous.bracket;
         Object.assign(workspace.config, previous.config);
+        Object.assign(workspace.draft, previous.draft);
         workspace.revision = previous.revision;
         if (record) record.state = previousRecord;
         throw error;
@@ -183,6 +199,10 @@ export class BracketService {
         if (typeof value[key] === "boolean") next[key] = value[key];
       return this.commit(next);
     }
+    if (action === "formats") {
+      const next = setBracketFormats(current, value.roundFormats);
+      return this.commit(next, (config) => this.mirrorScores(next, config));
+    }
     if (action === "entrants" || action === "generate") {
       if (played(current) && value.resetConfirmed !== true)
         fail(
@@ -195,6 +215,9 @@ export class BracketService {
             ...current,
             ...value,
             entrants: action === "generate" ? current.entrants : value.entrants,
+            roundFormats:
+              value.roundFormats ??
+              (value.finalFormat !== undefined ? {} : current.roundFormats),
             generate: action === "generate" || value.generate === true,
             matches: [],
             slots: [],
@@ -204,7 +227,9 @@ export class BracketService {
           },
           store.rosterLibrary,
         );
-        return this.commit(next);
+        return this.commit(next, () => {
+          store.workspace.draft.bracketMatchId = "";
+        });
       });
     }
     if (action === "result" || action === "clear-result") {
@@ -220,6 +245,7 @@ export class BracketService {
       const match = bracketMatch(current, value.matchId);
       if (
         !match ||
+        !match.required ||
         match.status !== "ready" ||
         match.teamIds.some((teamId) => !teamId)
       )
@@ -228,6 +254,12 @@ export class BracketService {
         current.entrants.find((team) => team.id === teamId),
       );
       const next = { ...current, activeMatchId: match.id, lastSync: null };
+      const draft = store.workspace.draft;
+      if (value.startDraft === true && draft.mode === "live")
+        throw Error(
+          "Disconnect the current live draft before starting another match.",
+        );
+      if (value.startDraft === true) store.archive?.capture();
       return this.commit(next, (config) => {
         config.teams = teams.map((team, index) => ({
           ...config.teams[index],
@@ -236,9 +268,25 @@ export class BracketService {
           logo: team.logo,
           score: match.scores[index],
         }));
-        config.format = current.seriesFormat;
+        config.format = match.seriesFormat;
         config.useSourceNames = false;
         config.game = match.scores[0] + match.scores[1] + 1;
+        config.round =
+          bracketOutput(current).rounds[match.round]?.name || config.round;
+        if (value.startDraft === true) {
+          Object.assign(draft, {
+            mode: "manual",
+            code: "",
+            archiveId: null,
+            bracketMatchId: match.id,
+            snapshot: blankDraft(draft.snapshot?.banCount || 3),
+            status: {
+              state: "idle",
+              message:
+                "Bracket match selected. Connect its Statlocker room or draft manually.",
+            },
+          });
+        }
       });
     }
     throw Error("Unknown bracket command.");

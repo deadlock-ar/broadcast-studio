@@ -12,7 +12,8 @@ export default function TournamentSwitcher() {
     [saveToLibrary, setSaveToLibrary] = useState(false),
     [generate, setGenerate] = useState(true),
     [seeding, setSeeding] = useState("seeded"),
-    [seriesFormat, setSeriesFormat] = useState("BO3");
+    [seriesFormat, setSeriesFormat] = useState("BO1"),
+    [finalFormat, setFinalFormat] = useState("BO3");
   const form = useRef(null);
   useEffect(() => {
     if (!open) return;
@@ -75,6 +76,7 @@ export default function TournamentSwitcher() {
               generate: generate && entrants.length >= 2,
               seeding,
               seriesFormat,
+              finalFormat,
             });
           }}
         >
@@ -113,11 +115,23 @@ export default function TournamentSwitcher() {
             </label>
             <div className="tournament-create-options">
               <label>
-                Match format
+                Early-round format
                 <select
                   aria-label="New tournament match format"
                   value={seriesFormat}
                   onChange={(event) => setSeriesFormat(event.target.value)}
+                >
+                  {["BO1", "BO3", "BO5", "BO7"].map((value) => (
+                    <option key={value}>{value}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Final format
+                <select
+                  aria-label="New tournament final format"
+                  value={finalFormat}
+                  onChange={(event) => setFinalFormat(event.target.value)}
                 >
                   {["BO1", "BO3", "BO5", "BO7"].map((value) => (
                     <option key={value}>{value}</option>

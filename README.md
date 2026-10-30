@@ -128,6 +128,23 @@ entries (1–2, 3–4, and so on). Byes advance automatically. Series formats BO
 BO3, BO5 and BO7 are supported. Replacing a draw or changing its entrants after
 results requires an explicit reset in the interface.
 
+New draws offer separate early-round and final formats, defaulting to BO1 and
+BO3. In an existing bracket, **Round formats** changes each unplayed round
+without redrawing or changing its teams. The **BO1 rounds, BO3 final** preset
+sets the common arrangement in one step. A round with recorded results keeps
+its format until those results are cleared. Each match's score limits,
+automatic advancement and prepared broadcast format follow its round.
+
+The bracket display shows real fixtures only. Teams that advance automatically
+start in their first actual match, with no team-versus-BYE cards. Internal
+advancement and saved match identities stay intact for existing tournaments.
+
+The **Draft studio** page also has a bracket-match selector. Choose a ready
+match and **Start draft for selected match** to load its names, round and
+format into a fresh manual board. An existing draft is saved first. Then
+connect that match's Statlocker room, or make picks and bans manually. The
+current live draft must be disconnected before starting a different match.
+
 Use **Use this match on broadcast** before the series to load its team names,
 logos, format and score into the broadcast controls. Confirm and publish each
 completed game from **Live desk**. The bracket counts that game once and

@@ -169,12 +169,13 @@ test("bracket results, display settings and the independent roster library survi
   const { app, start, close } = await fixture(t);
   const cup = app.store.tournaments.create({
     name: "Persistent cup",
+    finalFormat: "BO5",
     entrants: entrants(),
     generate: true,
     seeding: "manual",
     saveToLibrary: true,
   });
-  command(app, "prepare", { matchId: "r1-m1" });
+  command(app, "prepare", { matchId: "r1-m1", startDraft: true });
   command(app, "result", { matchId: "r1-m1", scores: [2, 1] });
   command(app, "settings", {
     transparent: true,
@@ -188,6 +189,11 @@ test("bracket results, display settings and the independent roster library survi
   const restarted = await start();
   assert.equal(restarted.store.workspace.activeTournamentId, cup.id);
   assert.deepEqual(restarted.store.workspace.bracket, before);
+  assert.equal(
+    restarted.store.workspace.bracket.matches.at(-1).seriesFormat,
+    "BO5",
+  );
+  assert.equal(restarted.store.workspace.draft.bracketMatchId, "r1-m1");
   assert.deepEqual(restarted.store.workspace.config, config);
   assert.deepEqual(restarted.store.rosterLibrary.snapshot(), library);
   assert.equal(
@@ -221,10 +227,15 @@ test("backups preserve active, inactive and deleted brackets together with reusa
     generate: true,
   });
   command(app, "settings", { visible: false });
+  const ready = app.store.workspace.bracket.matches.find(
+    (match) => match.required && match.status === "ready",
+  );
+  command(app, "prepare", { matchId: ready.id, startDraft: true });
   app.store.tournaments.trash("tournament", [first.id]);
   const backup = exportBackup(app.store);
   const prepared = prepareRestore(backup, app.store);
   assert.deepEqual(prepared.workspace.bracket, app.store.workspace.bracket);
+  assert.equal(prepared.workspace.draft.bracketMatchId, ready.id);
   assert.deepEqual(
     prepared.tournaments.find((record) => record.id === second.id).state
       .bracket,
@@ -241,6 +252,7 @@ test("backups preserve active, inactive and deleted brackets together with reusa
   const existingLibrary = app.store.rosterLibrary.snapshot();
   const legacy = prepareRestore(backup, app.store);
   assert.deepEqual(legacy.workspace.bracket, cleanBracket());
+  assert.equal(legacy.workspace.draft.bracketMatchId, "");
   assert.ok(
     legacy.tournaments.every(
       (record) =>
