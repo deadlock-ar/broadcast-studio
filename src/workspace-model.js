@@ -4,11 +4,13 @@ import { sessionId } from "../collector/model.mjs";
 import { cleanReportSettings } from "./analytics.js";
 import { cleanMatchOverlay } from "./match-overlay.js";
 import { cleanBracket } from "./bracket.js";
+import { cleanPlayerBanners } from "./player-banners.js";
 
 export const OUTPUTS = {
   draft: "/obs/draft",
   "match-overlay": "/obs/match-overlay",
   bracket: "/obs/bracket",
+  "player-banners": "/obs/player-banners",
   "live-events": "/obs/live-events",
   deadem: "/obs/deadem",
   scoreboard: "/obs/scoreboard",
@@ -62,6 +64,7 @@ export function initialWorkspace() {
     scoreboard: { matchId: "", visible: true },
     matchOverlay: cleanMatchOverlay(),
     bracket: cleanBracket(),
+    playerBanners: cleanPlayerBanners(),
     reports: cleanReportSettings(),
   };
 }
@@ -138,6 +141,15 @@ export function patchWorkspace(state, operations) {
     const valid =
       section === "config" ||
       section === "matchOverlay" ||
+      (section === "playerBanners" &&
+        [
+          "visible",
+          "transparent",
+          "showRanks",
+          "source",
+          "matchId",
+          "teams",
+        ].includes(key)) ||
       section === "reports" ||
       (section === "draft" &&
         key === "snapshot" &&
@@ -153,6 +165,7 @@ export function patchWorkspace(state, operations) {
   next.config = cleanConfig(next.config);
   next.reports = cleanReportSettings(next.reports);
   next.matchOverlay = cleanMatchOverlay(next.matchOverlay);
+  next.playerBanners = cleanPlayerBanners(next.playerBanners);
   next.draft.snapshot = cleanSnapshot(next.draft.snapshot);
   for (const key of ["apiStats", "deadem"]) {
     next[key].panel = cleanPanel(next[key].panel);
