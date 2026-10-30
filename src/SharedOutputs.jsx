@@ -6,6 +6,7 @@ const labels = {
   draft: "Draft",
   "match-overlay": "Match overlay",
   bracket: "Tournament bracket",
+  "player-banners": "Player banners",
   "live-events": "Deadlock API stats",
   deadem: "Live stats panel",
   scoreboard: "Post-match scoreboard",

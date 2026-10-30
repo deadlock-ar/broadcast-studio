@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { initialWorkspace } from "../src/workspace-model.js";
 import { cleanMatchOverlay } from "../src/match-overlay.js";
 import { cleanBracket } from "../src/bracket.js";
+import { cleanPlayerBanners } from "../src/player-banners.js";
 import { prepareTournamentBracket } from "./bracket-service.mjs";
 
 const sections = [
@@ -13,6 +14,7 @@ const sections = [
   "apiStats",
   "matchOverlay",
   "bracket",
+  "playerBanners",
 ];
 export const inTournament = (record, store) =>
   !store.workspace.activeTournamentId ||
@@ -41,6 +43,7 @@ export class Tournaments {
           const r = JSON.parse(row.value);
           r.state.matchOverlay = cleanMatchOverlay(r.state.matchOverlay);
           r.state.bracket = cleanBracket(r.state.bracket);
+          r.state.playerBanners = cleanPlayerBanners(r.state.playerBanners);
           return [r.id, r];
         }),
     );
@@ -50,6 +53,7 @@ export class Tournaments {
   put(record) {
     record.state.matchOverlay = cleanMatchOverlay(record.state.matchOverlay);
     record.state.bracket = cleanBracket(record.state.bracket);
+    record.state.playerBanners = cleanPlayerBanners(record.state.playerBanners);
     this.store.db
       .prepare("INSERT OR REPLACE INTO tournaments VALUES (?,?)")
       .run(record.id, JSON.stringify(record));
@@ -179,6 +183,7 @@ export class Tournaments {
       w[key] = structuredClone(r.state[key] || initialWorkspace()[key]);
     w.matchOverlay = cleanMatchOverlay(w.matchOverlay);
     w.bracket = cleanBracket(w.bracket);
+    w.playerBanners = cleanPlayerBanners(w.playerBanners);
     w.activeTournamentId = id;
     w.revision++;
     w.draft.status = {
