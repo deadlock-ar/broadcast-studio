@@ -4,6 +4,7 @@ import path from "node:path";
 import { applyInterruption, matchId, sessionId } from "./model.mjs";
 import { initialWorkspace } from "../src/workspace-model.js";
 import { cleanMatchOverlay } from "../src/match-overlay.js";
+import { cleanBracket } from "../src/bracket.js";
 
 export class BroadcastDatabase {
   constructor(directory) {
@@ -41,6 +42,7 @@ export class BroadcastDatabase {
     this.workspace.matchOverlay = cleanMatchOverlay(
       this.workspace.matchOverlay,
     );
+    this.workspace.bracket = cleanBracket(this.workspace.bracket);
     this.workspace.draft.status = {
       state: "idle",
       message: this.workspace.draft.code

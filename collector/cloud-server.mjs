@@ -22,6 +22,9 @@ import {
 } from "./model.mjs";
 import { normalizeMetadata, playersAt } from "../src/stats.js";
 import { resolveMatchOverlay } from "../src/match-overlay.js";
+import { bracketOutput } from "../src/bracket.js";
+import { RosterLibrary } from "./roster-library.mjs";
+import { BracketService } from "./bracket-service.mjs";
 import {
   patchWorkspace,
   applyOperations,
@@ -84,6 +87,8 @@ export async function createBroadcastServer(options = {}) {
   const trusted = !hosted && !password;
   const store = new BroadcastDatabase(directory);
   await store.load();
+  store.rosterLibrary = new RosterLibrary(store);
+  const brackets = new BracketService(store);
   store.archive = new Archive(store);
   let auth;
   try {
@@ -126,6 +131,8 @@ export async function createBroadcastServer(options = {}) {
         report: reportOutput(store, channel, reportHeroes, reportItems),
       };
     if (channel === "draft") return { config: w.config, draft: w.draft };
+    if (channel === "bracket")
+      return { bracket: bracketOutput(w.bracket, { title: w.config.event }) };
     if (channel === "match-overlay")
       return { overlay: resolveMatchOverlay(w, s) };
     if (channel === "live-events")
@@ -196,7 +203,7 @@ export async function createBroadcastServer(options = {}) {
         (section === "apiStats" &&
           ["live-events", "match-overlay"].includes(c.channel)) ||
         (section === "scoreboard" &&
-          ["scoreboard", "match-overlay"].includes(c.channel)) ||
+          ["scoreboard", "match-overlay", "bracket"].includes(c.channel)) ||
         (section === "collector" &&
           ["deadem", "ultimates", "match-overlay"].includes(c.channel));
       if (relevant) send(c, output(c.channel));
@@ -248,6 +255,17 @@ export async function createBroadcastServer(options = {}) {
       clients.delete(c);
     });
   }
+  const tournamentBody = async (req) => {
+    const value = await body(req);
+    if (req.headers["x-dlar-tournament"] !== store.workspace.activeTournamentId)
+      throw Object.assign(
+        Error(
+          "The tournament changed while this request was arriving. Review the selected tournament and try again.",
+        ),
+        { status: 409 },
+      );
+    return value;
+  };
   const server = http.createServer(async (req, res) => {
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("Referrer-Policy", "same-origin");
@@ -335,6 +353,8 @@ export async function createBroadcastServer(options = {}) {
             "/api/collector/",
             "/api/draft/",
             "/api/live-events/",
+            "/api/roster-library/",
+            "/api/bracket/",
           ].some((prefix) => url.pathname.startsWith(prefix));
         if (scopedWrite && !req.headers["x-dlar-tournament"])
           throw Object.assign(
@@ -363,8 +383,8 @@ export async function createBroadcastServer(options = {}) {
           return;
         }
         if (url.pathname === "/api/tournaments/create" && method === "POST") {
-          const v = await body(req);
-          store.tournaments.create(v.name);
+          const v = await tournamentBody(req);
+          store.tournaments.create(v);
           changed();
           json(res, 200, store.workspace);
           return;
@@ -380,6 +400,40 @@ export async function createBroadcastServer(options = {}) {
           const v = await body(req);
           store.tournaments.rename(v.id, v.name);
           changed();
+          json(res, 200, store.workspace);
+          return;
+        }
+        if (url.pathname === "/api/roster-library" && method === "GET") {
+          json(
+            res,
+            200,
+            store.rosterLibrary.list({
+              query: url.searchParams.get("query") || "",
+            }),
+          );
+          return;
+        }
+        if (
+          ["/api/roster-library/player", "/api/roster-library/team"].includes(
+            url.pathname,
+          ) &&
+          method === "POST"
+        ) {
+          const value = await tournamentBody(req);
+          const player = url.pathname.endsWith("/player");
+          const result = player
+            ? store.rosterLibrary.savePlayer(value)
+            : store.rosterLibrary.saveTeam(value);
+          json(res, 200, {
+            [player ? "player" : "team"]: result,
+            ...store.rosterLibrary.list(),
+          });
+          return;
+        }
+        if (url.pathname.startsWith("/api/bracket/") && method === "POST") {
+          const value = await tournamentBody(req);
+          brackets.command(url.pathname.slice("/api/bracket/".length), value);
+          changed("workspace");
           json(res, 200, store.workspace);
           return;
         }
@@ -475,6 +529,8 @@ export async function createBroadcastServer(options = {}) {
                     "INSERT OR REPLACE INTO deleted_games VALUES (?,?,?)",
                   )
                   .run(row.id, row.tournamentId, row.deletedAt);
+            if (prepared.rosterLibrary)
+              store.rosterLibrary.restore(prepared.rosterLibrary);
             store.write("workspace", prepared.workspace);
             store.db.exec("COMMIT");
           } catch (e) {
@@ -823,12 +879,34 @@ export async function createBroadcastServer(options = {}) {
           const presentation = await body(req);
           const wasPublished = Boolean(s.published);
           publishResult(s, presentation);
-          if (
-            !wasPublished &&
-            applySeriesWin(store, s, Number(presentation.winner))
-          ) {
-            s.published.teams = structuredClone(store.workspace.config.teams);
+          const sourceTeams = structuredClone(s.published.teams);
+          const teamKey = (name) =>
+            String(name || "")
+              .trim()
+              .toLocaleLowerCase();
+          const configured = store.workspace.config.teams;
+          const sourceSides = sourceTeams.map((team) =>
+            configured.findIndex(
+              (item) => teamKey(item.name) === teamKey(team.name),
+            ),
+          );
+          const samePair =
+            sourceSides.every((side) => side >= 0) &&
+            new Set(sourceSides).size === 2;
+          const scoreWinner = samePair
+            ? sourceSides[s.published.winner]
+            : s.published.winner;
+          if (!wasPublished && applySeriesWin(store, s, scoreWinner)) {
+            // Keep the game sides intact so its winner and player rows still
+            // refer to the same team when broadcast sides have been swapped.
+            s.published.teams = sourceTeams.map((team, side) => ({
+              ...team,
+              score: samePair
+                ? configured[sourceSides[side]].score
+                : configured[side].score,
+            }));
           }
+          brackets.onPublished(s, sourceTeams);
           await store.save(s);
           store.workspace.scoreboard.matchId = id;
           store.workspace.scoreboard.kind = "scoreboard";
@@ -960,6 +1038,7 @@ export async function createBroadcastServer(options = {}) {
     collector,
     feeds,
     publisher,
+    brackets,
     shutdown,
     origin,
     host: hosted ? "0.0.0.0" : "127.0.0.1",

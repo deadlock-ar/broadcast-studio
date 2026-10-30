@@ -14,6 +14,8 @@ import { cleanPanel } from "../src/stats.js";
 import { sessionId, cleanSettings, applyInterruption } from "./model.mjs";
 import { cleanReportSettings } from "../src/analytics.js";
 import { cleanMatchOverlay } from "../src/match-overlay.js";
+import { cleanBracket } from "../src/bracket.js";
+import { cleanRosterSnapshot } from "./roster-library.mjs";
 
 export function exportBackup(store) {
   store.tournaments?.saveActive();
@@ -32,6 +34,11 @@ export function exportBackup(store) {
     deletedGames: store.tournaments
       ? store.db.prepare("SELECT * FROM deleted_games").all()
       : [],
+    rosterLibrary: store.rosterLibrary?.snapshot() || {
+      version: 1,
+      teams: [],
+      players: [],
+    },
   };
 }
 export function prepareRestore(value, store) {
@@ -76,6 +83,7 @@ export function prepareRestore(value, store) {
   w.config = cleanConfig(source.config);
   w.reports = cleanReportSettings(source.reports);
   w.matchOverlay = cleanMatchOverlay(source.matchOverlay);
+  w.bracket = cleanBracket(source.bracket);
   w.draft = {
     ...w.draft,
     mode: "manual",
@@ -174,7 +182,19 @@ export function prepareRestore(value, store) {
     tournamentId: String(row.tournamentId || "").slice(0, 100),
     deletedAt: Number(row.deletedAt) || Date.now(),
   }));
-  return { sessions, drafts, workspace: w, tournaments, trash, deletedGames };
+  const rosterLibrary =
+    value.rosterLibrary == null
+      ? null
+      : cleanRosterSnapshot(value.rosterLibrary);
+  return {
+    sessions,
+    drafts,
+    workspace: w,
+    tournaments,
+    trash,
+    deletedGames,
+    rosterLibrary,
+  };
 }
 export class Backups {
   constructor(store) {
