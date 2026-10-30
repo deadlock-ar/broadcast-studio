@@ -72,7 +72,7 @@ Open **Match overlay** for the cream-and-olive in-game banner. Its permanent
 OBS URL is **/obs/match-overlay**. Use a **1920 × 102** Browser Source at its
 original size; a full 1920 × 1080 source also works with transparent space below.
 The banner retains the compact half-height design and a 35px transparent live
-hero-HUD region. It does not draw the game's player portraits or player names.
+hero-HUD region. The game's player portraits remain visible underneath.
 The center stays empty until an operator uploads their own logo.
 
 The default links follow the current tournament's displayed team names,
@@ -94,6 +94,23 @@ same controls also manage tournament subtitles, sponsors, logos, team accents
 and on-air visibility. Settings are shared between admins, saved per tournament,
 included in backups and restored after restart. Changing tournaments keeps the
 same OBS URL and shows the selected tournament's overlay.
+
+**Background opacity** softens the banner artwork and name-box backgrounds
+without fading names, scores, logos or banned-hero portraits. Try 85–90% first;
+100% preserves the original appearance. The setting is saved per tournament.
+
+Enable **Player name boxes** to place six clean labels above each team's live
+hero portraits. Names follow the selected Live stats game, including its manual
+player-name edits and portrait order. Swapping heroes in Live stats moves their
+name boxes in the same update. Overlay-only custom names are keyed by player ID,
+so they move with the player; **Use live name** restores the source name. With no
+collector game selected, the loaded API stats roster is used when available.
+Without game information, fill the twelve manual name slots instead.
+
+Expand **Adjust name box placement** to align the row with your game HUD. The
+default row fits the existing 1920 × 102 source. If moved lower, use the source
+height shown beside the permanent URL, or a 1920 × 1080 source. Source changes
+and tournament switches clear the previous roster instead of keeping old names.
 
 ## Permanent OBS outputs
 
