@@ -164,20 +164,55 @@ tournament; the reusable team/player library is shared across tournaments.
 Both are retained on the existing persistent volume and included in backups.
 Restoring an older backup preserves the existing reusable library.
 
+## Player introduction banners
+
+Open **Player banners** to introduce both teams on a permanent **/obs/player-banners**
+Browser Source at **1920 × 1080**. The screen contains two rows of six player
+cards, team names and a central VS. Each card shows up to three most-played
+heroes with exact tracked match counts and win rates. Optional rank badges sit
+at the bottom of each card. Background transparency and show/hide are shared.
+
+Choose **Follow broadcast teams** to use the tournament rosters matching the
+current broadcast names, including side swaps. **Choose a bracket match** follows
+that fixture's teams; **Manual rosters** lets you load saved teams or individual
+players and edit display names and Steam accounts without changing the bracket.
+Save manual edits before fetching. A blank display name uses the Steam name when
+available. Keep reusable records in **Data library → Teams & players**.
+
+Choose **Get statistics** after selecting the rosters. Cached data is reused for
+15 minutes; **Refresh statistics** requests newer data after a one-minute cooldown.
+The server batches up to twelve players, honors service retry delays and retains
+last available statistics if a refresh fails. Missing or protected profiles are
+shown as unavailable; no results or ranks are invented.
+
+Statistics come from the [Deadlock API](https://api.deadlock-api.com/docs), using
+its batch hero-stats, rank and Steam endpoints. Hero counts cover tracked normal
+matches, ranked and unranked, without a time filter. Rank means the latest
+Valve-reported badge available from the API, which may be unavailable or older
+than a player's current game. It is not a predicted rank. Numeric Steam account
+IDs, SteamID64 strings and numeric Steam profile URLs are accepted; vanity URLs
+are not supported.
+
+Settings and cached statistics are saved per tournament and included in backups.
+The public OBS projection contains display names, team branding, hero aggregates
+and optional rank artwork. Steam IDs, saved library records and service error
+details stay in the admin workspace. An OBS viewer never triggers API requests.
+
 ## Permanent OBS outputs
 
-| Output                         | Path               |
-| ------------------------------ | ------------------ |
-| Draft                          | /obs/draft         |
-| Tournament bracket             | /obs/bracket       |
-| Deadlock API stats             | /obs/live-events   |
-| Deadem stats                   | /obs/deadem        |
-| Reviewed post-match scoreboard | /obs/scoreboard    |
-| Ultimate indicators            | /obs/ultimates     |
-| Hero priority                  | /obs/hero-priority |
-| Top items                      | /obs/top-items     |
-| Series MVP                     | /obs/series-mvp    |
-| Compact match overlay          | /obs/match-overlay |
+| Output                         | Path                |
+| ------------------------------ | ------------------- |
+| Draft                          | /obs/draft          |
+| Tournament bracket             | /obs/bracket        |
+| Player introductions           | /obs/player-banners |
+| Deadlock API stats             | /obs/live-events    |
+| Deadem stats                   | /obs/deadem         |
+| Reviewed post-match scoreboard | /obs/scoreboard     |
+| Ultimate indicators            | /obs/ultimates      |
+| Hero priority                  | /obs/hero-priority  |
+| Top items                      | /obs/top-items      |
+| Series MVP                     | /obs/series-mvp     |
+| Compact match overlay          | /obs/match-overlay  |
 
 Copy the full URLs from **OBS outputs**. Add each source at **1920 × 1080**. Match IDs, branding, statistics and HUD calibration are stored on the server; changing them does not change the URLs. The scoreboard follows the latest explicitly published result, even after another game is selected. Hide/show controls are shared.
 
