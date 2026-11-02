@@ -6,6 +6,7 @@ import { initialWorkspace } from "../src/workspace-model.js";
 import { cleanMatchOverlay } from "../src/match-overlay.js";
 import { cleanBracket } from "../src/bracket.js";
 import { cleanPlayerBanners } from "../src/player-banners.js";
+import { cleanCasterStage } from "../src/caster-stage.js";
 
 export class BroadcastDatabase {
   constructor(directory) {
@@ -47,6 +48,7 @@ export class BroadcastDatabase {
     this.workspace.playerBanners = cleanPlayerBanners(
       this.workspace.playerBanners,
     );
+    this.workspace.casterStage = cleanCasterStage(this.workspace.casterStage);
     this.workspace.draft.status = {
       state: "idle",
       message: this.workspace.draft.code
@@ -124,6 +126,7 @@ export class BroadcastDatabase {
       "scoreboard",
       "matchOverlay",
       "playerBanners",
+      "casterStage",
       "reports",
     ])
       Object.assign(this.workspace[key], next[key]);

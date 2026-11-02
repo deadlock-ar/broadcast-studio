@@ -11,6 +11,7 @@ import {
   DemoSource,
 } from "deadem";
 import { readFrame } from "./extract.mjs";
+import { enrichFrame } from "./enrichment.mjs";
 import { ultimateEffects, ultimateHit } from "./ultimates.mjs";
 import { liveFragments, replayStream, resolveBroadcast } from "./sources.mjs";
 
@@ -22,6 +23,12 @@ const ultimates = JSON.parse(
   readFileSync(new URL("./data/ultimates.json", import.meta.url)),
 );
 const send = (type, data) => parentPort.postMessage({ type, ...data });
+const items = JSON.parse(
+  readFileSync(new URL("./data/items.json", import.meta.url)),
+);
+const signatures = JSON.parse(
+  readFileSync(new URL("./data/signatures.json", import.meta.url)),
+);
 let broadcast;
 for (
   let attempt = 0;
@@ -29,16 +36,7 @@ for (
   attempt++
 ) {
   const abort = new AbortController();
-  const parser = new Parser(
-    new ParserConfiguration({
-      entityClasses: [
-        "CCitadelPlayerController",
-        "CCitadelPlayerPawn",
-        "CCitadelGameRulesProxy",
-      ],
-    }),
-    Logger.CONSOLE_WARN,
-  );
+  const parser = new Parser(new ParserConfiguration(), Logger.CONSOLE_WARN);
   const demo = parser.getDemo();
   let serverTick = null,
     lastSample = -Infinity,
@@ -89,6 +87,7 @@ for (
       winner,
     );
     if (!frame.players.length) return;
+    enrichFrame(demo, frame, signatures, items);
     latest = frame;
     if (
       options.mode === "replay" &&

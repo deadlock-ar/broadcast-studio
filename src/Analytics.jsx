@@ -80,7 +80,9 @@ export default function Analytics({ active, config }) {
     () => data.games.filter((g) => baseline.includes(g.id)),
     [data, baseline],
   );
-  const unresolved = chosenGames.flatMap((g) =>
+  const unresolved = [
+    ...new Map([...chosenGames, ...baseGames].map((g) => [g.id, g])).values(),
+  ].flatMap((g) =>
     (g.purchases || [])
       .filter((p) => p.status === "review" || p.status === "pending")
       .map((p) => ({ ...p, gameId: g.id })),

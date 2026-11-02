@@ -69,7 +69,7 @@ export function reportOutput(store, channel, heroes, items) {
       rows: itemPriority(games, items, baseline),
       visible:
         games.length > 0 &&
-        !games.some((g) =>
+        ![...games, ...baseline].some((g) =>
           g.purchases.some((p) => ["pending", "review"].includes(p.status)),
         ),
     };

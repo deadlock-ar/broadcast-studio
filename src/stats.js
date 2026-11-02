@@ -8,6 +8,34 @@ export function metricSupported(metric, match) {
 }
 export const API_ROOT = "https://api.deadlock-api.com";
 export const METRICS = {
+  objectiveDamage: {
+    label: "Objective damage",
+    short: "OBJECTIVES",
+    field: "boss_damage",
+    unit: "Damage to objectives",
+    live: false,
+  },
+  kills: {
+    label: "Kills",
+    short: "KILLS",
+    field: "kills",
+    unit: "Hero kills",
+    live: true,
+  },
+  deaths: {
+    label: "Deaths",
+    short: "DEATHS",
+    field: "deaths",
+    unit: "Player deaths",
+    live: true,
+  },
+  assists: {
+    label: "Assists",
+    short: "ASSISTS",
+    field: "assists",
+    unit: "Kill assists",
+    live: true,
+  },
   damage: {
     label: "Hero damage",
     short: "DAMAGE",
@@ -126,6 +154,7 @@ export function normalizeMetadata(data, expectedId) {
         .map((s) => ({
           time: Number(s.time_stamp_s),
           damage: nonnegative(s.player_damage),
+          objectiveDamage: nonnegative(s.boss_damage),
           souls: nonnegative(s.net_worth),
           healing: nonnegative(s.player_healing),
           kills: nonnegative(s.kills),
@@ -188,7 +217,7 @@ export function applyProfileNames(match, profiles) {
 }
 export function playersAt(match, time = match?.duration) {
   if (!match) return [];
-  if (match.mode === "live") return match.players;
+  if (match.mode === "live" || match.mode === "snapshot") return match.players;
   const atEnd = Number(time) >= match.duration;
   return match.players.map((p) => {
     const sample = p.samples.filter((s) => s.time <= time).at(-1);
@@ -209,6 +238,7 @@ export function playersAt(match, time = match?.duration) {
     return {
       ...p,
       damage: sample?.damage ?? null,
+      objectiveDamage: sample?.objectiveDamage ?? null,
       healing: sample?.healing ?? null,
       souls: (atEnd ? p.final.souls : sample?.souls) ?? null,
       buffs,

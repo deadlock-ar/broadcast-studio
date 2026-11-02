@@ -19,6 +19,8 @@ import { setTournamentContext } from "./tournament-context.js";
 import MatchOverlay from "./MatchOverlay.jsx";
 import BracketScreen from "./BracketScreen.jsx";
 import PlayerBannersScreen from "./PlayerBannersScreen.jsx";
+import CasterScreen from "./CasterScreen.jsx";
+import { LiveMetricsGraphic } from "./LiveMetrics.jsx";
 
 function WorkspaceProvider({ initial, children, logout }) {
   const canonical = useRef(initial),
@@ -199,14 +201,21 @@ function CloudBroadcast({ channel }) {
           queue = [];
           identity = next.session?.id;
           delay = nextDelay;
-          if (["deadem", "ultimates"].includes(channel)) setValue(null);
+          if (["deadem", "ultimates", "momentum"].includes(channel))
+            setValue(null);
         }
         if (
           nextDelay &&
           next.visible !== false &&
-          ["deadem", "ultimates"].includes(channel)
+          ["deadem", "ultimates", "momentum"].includes(channel)
         )
-          queue = enqueueCollectorState(queue, next, Date.now(), nextDelay);
+          queue = enqueueCollectorState(
+            queue,
+            next,
+            Date.now(),
+            nextDelay,
+            channel === "momentum" ? 1000 : 100,
+          );
         else setValue(next);
         setError(false);
       } catch {
@@ -257,6 +266,31 @@ function CloudBroadcast({ channel }) {
     return (
       <BroadcastFrame>
         <PlayerBannersScreen banners={value?.banners} />
+      </BroadcastFrame>
+    );
+  if (channel === "casters")
+    return (
+      <BroadcastFrame>
+        <CasterScreen stage={value?.stage} />
+      </BroadcastFrame>
+    );
+  if (channel === "momentum")
+    return (
+      <BroadcastFrame>
+        {value?.visible !== false && (
+          <LiveMetricsGraphic
+            session={value?.session}
+            teamNames={value?.panel?.teamNames}
+            stale={
+              error ||
+              (value?.session &&
+                !value.session.ended &&
+                (value.session.status !== "live" ||
+                  now - value.session.updatedAt >
+                    15000 + (value.session.settings.delayMs || 0)))
+            }
+          />
+        )}
       </BroadcastFrame>
     );
   const result = value?.apiStats?.result,

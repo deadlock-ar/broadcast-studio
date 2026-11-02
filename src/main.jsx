@@ -5,6 +5,7 @@ import App from "./App.jsx";
 import { StatPanelOverlay } from "./StatPanels.jsx";
 import { ProductionOverlay } from "./ProductionStudio.jsx";
 import CloudStudio from "./CloudStudio.jsx";
+import "./DeadlockIdentity.css";
 
 const statsOverlay =
   new URLSearchParams(window.location.search).get("view") === "stats";

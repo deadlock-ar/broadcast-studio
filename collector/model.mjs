@@ -1,3 +1,9 @@
+import {
+  metricFrame,
+  recordTelemetry,
+  cleanMetricsBaseline,
+} from "./telemetry.mjs";
+
 export const number = (value) =>
   Number.isFinite(value) && value >= 0 ? value : null;
 export const clone = (value) => structuredClone(value);
@@ -81,6 +87,12 @@ export function mergePlayers(old = [], incoming = []) {
 export function applyFrame(session, frame, now = Date.now()) {
   if (session.result) return session; // Frozen result cannot be overwritten by disconnects or restart.
   const players = mergePlayers(session.match?.players, frame.players);
+  const measured = metricFrame(frame);
+  const telemetry = recordTelemetry(
+    session.match?.telemetry,
+    measured,
+    frame.endObserved,
+  );
   session.match = {
     ...frame,
     matchId: frame.matchId ?? session.match?.matchId ?? null,
@@ -90,6 +102,8 @@ export function applyFrame(session, frame, now = Date.now()) {
     players,
     complete: completeRoster(players),
     currentComplete: completeRoster(frame.players),
+    metricFrame: measured,
+    telemetry,
   };
   session.updatedAt = now;
   session.sequence++;
@@ -181,6 +195,11 @@ export function cleanSettings(
   );
   return {
     delayMs: bounded(value.delayMs ?? previous.delayMs, 0, 120000, 0),
+    metricsBaseline: cleanMetricsBaseline(
+      Object.hasOwn(value, "metricsBaseline")
+        ? value.metricsBaseline
+        : previous.metricsBaseline,
+    ),
     names,
     hudOrder: [...new Set(value.hudOrder ?? previous.hudOrder ?? [])]
       .filter((id) => typeof id === "string" && /^\d{1,10}$/.test(id))

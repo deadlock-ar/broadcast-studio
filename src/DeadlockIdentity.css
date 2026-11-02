@@ -1,0 +1,270 @@
+/* Presentation-only identity layer. Keep layout geometry and source data in
+   their existing component styles. New scoreboard/caster artwork is isolated. */
+@font-face {
+  font-family: "DLAR Display";
+  src: url("/fonts/match-bodoni.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DLAR Condensed";
+  src: url("/fonts/match-oswald.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 200 700;
+  font-display: swap;
+}
+
+/* The workspace keeps paper as its working surface. Ink belongs to navigation,
+   broadcast stages and short section accents, rather than every form field. */
+.studio-app .sidebar {
+  background: linear-gradient(170deg, #22302a, #17231f);
+  border-right-color: #9b9c7059;
+}
+.studio-app .sidebar-brand > span:last-child {
+  font-family: "DLAR Display", "Cairo", Georgia, serif;
+}
+.studio-app .sidebar nav button {
+  border-radius: 1px;
+}
+.studio-app .sidebar nav button.selected {
+  background: linear-gradient(90deg, #66744b63, #384734);
+  border-color: #8a96715c;
+  box-shadow: inset 2px 0 #bdb280;
+}
+.studio-app .workspace-bar {
+  background: #eee9dc;
+  border-bottom-color: #afb79b66;
+}
+.studio-app .sidebar-section,
+.studio-app .workspace-bar > :first-child {
+  font-family: "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif;
+}
+.studio-app
+  :is(
+    .workspace-content > .page-heading,
+    .stats-studio > .page-heading,
+    .production-studio > .page-heading,
+    .bracket-studio > .page-heading,
+    .player-banners-studio > .page-heading,
+    .analytics-studio > .page-heading,
+    .data-library > .page-heading
+  )
+  h1 {
+  font-family: "DLAR Display", "Cairo", Georgia, serif;
+  font-weight: 600;
+}
+.studio-app
+  :is(
+    .preview-panel,
+    .connection-panel,
+    .production-card,
+    .stats-match-loader,
+    .stats-obs-panel,
+    .bracket-studio .brk-card,
+    .player-banners-studio .pbs-card,
+    .analytics-selection,
+    .analytics-options
+  ) {
+  border-radius: 2px;
+  border-color: #aeb69a8c;
+  box-shadow:
+    inset 0 1px #fffaf0,
+    0 3px 12px #29372a04;
+}
+.studio-app :is(.panel-toolbar, .brk-card-head, .pbs-card-head) {
+  background-image: linear-gradient(90deg, #8490651c, transparent 70%);
+}
+.studio-app
+  :is(
+    .production-card > h2,
+    .production-section-heading h2,
+    .stats-template-heading h2,
+    .stats-match-loader h2,
+    .stats-obs-panel h2,
+    .brk-card-head h2,
+    .pbs-card-head h2,
+    .analytics-selection h2,
+    .analytics-options h2
+  ) {
+  font-family: "DLAR Display", "Cairo", Georgia, serif;
+  font-weight: 600;
+}
+.studio-app .stats-template {
+  border-radius: 2px;
+}
+.studio-app .stats-template.selected {
+  background: linear-gradient(140deg, #e4e9d7, #f1eddf);
+  border-color: #697a4f;
+  box-shadow:
+    inset 0 2px #6b7b52,
+    0 0 0 1px #697a4f;
+}
+.studio-app .stats-template > strong {
+  font-family: "DLAR Display", "Cairo", Georgia, serif;
+}
+.studio-app .report-preview {
+  border-color: #8a96746b;
+  box-shadow:
+    0 0 0 4px #dedfce,
+    0 0 0 5px #a9b29370;
+}
+
+/* Draft output: the game influence comes from the display lettering, layered
+   framing and warm/cool side accents. Portrait colors and effects are untouched. */
+.draft-canvas:not(.transparent) {
+  background:
+    radial-gradient(ellipse at 50% 0, #46574055, transparent 62%),
+    linear-gradient(140deg, #202d26, #14201c);
+}
+.draft-canvas:not(.transparent)::after {
+  border-color: #b4ad7652;
+  background:
+    linear-gradient(#c2b783, #c2b783) left top / 80px 1px no-repeat,
+    linear-gradient(#c2b783, #c2b783) left top / 1px 80px no-repeat,
+    linear-gradient(#c2b783, #c2b783) right bottom / 80px 1px no-repeat,
+    linear-gradient(#c2b783, #c2b783) right bottom / 1px 80px no-repeat;
+}
+.draft-canvas .broadcast-heading h2 {
+  font-family: "DLAR Display", "Cairo", Georgia, serif;
+  font-weight: 600;
+}
+.draft-canvas .draft-frame {
+  background: linear-gradient(115deg, #eee5d2, #e2e2cd);
+  border-color: #8c986c;
+}
+.draft-canvas .frame-corner {
+  border-color: #727f56;
+}
+.draft-canvas .side-1 .draft-team-header {
+  border-bottom-color: #b48b486e;
+}
+.draft-canvas .side-2 .draft-team-header {
+  border-bottom-color: #6b94ae75;
+}
+.draft-canvas .side-1 .team-mark {
+  border-color: #ac834c;
+}
+.draft-canvas .side-2 .team-mark {
+  border-color: #7995aa;
+}
+.draft-canvas .draft-team-header h3,
+.draft-canvas .draft-group-label,
+.draft-canvas .hero-label {
+  font-family: "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif;
+}
+.draft-canvas .hero-slot:not(.active) {
+  border-color: #8d9a766b;
+}
+.draft-canvas .hero-label {
+  background: linear-gradient(transparent, #15251deb);
+}
+
+/* Compact stat outputs retain their sizes and the operator's paper/ink theme.
+   Amber/Sapphire marks identify the existing source team index, never ranking. */
+.stat-canvas .stat-box {
+  --surface: #eae2cf;
+  --text: #26332c;
+  --subtle: #536346;
+  --rule: #7b89523d;
+  border-color: #85956b;
+  box-shadow:
+    inset 0 2px #a7af84,
+    0 4px 18px #0004;
+}
+.stat-canvas .stat-box.stat-theme-ink {
+  --surface: #1c2c24;
+  --text: #f1ead8;
+  --subtle: #bdc7aa;
+  --rule: #aab88b38;
+  border-color: #87966c;
+}
+.stat-canvas .stat-box-header {
+  box-shadow: inset 0 -1px var(--rule);
+}
+.stat-canvas .stat-box h2 {
+  font-family: "DLAR Display", "Cairo", Georgia, serif;
+  font-weight: 600;
+}
+.stat-canvas .stat-value {
+  font-family: "DLAR Condensed", "Barlow Condensed", sans-serif;
+}
+.stat-canvas .stat-player .stat-hero-icon {
+  border-left-color: #b78d48;
+}
+.stat-canvas .stat-player.stat-team-1 .stat-hero-icon {
+  border-left-color: #7da5bf;
+}
+.stat-canvas .stat-meter {
+  background: #b78d48;
+}
+.stat-canvas .stat-team-1 .stat-meter {
+  background: #7da5bf;
+}
+
+/* Bracket and player introductions use the same restrained ink stage. Avoid
+   adding backgrounds to transparent outputs, or changing their fitted grids. */
+.bracket-screen:not(.is-transparent),
+.player-banners-screen:not(.is-transparent) {
+  background:
+    radial-gradient(ellipse at top right, #596d4254, transparent 58%),
+    linear-gradient(140deg, #1e3027, #121e1a);
+}
+.bracket-screen .bracket-screen-heading h1,
+.player-banners-screen .player-banners-screen-heading h1,
+.player-banners-screen .player-banners-team-heading h2 {
+  font-family: "DLAR Display", "Cairo", Georgia, serif;
+  font-weight: 600;
+}
+.bracket-screen .bracket-screen-heading,
+.player-banners-screen .player-banners-screen-heading {
+  border-bottom-color: #b3ab7563;
+}
+.bracket-screen .bracket-screen-match {
+  border-radius: 1px;
+  border-color: #a1ad7f7a;
+  background: #1d3025;
+}
+.bracket-screen .bracket-screen-match.is-on-air {
+  outline-color: #c0ad70;
+}
+.bracket-screen .bracket-screen-team.is-winner {
+  background: #dce1c5;
+}
+.bracket-screen .bracket-screen-team-name,
+.bracket-screen .bracket-screen-team strong,
+.player-banners-screen .player-banners-player-heading h3 {
+  font-family: "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif;
+}
+.player-banners-screen .player-banners-team {
+  --player-banner-accent: #c5a15c;
+  --player-banner-edge: #b391534d;
+}
+.player-banners-screen .player-banners-team-2 {
+  --player-banner-accent: #8faecb;
+  --player-banner-edge: #7597b452;
+}
+.player-banners-screen .player-banners-card:not(.is-empty) {
+  background: linear-gradient(145deg, #efe6d3, #dce0c9);
+  box-shadow:
+    inset 0 1px #fff7e7,
+    0 5px 18px #0003;
+}
+.player-banners-screen .player-banners-match-count,
+.player-banners-screen .player-banners-win-rate {
+  font-family: "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif;
+}
+
+/* The HTML MVP output shares the display typography. Canvas-exported reports
+   have their own drawing code and are intentionally not recolored via filters. */
+.mvp-canvas .mvp-card {
+  border-color: #b6a671;
+  background: linear-gradient(130deg, #263b2f, #14211b);
+}
+.mvp-canvas .mvp-card header > span,
+.mvp-canvas .mvp-content h1 {
+  font-family: "DLAR Display", "Cairo", Georgia, serif;
+}
+.mvp-canvas .mvp-totals strong {
+  font-family: "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif;
+}

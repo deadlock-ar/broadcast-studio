@@ -1,14 +1,24 @@
 import { tournamentHeaders } from "./tournament-context.js";
 export { liveRoster } from "./roster-order.js";
 export const COLLECTOR_ORIGIN = "http://127.0.0.1:8766";
-export function enqueueCollectorState(queue, value, now, delay) {
+export function enqueueCollectorState(
+  queue,
+  value,
+  now,
+  delay,
+  intervalMs = 100,
+) {
   const next = { at: now + delay, value };
   const last = queue.at(-1);
-  // Coalesce full snapshots to 10 Hz so long delays survive event bursts.
-  if (last && Math.floor(last.at / 100) === Math.floor(next.at / 100))
+  const interval =
+    Number.isFinite(intervalMs) && intervalMs > 0
+      ? Math.max(1, intervalMs)
+      : 100;
+  // Ordinary outputs retain 10 Hz; slower graph outputs need fewer snapshots.
+  if (last && Math.floor(last.at / interval) === Math.floor(next.at / interval))
     queue[queue.length - 1] = next;
   else queue.push(next);
-  return queue.slice(-1300);
+  return queue.slice(-(Math.ceil(120000 / interval) + 100));
 }
 export function collectorEndpoint(path, id) {
   const url = new URL(

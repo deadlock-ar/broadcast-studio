@@ -27,6 +27,9 @@ import { RosterLibrary } from "./roster-library.mjs";
 import { BracketService } from "./bracket-service.mjs";
 import { PlayerBannersService } from "./player-banners-service.mjs";
 import { playerBannersOutput } from "../src/player-banners.js";
+import { OfflineImporter, importedMatch } from "./offline.mjs";
+import { casterStageOutput } from "../src/caster-stage.js";
+import { publicCollectorMatch } from "./output-snapshot.mjs";
 import {
   patchWorkspace,
   applyOperations,
@@ -122,6 +125,11 @@ export async function createBroadcastServer(options = {}) {
   const reportItems = JSON.parse(
     await readFile(new URL("./data/items.json", import.meta.url), "utf8"),
   );
+  const offline = new OfflineImporter(
+    store,
+    reportItems,
+    options.loadOfflineMetadata,
+  );
   const clients = new Set();
   let lastBroadcast = 0,
     pendingBroadcast = null;
@@ -141,6 +149,7 @@ export async function createBroadcastServer(options = {}) {
       return { bracket: bracketOutput(w.bracket, { title: w.config.event }) };
     if (channel === "player-banners")
       return { banners: playerBannersOutput(w) };
+    if (channel === "casters") return { stage: casterStageOutput(w) };
     if (channel === "match-overlay")
       return { overlay: resolveMatchOverlay(w, s) };
     if (channel === "live-events")
@@ -164,7 +173,7 @@ export async function createBroadcastServer(options = {}) {
           id: s.id,
           mode: s.mode,
           status: s.status,
-          match: s.result?.match || s.match,
+          match: publicCollectorMatch(s.result?.match || s.match, channel),
           updatedAt: s.updatedAt,
           settings: s.settings,
           effects: channel === "ultimates" ? s.effects : [],
@@ -211,10 +220,23 @@ export async function createBroadcastServer(options = {}) {
         (section === "apiStats" &&
           ["live-events", "match-overlay"].includes(c.channel)) ||
         (section === "scoreboard" &&
-          ["scoreboard", "match-overlay", "bracket"].includes(c.channel)) ||
+          ["scoreboard", "match-overlay", "bracket", "casters"].includes(
+            c.channel,
+          )) ||
         (section === "collector" &&
-          ["deadem", "ultimates", "match-overlay"].includes(c.channel));
-      if (relevant) send(c, output(c.channel));
+          ["deadem", "ultimates", "momentum", "match-overlay"].includes(
+            c.channel,
+          ));
+      if (relevant) {
+        const momentumLive =
+          c.channel === "momentum" &&
+          section === "collector" &&
+          session()?.status === "live" &&
+          !session()?.result;
+        if (momentumLive && Date.now() - (c.lastMomentum || 0) < 1000) continue;
+        if (c.channel === "momentum") c.lastMomentum = Date.now();
+        send(c, output(c.channel));
+      }
     }
   }
   const collector = new CollectorEngine(store, () => {
@@ -454,6 +476,15 @@ export async function createBroadcastServer(options = {}) {
           await playerBanners.refresh(value);
           changed("workspace");
           json(res, 200, store.workspace);
+          return;
+        }
+        if (url.pathname === "/api/data/import-match" && method === "POST") {
+          const value = await tournamentBody(req);
+          const result = await offline.import(value);
+          store.workspace.revision++;
+          store.saveWorkspace();
+          changed("workspace");
+          json(res, 200, result);
           return;
         }
         if (url.pathname === "/api/data" && method === "GET") {
@@ -702,6 +733,9 @@ export async function createBroadcastServer(options = {}) {
             reviewedAt: Date.now(),
           };
           Object.assign(row, correction);
+          s.items.reviewCount = s.items.purchases.filter((p) =>
+            ["review", "pending"].includes(p.status),
+          ).length;
           s.itemReviews = { ...s.itemReviews, [row.id]: correction };
           await store.save(s);
           changed("reports");
@@ -955,12 +989,19 @@ export async function createBroadcastServer(options = {}) {
             );
           const raw = await upstream.json(),
             normalized = normalizeMetadata(raw, numericId);
+          const details = importedMatch(raw, numericId, reportItems);
           const players = playersAt(normalized, normalized.duration).map(
             (p) => ({
               ...p,
               objectiveDamage:
                 s.result.match.players.find((old) => old.id === p.id)
-                  ?.objectiveDamage ?? null,
+                  ?.objectiveDamage ??
+                details.match.players.find((v) => v.id === p.id)
+                  ?.objectiveDamage ??
+                null,
+              soulsBySource:
+                details.match.players.find((v) => v.id === p.id)
+                  ?.soulsBySource ?? null,
               items:
                 s.result.match.players.find((old) => old.id === p.id)?.items ??
                 null,
@@ -990,6 +1031,10 @@ export async function createBroadcastServer(options = {}) {
               duration: normalized.duration,
               players,
               complete: true,
+              telemetry:
+                s.result.match.telemetry?.points?.length > 1
+                  ? s.result.match.telemetry
+                  : details.match.telemetry,
             },
             winner: [0, 1].includes(winner) ? winner : s.result.winner,
             verification: "metadata",

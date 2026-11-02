@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useWorkspace, workspaceRequest } from "./workspace-context.js";
 import BackupControls from "./BackupControls.jsx";
 import RosterLibraryPanel from "./RosterLibraryPanel.jsx";
+import OfflineImport from "./OfflineImport.jsx";
 export default function DataLibrary({ active }) {
   const shared = useWorkspace(),
     [data, setData] = useState({
@@ -76,6 +77,7 @@ export default function DataLibrary({ active }) {
       <div className="production-tabs">
         {[
           ["game", "Games"],
+          ["import", "Import off-stream match"],
           ["draft", "Drafts"],
           ["tournament", "Tournaments"],
           ["rosters", "Teams & players"],
@@ -100,7 +102,16 @@ export default function DataLibrary({ active }) {
           {notice}
         </p>
       )}
-      {kind === "rosters" ? (
+      {kind === "import" ? (
+        <OfflineImport
+          drafts={data.drafts.filter((d) => d.tournamentId === current)}
+          onImported={() =>
+            workspaceRequest("data")
+              .then(setData)
+              .catch((e) => setNotice(e.message))
+          }
+        />
+      ) : kind === "rosters" ? (
         <RosterLibraryPanel active={active} />
       ) : kind === "backup" ? (
         <BackupControls allowDelete />

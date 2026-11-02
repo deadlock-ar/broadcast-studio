@@ -24,6 +24,10 @@ import { cleanSettings } from "../collector/model.mjs";
 import ObserverControls from "./ObserverControls.jsx";
 import PanelControls from "./PanelControls.jsx";
 import MatchScoreboard from "./MatchScoreboard.jsx";
+import RecordingEvidence from "./RecordingEvidence.jsx";
+import "./RecordingEvidence.css";
+import { LiveMetricsGraphic } from "./LiveMetrics.jsx";
+import { captureBaseline } from "../collector/telemetry.mjs";
 
 const roster = {
   ...Object.fromEntries(
@@ -255,6 +259,12 @@ function ObsLink({ view, id, metric, label }) {
 }
 export default function ProductionStudio({ active, config }) {
   const shared = useWorkspace();
+  const [metricsNow, setMetricsNow] = useState(Date.now);
+  useEffect(() => {
+    if (!active) return;
+    const timer = setInterval(() => setMetricsNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, [active]);
   const [panel, setPanel] = useWorkspaceField(
     ["deadem", "panel"],
     cleanPanel({ theme: "ink" }),
@@ -502,9 +512,11 @@ export default function ProductionStudio({ active, config }) {
       )}
       {session && (
         <>
+          <RecordingEvidence session={session} />
           <div className="production-tabs">
             {[
               ["panels", "Live stat panels"],
+              ["metrics", "Momentum & fight tracker"],
               ["hud", "Ultimate HUD"],
               ["scoreboard", "Post-match scoreboard"],
             ].map(([key, label]) => (
@@ -583,6 +595,90 @@ export default function ProductionStudio({ active, config }) {
                 view="collector-panel"
                 label="Live stats panel"
               />
+            </>
+          )}
+          {section === "metrics" && (
+            <>
+              <div className="production-section-heading">
+                <div>
+                  <h2>Follow the lead. Measure the next fight.</h2>
+                  <p>
+                    Souls difference, objective damage, kills, deaths and
+                    assists. Net worth per minute uses up to sixty observed game
+                    seconds.
+                  </p>
+                </div>
+              </div>
+              <div className="production-metrics-controls">
+                <button
+                  className="button primary"
+                  disabled={
+                    busy ||
+                    session.status !== "live" ||
+                    metricsNow - session.updatedAt > 15000 ||
+                    !captureBaseline(match)
+                  }
+                  onClick={() =>
+                    Date.now() - session.updatedAt > 15000
+                      ? setNotice(
+                          "Wait for a fresh complete observation before marking the fight.",
+                        )
+                      : action("settings", {
+                          metricsBaseline: captureBaseline(match),
+                        })
+                  }
+                >
+                  Track from now
+                </button>
+                <button
+                  className="button secondary"
+                  disabled={busy || !session.settings.metricsBaseline}
+                  onClick={() => action("settings", { metricsBaseline: null })}
+                >
+                  Show match totals
+                </button>
+                <span>
+                  {session.settings.metricsBaseline
+                    ? `Comparing from ${clock(session.settings.metricsBaseline.time)}. Reset the mark before the next fight.`
+                    : "Mark a start to compare damage, objectives and K/D/A during a fight."}
+                </span>
+              </div>
+              <Preview label="Souls difference and fight tracker preview">
+                <LiveMetricsGraphic
+                  session={session}
+                  teamNames={config.teams.map((t) => t.name)}
+                  stale={
+                    !session.result && metricsNow - session.updatedAt > 15000
+                  }
+                />
+              </Preview>
+              <p className="production-hint">
+                Samples begin when collection starts. Missing team observations
+                stay blank; the graph does not recreate earlier play. Net worth
+                change is not gross souls income. Souls by source is shown on
+                the scoreboard when finished metadata provides it.
+              </p>
+              {shared && (
+                <div className="production-obs-link">
+                  <div>
+                    <strong>Momentum & fight tracker OBS URL</strong>
+                    <input
+                      aria-label="Momentum OBS URL"
+                      readOnly
+                      value={`${window.location.origin}/obs/momentum`}
+                      onFocus={(e) => e.target.select()}
+                    />
+                  </div>
+                  <a
+                    className="button secondary"
+                    href="/obs/momentum"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open ↗
+                  </a>
+                </div>
+              )}
             </>
           )}
           {section === "hud" && (
