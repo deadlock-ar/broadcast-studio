@@ -1,0 +1,162 @@
+@font-face {
+  font-family: "Match Bodoni";
+  src: url("/fonts/match-bodoni.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+.match-banner-scene {
+  --banner-baseline: 66.5625px;
+  --hero-height: 35px;
+  position: relative;
+  display: block;
+  width: 100%;
+  height: calc(var(--banner-baseline) + var(--hero-height));
+  isolation: isolate;
+  background: transparent;
+  line-height: 0;
+  overflow: visible;
+}
+
+.match-banner-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.match-banner-svg .team-name {
+  font-family: var(--match-team-font, "Match Bodoni", Georgia, serif);
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.match-banner-svg .side-text {
+  font-family: "Arial Narrow", "Roboto Condensed", Arial, sans-serif;
+  font-weight: 600;
+  fill: #eee9d9;
+}
+
+.match-banner-svg .side-heading {
+  font-size: 10.5px;
+  letter-spacing: 2.4px;
+}
+.match-banner-svg .side-detail {
+  font-size: 10.5px;
+  letter-spacing: 1.7px;
+}
+
+.match-banner-svg .empty-ban {
+  font:
+    11px Arial,
+    sans-serif;
+  letter-spacing: 2px;
+  fill: #879275;
+}
+
+.match-hero-window {
+  position: absolute;
+  top: var(--banner-baseline);
+  left: 0;
+  width: 100%;
+  height: var(--hero-height);
+  max-height: 70px;
+  background: transparent;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.match-hero-window-guide {
+  display: none;
+}
+.match-banner-scene.show-guide .match-hero-window-guide {
+  display: flex;
+  align-items: flex-end;
+  position: absolute;
+  inset: 0;
+  padding: 0 10px 7px;
+  border-top: 1px dashed #b4cd8d;
+  border-bottom: 1px dashed #b4cd8d;
+  background: #8aa76514;
+  color: #e2e9cf;
+  font:
+    11px/1.2 Arial,
+    sans-serif;
+  letter-spacing: 0.08em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .match-banner-svg .ban-portrait {
+    transition: opacity 0.12s ease-out;
+  }
+}
+
+@font-face {
+  font-family: "Match Oswald";
+  src: url("/fonts/match-oswald.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 200 700;
+  font-display: swap;
+}
+
+.match-banner-scene[hidden] {
+  display: none;
+}
+
+.match-banner-svg .banner-art,
+.match-banner-svg .ban-plate {
+  opacity: var(--match-background-opacity, 1);
+}
+
+.match-player-names {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.match-player-names[hidden] {
+  display: none;
+}
+
+.match-player-name {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  padding: 0 5px;
+  box-sizing: border-box;
+  color: #faf8ee;
+  font:
+    600 14px/1.15 Arial,
+    sans-serif;
+  text-shadow: 0 1px 2px #000b;
+}
+
+.match-player-name::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 3px;
+  border-top: 2px solid var(--name-accent);
+  background: #172018;
+  box-shadow: 0 1px 3px #0005;
+  opacity: var(--match-background-opacity, 1);
+}
+
+.match-player-name span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}

@@ -1,0 +1,143 @@
+.cloud-login,
+.cloud-loading {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #292b27;
+  color: #eae1cf;
+  padding: 36px;
+}
+.cloud-login section {
+  max-width: 550px;
+  width: 100%;
+  padding: 40px;
+  border: 1px solid #809064;
+  background: radial-gradient(ellipse at top right, #65734f44, transparent 65%);
+}
+.cloud-login img {
+  width: 76px;
+  height: 76px;
+  object-fit: cover;
+  display: block;
+  margin-bottom: 30px;
+  border-radius: 50%;
+}
+.cloud-login .eyebrow {
+  color: #aebd95;
+}
+.cloud-login h1 {
+  font:
+    52px/1.1 Georgia,
+    serif;
+  letter-spacing: -1.8px;
+  margin: 20px 0;
+}
+.cloud-login h1 em {
+  color: #9ea982;
+}
+.cloud-login p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #c9c7ba;
+}
+.cloud-login label {
+  display: grid;
+  gap: 10px;
+  font-size: 12px;
+  margin: 25px 0 16px;
+}
+.cloud-login input {
+  width: 100%;
+  padding: 14px;
+  background: #eae1cf;
+  color: #292b27;
+  border: 1px solid #9ea982;
+  border-radius: 3px;
+  font:
+    16px Inter,
+    sans-serif;
+}
+.cloud-login form .button {
+  width: 100%;
+  margin-bottom: 25px;
+}
+.cloud-login small {
+  display: block;
+  font-size: 11px;
+  line-height: 1.7;
+  color: #9ea982;
+}
+.cloud-error {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  max-width: 600px;
+  z-index: 200;
+  background: #472e27;
+  color: #fff;
+  padding: 18px;
+  border: 1px solid #c0997c;
+  border-radius: 5px;
+  box-shadow: 0 8px 40px #0003;
+  font-size: 13px;
+}
+.cloud-error button {
+  margin-left: 16px;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.workspace-content.outputs-tab > :not(.cloud-output-links) {
+  display: none;
+}
+.cloud-output-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16px 0;
+  padding: 24px;
+}
+.cloud-output-row > div {
+  flex: 1;
+  min-width: 0;
+}
+.workspace-content:not(.outputs-tab) > .cloud-output-links {
+  display: none;
+}
+.cloud-output-links input {
+  width: 100%;
+  padding: 12px;
+  background: #fffdf8;
+  border: 1px solid #d4d7c8;
+  border-radius: 4px;
+  color: #292b27;
+  font:
+    13px Inter,
+    sans-serif;
+}
+.cloud-output-links p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #69725c;
+}
+.cloud-output-links h2 {
+  font:
+    25px Georgia,
+    serif;
+  margin: 0 0 15px;
+}
+@media (max-width: 600px) {
+  .cloud-login section {
+    padding: 24px;
+  }
+  .cloud-login h1 {
+    font-size: 40px;
+  }
+  .cloud-output-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

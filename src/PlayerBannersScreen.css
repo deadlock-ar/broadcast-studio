@@ -1,0 +1,365 @@
+.player-banners-screen {
+  box-sizing: border-box;
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  padding: 38px 64px 24px;
+  overflow: hidden;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: 68px minmax(0, 1fr) 64px minmax(0, 1fr) 22px;
+  gap: 12px;
+  color: #f4eedf;
+  background:
+    radial-gradient(ellipse at top right, #546c434d, transparent 55%),
+    linear-gradient(135deg, #1b2b23, #111c18);
+  font-family: "Inter", Arial, sans-serif;
+}
+.player-banners-screen *,
+.player-banners-screen *::before,
+.player-banners-screen *::after {
+  box-sizing: border-box;
+}
+.player-banners-screen::before {
+  content: "";
+  position: absolute;
+  inset: 20px;
+  border: 1px solid #c8c4a329;
+  z-index: -1;
+  pointer-events: none;
+}
+.player-banners-screen.is-transparent {
+  background: transparent;
+}
+.player-banners-screen.is-transparent::before {
+  display: none;
+}
+.player-banners-screen-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 32px;
+  border-bottom: 1px solid #b1bb9440;
+  padding-bottom: 14px;
+  text-shadow: 0 2px 6px #0008;
+}
+.player-banners-kicker {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3.5px;
+  color: #bdc9aa;
+}
+.player-banners-screen-heading h1 {
+  max-width: 1340px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin: 7px 0 0;
+  font:
+    31px/1.05 Georgia,
+    serif;
+  letter-spacing: -0.5px;
+}
+.player-banners-screen-label {
+  padding-top: 24px;
+  color: #cbd3ba;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  white-space: nowrap;
+}
+.player-banners-team {
+  --player-banner-accent: #dbb772;
+  --player-banner-edge: #b58b464d;
+  display: grid;
+  grid-template-rows: 43px minmax(0, 1fr);
+  gap: 10px;
+  min-height: 0;
+}
+.player-banners-team-2 {
+  --player-banner-accent: #a6c4ec;
+  --player-banner-edge: #718db752;
+}
+.player-banners-team-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  min-width: 0;
+  text-shadow: 0 2px 7px #0009;
+}
+.player-banners-team-heading h2 {
+  margin: 0;
+  max-width: 1250px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font:
+    34px/1.15 Georgia,
+    serif;
+  color: #f6edda;
+}
+.player-banners-team-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+.player-banners-team-line {
+  flex: 1 1 120px;
+  height: 1px;
+  background: var(--player-banner-edge);
+}
+.player-banners-roster {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 18px;
+  min-height: 0;
+}
+.player-banners-card {
+  position: relative;
+  display: grid;
+  grid-template-rows: 58px minmax(0, 1fr) 48px;
+  padding: 14px 14px 9px;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid var(--player-banner-edge);
+  border-top: 3px solid var(--player-banner-accent);
+  background: linear-gradient(155deg, #f0eadc, #dedfcd);
+  color: #273628;
+  box-shadow: 0 5px 18px #0003;
+}
+.player-banners-card.is-empty {
+  border-top-color: #6c7d69;
+  background: linear-gradient(155deg, #24362d, #1b2c24);
+  color: #b5bfaa;
+}
+.player-banners-player-heading {
+  min-width: 0;
+  text-align: center;
+}
+.player-banners-slot {
+  display: block;
+  color: #62715b;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 2.8px;
+}
+.player-banners-player-heading h3 {
+  margin: 9px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 25px;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+}
+.player-banners-card.is-empty .player-banners-slot {
+  color: #93a28a;
+}
+.player-banners-stale {
+  display: block;
+  margin-top: 3px;
+  color: #7a6544;
+  font-size: 9px;
+  line-height: 1;
+}
+.player-banners-heroes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  min-height: 0;
+}
+.player-banners-hero {
+  display: grid;
+  grid-template-rows: minmax(72px, 1fr) 25px 23px 28px;
+  min-width: 0;
+  min-height: 0;
+  text-align: center;
+}
+.player-banners-portrait {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, #8d9a7b, #354639);
+  border: 1px solid #59694b4d;
+  min-height: 0;
+}
+.player-banners-portrait::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0 0;
+  background: linear-gradient(transparent, #14221a66);
+  pointer-events: none;
+}
+.player-banners-portrait img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: 50% 35%;
+}
+.player-banners-hero-position {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  background: #18291ed9;
+  border: 1px solid #d4d8bd50;
+  color: #e8e9d3;
+  font-size: 9px;
+  font-weight: 700;
+  z-index: 1;
+}
+.player-banners-hero-name {
+  display: block;
+  align-self: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.player-banners-match-count {
+  color: #58644e;
+  font-size: 13px;
+  line-height: 1;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.player-banners-match-count span {
+  display: block;
+  margin-top: 2px;
+  font-size: 8px;
+  line-height: 1;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+.player-banners-win-rate {
+  color: #2a442d;
+  font-size: 17px;
+  line-height: 1;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.player-banners-win-rate span {
+  display: block;
+  margin-top: 4px;
+  color: #637258;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.player-banners-no-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  border-top: 1px solid #63725026;
+  border-bottom: 1px solid #63725026;
+  text-align: center;
+  color: #6a785d;
+}
+.player-banners-empty-emblem {
+  font-size: 35px;
+  line-height: 1;
+  opacity: 0.7;
+}
+.player-banners-no-stats p {
+  margin: 15px 0 0;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.player-banners-card.is-empty .player-banners-no-stats {
+  color: #8e9e84;
+  border-color: #a4b49024;
+}
+.player-banners-hero.is-unavailable {
+  opacity: 0.55;
+}
+.player-banners-hero.is-unavailable .player-banners-portrait {
+  display: grid;
+  place-items: center;
+  background: #c5ccb5;
+  color: #67775b;
+  font-size: 24px;
+}
+.player-banners-player-footer {
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  text-align: center;
+}
+.player-banners-rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 100%;
+}
+.player-banners-rank img {
+  width: 41px;
+  height: 41px;
+  object-fit: contain;
+}
+.player-banners-rank span {
+  max-width: 170px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  font-weight: 700;
+  color: #526345;
+}
+.player-banners-rank-unavailable {
+  padding-bottom: 8px;
+  color: #7d886d;
+  font-size: 10px;
+}
+.player-banners-footer-mark {
+  color: #8a9977;
+  font-size: 13px;
+  letter-spacing: 3px;
+  padding-bottom: 6px;
+}
+.player-banners-versus {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+  padding: 0 400px;
+  text-shadow: 0 2px 8px #0009;
+}
+.player-banners-versus > span {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c1b48c70);
+}
+.player-banners-versus > span:last-child {
+  transform: scaleX(-1);
+}
+.player-banners-versus strong {
+  padding: 3px 10px;
+  font:
+    italic 37px/1 Georgia,
+    serif;
+  color: #e2d6b7;
+}
+.player-banners-screen-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  color: #a9b796;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-shadow: 0 1px 4px #000b;
+}

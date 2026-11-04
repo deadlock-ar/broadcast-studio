@@ -1,6 +1,41 @@
 export const STATS_KEY = "dlar-stat-panels-v1";
+export function metricSupported(metric, match) {
+  return (
+    match?.mode !== "live" ||
+    METRICS[metric]?.live === true ||
+    ["deadem", "local-client-demo"].includes(match?.provider)
+  );
+}
 export const API_ROOT = "https://api.deadlock-api.com";
 export const METRICS = {
+  objectiveDamage: {
+    label: "Objective damage",
+    short: "OBJECTIVES",
+    field: "boss_damage",
+    unit: "Damage to objectives",
+    live: false,
+  },
+  kills: {
+    label: "Kills",
+    short: "KILLS",
+    field: "kills",
+    unit: "Hero kills",
+    live: true,
+  },
+  deaths: {
+    label: "Deaths",
+    short: "DEATHS",
+    field: "deaths",
+    unit: "Player deaths",
+    live: true,
+  },
+  assists: {
+    label: "Assists",
+    short: "ASSISTS",
+    field: "assists",
+    unit: "Kill assists",
+    live: true,
+  },
   damage: {
     label: "Hero damage",
     short: "DAMAGE",
@@ -61,11 +96,18 @@ export function cleanPanel(value = {}) {
       "bottom-left",
       "bottom-right",
       "center",
+      "custom",
     ].includes(v.position)
       ? v.position
       : "bottom-right",
     theme: v.theme === "ink" ? "ink" : "parchment",
-    scale: [0.8, 1, 1.2].includes(Number(v.scale)) ? Number(v.scale) : 1,
+    scale: Number.isFinite(Number(v.scale))
+      ? Math.max(0.25, Math.min(2, Number(v.scale)))
+      : 1,
+    x: Math.max(0, Math.min(1919, Number(v.x) || 0)),
+    y: Math.max(0, Math.min(1079, Number(v.y) || 0)),
+    width: Math.max(240, Math.min(1880, Number(v.width) || 640)),
+    fontSize: Math.max(12, Math.min(36, Number(v.fontSize) || 18)),
     title: text(v.title, 64),
     teamNames: [
       text(v.teamNames?.[0]) || "Amber",
@@ -112,6 +154,7 @@ export function normalizeMetadata(data, expectedId) {
         .map((s) => ({
           time: Number(s.time_stamp_s),
           damage: nonnegative(s.player_damage),
+          objectiveDamage: nonnegative(s.boss_damage),
           souls: nonnegative(s.net_worth),
           healing: nonnegative(s.player_healing),
           kills: nonnegative(s.kills),
@@ -174,7 +217,7 @@ export function applyProfileNames(match, profiles) {
 }
 export function playersAt(match, time = match?.duration) {
   if (!match) return [];
-  if (match.mode === "live") return match.players;
+  if (match.mode === "live" || match.mode === "snapshot") return match.players;
   const atEnd = Number(time) >= match.duration;
   return match.players.map((p) => {
     const sample = p.samples.filter((s) => s.time <= time).at(-1);
@@ -195,6 +238,7 @@ export function playersAt(match, time = match?.duration) {
     return {
       ...p,
       damage: sample?.damage ?? null,
+      objectiveDamage: sample?.objectiveDamage ?? null,
       healing: sample?.healing ?? null,
       souls: (atEnd ? p.final.souls : sample?.souls) ?? null,
       buffs,

@@ -395,7 +395,7 @@
   --text: #292b27;
   --subtle: #525c45;
   --rule: #65734f40;
-  width: 640px;
+  width: var(--panel-width,640px);
   padding: 12px;
   background: var(--surface);
   color: var(--text);
