@@ -91,6 +91,7 @@ export function readFrame(
       buffs: counts ? Object.values(counts).reduce((s, n) => s + n, 0) : null,
       buffTypes: counts,
       damage: scalar("m_iHeroDamage"),
+      objectiveDamage: scalar("m_iObjectiveDamage"),
       healing: scalar("m_iHeroHealing"),
       souls: scalar("m_iGoldNetWorth"),
       kills: scalar("m_iPlayerKills"),

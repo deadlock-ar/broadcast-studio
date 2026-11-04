@@ -1,0 +1,31 @@
+.recording-evidence {
+  margin: 20px 0;
+  padding: 20px 24px;
+  line-height: 1.7;
+}
+.recording-evidence summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.recording-evidence p {
+  max-width: 1000px;
+  font-size: 13px;
+  color: #5c6550;
+}
+.recording-evidence-rows {
+  max-height: 360px;
+  overflow: auto;
+  margin-top: 18px;
+}
+.recording-evidence-rows > div {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  border-top: 1px solid #65734f22;
+  padding: 8px;
+  font-size: 12px;
+  gap: 12px;
+}
+.recording-evidence code {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}

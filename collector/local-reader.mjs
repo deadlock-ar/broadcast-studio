@@ -22,6 +22,7 @@ import { readFrame, playerFor } from "./extract.mjs";
 import { ultimateHit, ultimateEffects } from "./ultimates.mjs";
 import { PurchaseLedger } from "./purchases.mjs";
 import { enrichFrame } from "./enrichment.mjs";
+import { appendConsoleEntry } from "./console-entries.mjs";
 
 const load = async (name) =>
   JSON.parse(
@@ -216,15 +217,7 @@ export async function collectLocal(options, publish, signal) {
     },
   );
   parser.registerPostInterceptor(InterceptorStage.DEMO_PACKET, (packet) => {
-    if (packet.type.id === 9) {
-      audit.push({
-        tick: packet.tick,
-        command: String(
-          packet.data.command || packet.data.cmd || JSON.stringify(packet.data),
-        ).slice(0, 500),
-      });
-      if (audit.length > 500) audit.shift();
-    }
+    appendConsoleEntry(audit, packet);
     if (packet.type.id === 0) stopped = true;
     if (packet.type.id !== 7 || packet.tick < 0) return;
     lastTick = packet.tick;

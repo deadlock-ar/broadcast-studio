@@ -16,6 +16,7 @@ import { cleanReportSettings } from "../src/analytics.js";
 import { cleanMatchOverlay } from "../src/match-overlay.js";
 import { cleanBracket } from "../src/bracket.js";
 import { cleanPlayerBanners } from "../src/player-banners.js";
+import { cleanCasterStage } from "../src/caster-stage.js";
 import { cleanRosterSnapshot } from "./roster-library.mjs";
 
 export function exportBackup(store) {
@@ -86,6 +87,7 @@ export function prepareRestore(value, store) {
   w.matchOverlay = cleanMatchOverlay(source.matchOverlay);
   w.bracket = cleanBracket(source.bracket);
   w.playerBanners = cleanPlayerBanners(source.playerBanners);
+  w.casterStage = cleanCasterStage(source.casterStage);
   w.draft = {
     ...w.draft,
     mode: "manual",

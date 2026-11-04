@@ -21,6 +21,7 @@ import ProductionStudio from "./ProductionStudio";
 import MatchOverlayControls from "./MatchOverlayControls.jsx";
 import BracketStudio from "./BracketStudio.jsx";
 import PlayerBannersStudio from "./PlayerBannersStudio.jsx";
+import CasterStudio from "./CasterStudio.jsx";
 import DraftMatchSelector from "./DraftMatchSelector.jsx";
 import SharedOutputs from "./SharedOutputs.jsx";
 import Analytics from "./Analytics.jsx";
@@ -583,6 +584,7 @@ export default function App() {
       "overlay",
       "bracket",
       "banners",
+      "casters",
       "outputs",
       "analytics",
       "data",
@@ -950,6 +952,15 @@ export default function App() {
           )}
           {cloud && (
             <button
+              className={tab === "casters" ? "selected" : ""}
+              onClick={() => setTab("casters")}
+            >
+              <Icon name="studio" />
+              Caster desk
+            </button>
+          )}
+          {cloud && (
+            <button
               className={tab === "banners" ? "selected" : ""}
               onClick={() => setTab("banners")}
             >
@@ -1036,7 +1047,7 @@ export default function App() {
         <div
           inert={shared?.changingTournament || undefined}
           aria-busy={shared?.changingTournament || undefined}
-          className={`workspace-content${tab === "stats" ? " stats-tab" : tab === "live" ? " production-tab" : tab === "overlay" ? " overlay-tab" : tab === "bracket" ? " bracket-tab" : tab === "banners" ? " banners-tab" : tab === "outputs" ? " outputs-tab" : tab === "analytics" ? " analytics-tab" : tab === "data" ? " data-tab" : tab === "settings" ? " settings-only" : ""}`}
+          className={`workspace-content${tab === "stats" ? " stats-tab" : tab === "live" ? " production-tab" : tab === "overlay" ? " overlay-tab" : tab === "bracket" ? " bracket-tab" : tab === "casters" ? " casters-tab" : tab === "banners" ? " banners-tab" : tab === "outputs" ? " outputs-tab" : tab === "analytics" ? " analytics-tab" : tab === "data" ? " data-tab" : tab === "settings" ? " settings-only" : ""}`}
         >
           <StatPanels
             key={`stats:${shared?.data.activeTournamentId}`}
@@ -1066,6 +1077,12 @@ export default function App() {
               key={`analytics:${shared.data.activeTournamentId}`}
               config={config}
               active={tab === "analytics"}
+            />
+          )}
+          {cloud && (
+            <CasterStudio
+              key={`casters:${shared.data.activeTournamentId}`}
+              active={tab === "casters"}
             />
           )}
           {cloud && (

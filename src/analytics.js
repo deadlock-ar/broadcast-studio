@@ -89,12 +89,15 @@ export function draftPriority(drafts, heroes = []) {
         ban: 0,
         firstPick: 0,
         pick: 0,
+        unknownPick: 0,
+        unknownBan: 0,
       },
     ]),
   );
   for (const draft of drafts)
     for (const step of draft.selections || draftSelections(draft.snapshot)) {
-      if (!step.heroId) continue;
+      if (!step.heroId || !["pick", "ban"].includes(step.selectionType))
+        continue;
       const row = rows.get(step.heroId) || {
         id: step.heroId,
         name: `Hero ${step.heroId}`,
@@ -103,9 +106,16 @@ export function draftPriority(drafts, heroes = []) {
         ban: 0,
         firstPick: 0,
         pick: 0,
+        unknownPick: 0,
+        unknownBan: 0,
       };
-      const key =
-        step.selectionType === "ban"
+      const unknownOrder =
+        step.orderKnown === false || step.firstRound === null;
+      const key = unknownOrder
+        ? step.selectionType === "ban"
+          ? "unknownBan"
+          : "unknownPick"
+        : step.selectionType === "ban"
           ? step.firstRound
             ? "firstBan"
             : "ban"

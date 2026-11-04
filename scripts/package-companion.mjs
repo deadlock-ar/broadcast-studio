@@ -53,6 +53,8 @@ for (const name of [
   "extract.mjs",
   "ultimates.mjs",
   "model.mjs",
+  "telemetry.mjs",
+  "console-entries.mjs",
   "purchases.mjs",
   "enrichment.mjs",
   "package.json",

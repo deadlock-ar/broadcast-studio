@@ -3,6 +3,7 @@ import { initialWorkspace } from "../src/workspace-model.js";
 import { cleanMatchOverlay } from "../src/match-overlay.js";
 import { cleanBracket } from "../src/bracket.js";
 import { cleanPlayerBanners } from "../src/player-banners.js";
+import { cleanCasterStage } from "../src/caster-stage.js";
 import { prepareTournamentBracket } from "./bracket-service.mjs";
 
 const sections = [
@@ -15,6 +16,7 @@ const sections = [
   "matchOverlay",
   "bracket",
   "playerBanners",
+  "casterStage",
 ];
 export const inTournament = (record, store) =>
   !store.workspace.activeTournamentId ||
@@ -44,6 +46,7 @@ export class Tournaments {
           r.state.matchOverlay = cleanMatchOverlay(r.state.matchOverlay);
           r.state.bracket = cleanBracket(r.state.bracket);
           r.state.playerBanners = cleanPlayerBanners(r.state.playerBanners);
+          r.state.casterStage = cleanCasterStage(r.state.casterStage);
           return [r.id, r];
         }),
     );
@@ -54,6 +57,7 @@ export class Tournaments {
     record.state.matchOverlay = cleanMatchOverlay(record.state.matchOverlay);
     record.state.bracket = cleanBracket(record.state.bracket);
     record.state.playerBanners = cleanPlayerBanners(record.state.playerBanners);
+    record.state.casterStage = cleanCasterStage(record.state.casterStage);
     this.store.db
       .prepare("INSERT OR REPLACE INTO tournaments VALUES (?,?)")
       .run(record.id, JSON.stringify(record));
@@ -184,6 +188,7 @@ export class Tournaments {
     w.matchOverlay = cleanMatchOverlay(w.matchOverlay);
     w.bracket = cleanBracket(w.bracket);
     w.playerBanners = cleanPlayerBanners(w.playerBanners);
+    w.casterStage = cleanCasterStage(w.casterStage);
     w.activeTournamentId = id;
     w.revision++;
     w.draft.status = {
@@ -245,6 +250,8 @@ export class Tournaments {
         id: d.id,
         tournamentId: d.tournamentId,
         label: d.label,
+        source: d.source,
+        orderKnown: d.orderKnown,
         selections: d.selections?.filter((s) => s.heroId).length || 0,
         updatedAt: d.updatedAt,
       })),

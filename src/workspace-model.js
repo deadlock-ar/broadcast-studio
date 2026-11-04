@@ -5,12 +5,15 @@ import { cleanReportSettings } from "./analytics.js";
 import { cleanMatchOverlay } from "./match-overlay.js";
 import { cleanBracket } from "./bracket.js";
 import { cleanPlayerBanners } from "./player-banners.js";
+import { cleanCasterStage } from "./caster-stage.js";
 
 export const OUTPUTS = {
   draft: "/obs/draft",
   "match-overlay": "/obs/match-overlay",
   bracket: "/obs/bracket",
   "player-banners": "/obs/player-banners",
+  casters: "/obs/casters",
+  momentum: "/obs/momentum",
   "live-events": "/obs/live-events",
   deadem: "/obs/deadem",
   scoreboard: "/obs/scoreboard",
@@ -65,6 +68,7 @@ export function initialWorkspace() {
     matchOverlay: cleanMatchOverlay(),
     bracket: cleanBracket(),
     playerBanners: cleanPlayerBanners(),
+    casterStage: cleanCasterStage(),
     reports: cleanReportSettings(),
   };
 }
@@ -141,6 +145,7 @@ export function patchWorkspace(state, operations) {
     const valid =
       section === "config" ||
       section === "matchOverlay" ||
+      section === "casterStage" ||
       (section === "playerBanners" &&
         [
           "visible",
@@ -166,6 +171,7 @@ export function patchWorkspace(state, operations) {
   next.reports = cleanReportSettings(next.reports);
   next.matchOverlay = cleanMatchOverlay(next.matchOverlay);
   next.playerBanners = cleanPlayerBanners(next.playerBanners);
+  next.casterStage = cleanCasterStage(next.casterStage);
   next.draft.snapshot = cleanSnapshot(next.draft.snapshot);
   for (const key of ["apiStats", "deadem"]) {
     next[key].panel = cleanPanel(next[key].panel);
