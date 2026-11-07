@@ -22,7 +22,7 @@
   padding-bottom: 42px;
 }
 .sidebar-brand > span:last-child {
-  font-family: Georgia, serif;
+  font-family: "DLAR Arabic", Georgia, serif;
   font-size: 25px;
   letter-spacing: -1px;
   white-space: nowrap;
@@ -33,7 +33,7 @@
 }
 .sidebar-brand small {
   display: block;
-  font-family: "Barlow Condensed", sans-serif;
+  font-family: "DLAR Arabic", "Barlow Condensed", sans-serif;
   font-size: 10px;
   letter-spacing: 2.3px;
   padding-top: 8px;
@@ -119,13 +119,14 @@
 }
 .sidebar-bottom > span[lang] {
   font:
-    700 13px "Cairo",
+    700 13px "DLAR Arabic",
+    "Cairo",
     sans-serif;
   color: #adb99b;
 }
 .sidebar-bottom > small {
   display: block;
-  font-family: "Barlow Condensed", sans-serif;
+  font-family: "DLAR Arabic", "Barlow Condensed", sans-serif;
   color: #7f8b72;
   font-size: 9px;
   letter-spacing: 1.8px;
@@ -147,13 +148,14 @@
   place-items: center;
   border: 1px solid #61704e;
   border-radius: 50%;
-  font-family: Georgia, serif;
+  font-family: "DLAR Arabic", Georgia, serif;
 }
 .sidebar-admin small {
   display: block;
   color: #849575;
   font:
-    9px "Barlow Condensed",
+    9px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 1.5px;
   padding-top: 6px;
@@ -177,7 +179,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 40px;
-  font-family: "Barlow Condensed", sans-serif;
+  font-family: "DLAR Arabic", "Barlow Condensed", sans-serif;
   font-size: 11px;
   letter-spacing: 1.8px;
   color: #717860;
@@ -189,7 +191,8 @@
 }
 .save-state {
   font:
-    11px "Inter",
+    11px "DLAR Arabic",
+    "Inter",
     sans-serif;
   letter-spacing: 0;
   display: flex;
@@ -210,7 +213,7 @@
   gap: 20px;
 }
 .eyebrow {
-  font-family: "Barlow Condensed", sans-serif;
+  font-family: "DLAR Arabic", "Barlow Condensed", sans-serif;
   font-weight: 500;
   font-size: 11px;
   letter-spacing: 2px;
@@ -218,7 +221,8 @@
 }
 .page-heading h1 {
   font:
-    43px/1.2 Georgia,
+    43px/1.2 "DLAR Arabic",
+    Georgia,
     serif;
   letter-spacing: -1.5px;
   margin: 9px 0 10px;
@@ -452,7 +456,8 @@
 }
 .connection-heading h2 {
   font:
-    23px Georgia,
+    23px "DLAR Arabic",
+    Georgia,
     serif;
   letter-spacing: -0.5px;
   margin-top: 8px;
@@ -523,7 +528,7 @@
   font-size: 10px;
 }
 .source-meta > span {
-  font-family: "Barlow Condensed", sans-serif;
+  font-family: "DLAR Arabic", "Barlow Condensed", sans-serif;
   letter-spacing: 1px;
   color: #8a947b;
 }
@@ -564,7 +569,8 @@
 }
 .section-heading h2 {
   font:
-    23px Georgia,
+    23px "DLAR Arabic",
+    Georgia,
     serif;
   margin-top: 5px;
   letter-spacing: -0.3px;
@@ -600,7 +606,8 @@
 }
 .editor-team-number {
   font:
-    18px Georgia,
+    18px "DLAR Arabic",
+    Georgia,
     serif;
   color: #bbbfae;
   margin-left: auto;
@@ -627,7 +634,8 @@
   flex-shrink: 0;
   overflow: hidden;
   font:
-    700 27px "Barlow Condensed",
+    700 27px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 2px;
 }
@@ -770,7 +778,8 @@
 }
 .settings-panel h2 {
   font:
-    23px Georgia,
+    23px "DLAR Arabic",
+    Georgia,
     serif;
   margin-bottom: 18px;
 }
@@ -856,7 +865,8 @@
 }
 .settings-panel > small {
   font:
-    10px "Barlow Condensed",
+    10px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 1.5px;
   color: #8b927b;
@@ -887,7 +897,8 @@
 }
 .broadcast-link-panel h2 {
   font:
-    22px Georgia,
+    22px "DLAR Arabic",
+    Georgia,
     serif;
   margin: 6px 0;
 }
@@ -912,7 +923,8 @@
   justify-content: space-between;
   padding: 26px 0 0;
   font:
-    9px "Barlow Condensed",
+    9px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 1.3px;
   color: #8a927c;
@@ -986,7 +998,8 @@
 }
 .modal h2 {
   font:
-    25px Georgia,
+    25px "DLAR Arabic",
+    Georgia,
     serif;
 }
 .guide-steps {
@@ -997,7 +1010,7 @@
   padding: 0 0 23px 7px;
 }
 .guide-steps li::marker {
-  font-family: Georgia, serif;
+  font-family: "DLAR Arabic", Georgia, serif;
   color: #65734f;
 }
 .guide-steps p {
@@ -1069,7 +1082,7 @@
   background: #252b20;
   color: var(--parchment);
   isolation: isolate;
-  font-family: "Inter", "Cairo", sans-serif;
+  font-family: "DLAR Arabic", "Inter", "Cairo", sans-serif;
 }
 .draft-canvas:after {
   content: "";
@@ -1115,14 +1128,15 @@
   padding-top: 115px;
 }
 .tiny {
-  font-family: "Barlow Condensed", sans-serif;
+  font-family: "DLAR Arabic", "Barlow Condensed", sans-serif;
   font-size: 20px;
   letter-spacing: 7px;
   color: #adb995;
 }
 .broadcast-heading h2 {
   font:
-    65px/1.2 Georgia,
+    65px/1.2 "DLAR Arabic",
+    Georgia,
     "Cairo",
     serif;
   color: #f0e8d5;
@@ -1140,7 +1154,7 @@
   margin: 10px 0 23px;
 }
 .broadcast-round {
-  font-family: "Barlow Condensed", sans-serif;
+  font-family: "DLAR Arabic", "Barlow Condensed", sans-serif;
   text-transform: uppercase;
   font-size: 23px;
   letter-spacing: 3px;
@@ -1229,7 +1243,8 @@
 }
 .draft-team-header h3 {
   font:
-    700 39px/1.15 "Barlow Condensed",
+    700 39px/1.15 "DLAR Arabic",
+    "Barlow Condensed",
     "Cairo",
     sans-serif;
   text-transform: uppercase;
@@ -1241,7 +1256,8 @@
 }
 .team-subtitle {
   font:
-    16px "Barlow Condensed",
+    16px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   color: #899477;
   letter-spacing: 3px;
@@ -1261,7 +1277,8 @@
 .team-score {
   margin-left: auto;
   font:
-    51px Georgia,
+    51px "DLAR Arabic",
+    Georgia,
     serif;
   color: #566243;
 }
@@ -1278,7 +1295,8 @@
 }
 .draft-group-label {
   font:
-    17px "Barlow Condensed",
+    17px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 3px;
   color: #6e7c59;
@@ -1288,7 +1306,8 @@
 }
 .draft-group-label span {
   font:
-    14px "Inter",
+    14px "DLAR Arabic",
+    "Inter",
     sans-serif;
   letter-spacing: 1px;
   color: #919b82;
@@ -1359,7 +1378,8 @@
   align-items: center;
   gap: 14px;
   font:
-    14px "Barlow Condensed",
+    14px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 1.7px;
   text-transform: uppercase;
@@ -1377,7 +1397,8 @@
   background: linear-gradient(transparent, #20281dea);
   color: #f8f1df;
   font:
-    500 17px/1 "Barlow Condensed",
+    500 17px/1 "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   text-align: center;
   white-space: nowrap;
@@ -1459,7 +1480,8 @@
   background: #65734f;
   color: #f6f0de;
   font:
-    12px "Barlow Condensed",
+    12px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 1px;
   text-align: center;
@@ -1474,7 +1496,8 @@
 }
 .ban-row > span {
   font:
-    16px "Barlow Condensed",
+    16px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   color: #8b806c;
   letter-spacing: 3px;
@@ -1542,7 +1565,8 @@
 }
 .broadcast-wordmark {
   font:
-    700 36px/1.1 Georgia,
+    700 36px/1.1 "DLAR Arabic",
+    Georgia,
     serif;
   letter-spacing: -2px;
   white-space: nowrap;
@@ -1554,7 +1578,8 @@
 }
 .arabic-brand {
   font:
-    900 16px "Cairo",
+    900 16px "DLAR Arabic",
+    "Cairo",
     sans-serif;
   margin-top: 6px;
 }
@@ -1564,7 +1589,7 @@
   margin: 19px 0;
 }
 .draft-phase {
-  font-family: "Barlow Condensed", "Cairo", sans-serif;
+  font-family: "DLAR Arabic", "Barlow Condensed", "Cairo", sans-serif;
   font-size: 17px;
   line-height: 1.5;
   letter-spacing: 1px;
@@ -1576,7 +1601,8 @@
 }
 .draft-timer {
   font:
-    38px Georgia,
+    38px "DLAR Arabic",
+    Georgia,
     serif;
   color: #65734f;
   margin-top: 13px;
@@ -1584,7 +1610,8 @@
 }
 .draft-timer small {
   font:
-    11px "Barlow Condensed",
+    11px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   display: block;
   letter-spacing: 2px;
@@ -1599,7 +1626,8 @@
   display: flex;
   justify-content: space-between;
   font:
-    16px "Barlow Condensed",
+    16px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 3px;
   color: #8d9b77;
@@ -1648,7 +1676,8 @@
 }
 .lower-match {
   font:
-    17px "Barlow Condensed",
+    17px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 1px;
   color: #65734f;
@@ -1667,7 +1696,8 @@
   bottom: 455px;
   right: 40px;
   font:
-    15px "Barlow Condensed",
+    15px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 2px;
   color: #9aaa81;

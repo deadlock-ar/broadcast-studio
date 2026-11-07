@@ -117,6 +117,213 @@ test("switching tournaments restores separate draft, branding, scores, manual MV
   );
 });
 
+test("renaming updates only the tournament's event labels and retains results and manual titles", async (t) => {
+  const store = await database(t);
+  store.tournaments = new Tournaments(store);
+  const a = store.tournaments.create({
+    name: "Cup A",
+    entrants: [{ name: "Alpha" }, { name: "Omega" }],
+    generate: true,
+    seeding: "seeded",
+  });
+  const saved = game(store);
+  saved.published.event = "Cup A";
+  await store.save(saved);
+  const custom = game(store, "789");
+  custom.tournament = "Historic event label";
+  custom.published.event = "Sponsor showcase";
+  await store.save(custom);
+  store.workspace.draft.snapshot.steps[0].heroId = 1;
+  store.workspace.draft.snapshot.status = "COMPLETED";
+  const draft = store.archive.capture({ label: "Opening game" });
+  const b = store.tournaments.create("Cup B");
+  // Equal text alone must never cause another tournament's records to change.
+  store.workspace.config.event = "Cup A";
+  const other = game(store, "456");
+  other.published.event = "Cup A";
+  await store.save(other);
+  store.workspace.draft.snapshot.steps[0].heroId = 2;
+  const otherDraft = store.archive.capture({ label: "Other opening" });
+  store.tournaments.select(a.id);
+  store.workspace.config.teams[0].score = 1;
+  store.workspace.reports.titles.heroes = "Custom hero report";
+  store.workspace.matchOverlay.links.event = false;
+  store.workspace.matchOverlay.tournament.name = "Custom overlay";
+  store.workspace.scoreboard.mvp = { title: "Custom award" };
+  store.saveWorkspace();
+  const bracket = structuredClone(store.workspace.bracket);
+  const result = structuredClone(saved.result);
+  store.tournaments.rename(a.id, "Renamed Cup A");
+  assert.equal(store.workspace.config.event, "Renamed Cup A");
+  assert.equal(a.state.config.event, "Renamed Cup A");
+  assert.equal(saved.tournament, "Renamed Cup A");
+  assert.equal(saved.published.event, "Renamed Cup A");
+  assert.equal(saved.label, "Saved final");
+  assert.equal(custom.tournament, "Historic event label");
+  assert.equal(custom.published.event, "Sponsor showcase");
+  assert.deepEqual(saved.result, result);
+  assert.deepEqual(store.workspace.bracket, bracket);
+  assert.equal(store.workspace.config.teams[0].score, 1);
+  assert.equal(store.workspace.reports.titles.heroes, "Custom hero report");
+  assert.equal(store.workspace.matchOverlay.tournament.name, "Custom overlay");
+  assert.equal(store.workspace.matchOverlay.links.event, false);
+  assert.equal(store.workspace.scoreboard.mvp.title, "Custom award");
+  const archived = store.archive.list().find((item) => item.id === draft.id);
+  assert.equal(archived.tournament, "Renamed Cup A");
+  assert.equal(archived.config.event, "Renamed Cup A");
+  assert.equal(archived.label, "Opening game");
+  assert.equal(archived.completed, true);
+  assert.deepEqual(archived.selections, draft.selections);
+  assert.equal(other.tournament, "Cup A");
+  assert.equal(other.published.event, "Cup A");
+  assert.equal(
+    store.archive.list().find((item) => item.id === otherDraft.id).tournament,
+    "Cup A",
+  );
+  assert.equal(store.tournaments.records.get(b.id).name, "Cup B");
+  const persisted = JSON.parse(
+    store.db.prepare("SELECT value FROM matches WHERE id=?").get(saved.id)
+      .value,
+  );
+  assert.equal(persisted.published.event, "Renamed Cup A");
+});
+
+test("inactive and same-name renames persist through selection and service restart", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "dlar-rename-restart-"));
+  let store = new BroadcastDatabase(dir);
+  const open = async () => {
+    await store.load();
+    store.archive = new Archive(store);
+    store.tournaments = new Tournaments(store);
+  };
+  await open();
+  t.after(async () => {
+    store.close();
+    await rm(dir, { recursive: true, force: true });
+  });
+  const a = store.tournaments.create("Beat Pit Open qualifiers");
+  const saved = game(store);
+  saved.published.event = a.name;
+  await store.save(saved);
+  store.workspace.draft.snapshot.steps[0].heroId = 1;
+  const draft = store.archive.capture();
+  const b = store.tournaments.create("Cup B");
+  store.workspace.config.teams[0].score = 2;
+  store.saveWorkspace();
+  // Reproduce a name already saved by the old implementation.
+  a.name = "Bear Pit Open qualifiers";
+  store.tournaments.put(a);
+  store.tournaments.rename(a.id, a.name);
+  assert.equal(store.workspace.activeTournamentId, b.id);
+  assert.equal(store.workspace.config.event, "Cup B");
+  assert.equal(store.workspace.config.teams[0].score, 2);
+  assert.equal(a.state.config.event, "Bear Pit Open qualifiers");
+  assert.equal(saved.published.event, "Bear Pit Open qualifiers");
+  store.tournaments.select(a.id);
+  assert.equal(store.workspace.config.event, "Bear Pit Open qualifiers");
+  store.tournaments.select(b.id);
+  store.close();
+  store = new BroadcastDatabase(dir);
+  await open();
+  assert.equal(store.workspace.config.event, "Cup B");
+  store.tournaments.select(a.id);
+  assert.equal(store.workspace.config.event, "Bear Pit Open qualifiers");
+  assert.equal(
+    store.sessions.get(saved.id).tournament,
+    "Bear Pit Open qualifiers",
+  );
+  assert.equal(
+    store.archive.list().find((item) => item.id === draft.id).config.event,
+    "Bear Pit Open qualifiers",
+  );
+  assert.throws(() => store.tournaments.rename(a.id, "Cup B"), /different/);
+  assert.equal(store.workspace.config.event, "Bear Pit Open qualifiers");
+});
+
+test("rename rollback keeps tournament, workspace and saved event labels consistent", async (t) => {
+  const store = await database(t);
+  store.tournaments = new Tournaments(store);
+  const record = store.tournaments.create("Cup A"),
+    saved = game(store);
+  saved.published.event = record.name;
+  await store.save(saved);
+  store.workspace.draft.snapshot.steps[0].heroId = 1;
+  const draft = store.archive.capture();
+  store.saveWorkspace();
+  const revision = store.workspace.revision;
+  store.db.exec(`CREATE TRIGGER reject_rename BEFORE UPDATE ON drafts
+    BEGIN SELECT RAISE(ABORT, 'Archive write failed'); END;`);
+  assert.throws(
+    () => store.tournaments.rename(record.id, "New Cup A"),
+    /Archive write failed/,
+  );
+  assert.equal(record.name, "Cup A");
+  assert.equal(store.workspace.config.event, "Cup A");
+  assert.equal(store.workspace.revision, revision);
+  assert.equal(saved.published.event, "Cup A");
+  assert.equal(store.read("workspace").config.event, "Cup A");
+  assert.equal(
+    JSON.parse(
+      store.db
+        .prepare("SELECT value FROM tournaments WHERE id=?")
+        .get(record.id).value,
+    ).name,
+    "Cup A",
+  );
+  assert.equal(
+    store.archive.list().find((item) => item.id === draft.id).tournament,
+    "Cup A",
+  );
+});
+
+test("HTTP rename refreshes the event used by each linked broadcast output", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "dlar-rename-http-"));
+  const app = await createBroadcastServer({
+    directory: dir,
+    port: 0,
+    origin: "http://studio.test",
+  });
+  await new Promise((resolve) => app.server.listen(0, "127.0.0.1", resolve));
+  t.after(async () => {
+    await app.shutdown();
+    await rm(dir, { recursive: true, force: true });
+  });
+  const base = `http://127.0.0.1:${app.server.address().port}`,
+    id = app.store.workspace.activeTournamentId;
+  const response = await fetch(base + "/api/tournaments/rename", {
+    method: "POST",
+    headers: {
+      Origin: app.origin,
+      "Content-Type": "application/json",
+      "X-DLAR-Tournament": id,
+    },
+    body: JSON.stringify({ id, name: "Bear Pit Open qualifiers" }),
+  });
+  assert.equal(response.status, 200);
+  assert.equal(
+    (await response.json()).config.event,
+    "Bear Pit Open qualifiers",
+  );
+  const output = async (channel) =>
+    (await fetch(base + "/api/broadcast?channel=" + channel)).json();
+  assert.equal(
+    (await output("draft")).config.event,
+    "Bear Pit Open qualifiers",
+  );
+  assert.equal(
+    (await output("bracket")).bracket.title,
+    "Bear Pit Open qualifiers",
+  );
+  assert.equal(
+    (await output("match-overlay")).overlay.tournament.name,
+    "Bear Pit Open qualifiers",
+  );
+  assert.equal(
+    (await output("casters")).stage.event,
+    "Bear Pit Open qualifiers",
+  );
+});
+
 test("deleting and restoring a game cleans outputs and report selections without recalculating series scores", async (t) => {
   const store = await database(t);
   store.tournaments = new Tournaments(store);

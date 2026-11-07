@@ -10,7 +10,9 @@
   margin: 20px 0;
 }
 .panel-customization h3 {
-  font: 24px Georgia;
+  font:
+    24px "DLAR Arabic",
+    Georgia;
   margin: 0 0 20px;
 }
 .panel-customization select,
@@ -28,7 +30,7 @@
   padding: 42px;
   background: #eae1cf;
   color: #292b27;
-  font-family: Inter, sans-serif;
+  font-family: "DLAR Arabic", Inter, sans-serif;
 }
 .complete-score-header {
   display: flex;
@@ -44,14 +46,18 @@
   object-fit: contain;
 }
 .complete-score-header h1 {
-  font: 46px Georgia;
+  font:
+    46px "DLAR Arabic",
+    Georgia;
   margin: 4px 0;
 }
 .complete-score-header h1 span {
   color: #65734f;
 }
 .complete-score-header small {
-  font: 14px sans-serif;
+  font:
+    14px "DLAR Arabic",
+    sans-serif;
   letter-spacing: 3px;
 }
 .complete-score-header aside {
@@ -90,17 +96,23 @@
   object-fit: contain;
 }
 .complete-score-team h2 {
-  font: 30px Georgia;
+  font:
+    30px "DLAR Arabic",
+    Georgia;
   margin: 6px 0;
 }
 .complete-score-team > header small {
-  font: 11px sans-serif;
+  font:
+    11px "DLAR Arabic",
+    sans-serif;
   letter-spacing: 2px;
 }
 .complete-score-team > header > b {
   margin-left: auto;
   text-align: center;
-  font: 38px Georgia;
+  font:
+    38px "DLAR Arabic",
+    Georgia;
 }
 .complete-score-team > header > b small {
   display: block;
@@ -230,7 +242,9 @@
   color: #68725b;
 }
 .score-mvp {
-  font: 20px Georgia;
+  font:
+    20px "DLAR Arabic",
+    Georgia;
   color: #52613b;
 }
 .report-output-canvas {

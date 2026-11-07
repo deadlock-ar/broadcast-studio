@@ -27,7 +27,8 @@
 }
 .cloud-login h1 {
   font:
-    52px/1.1 Georgia,
+    52px/1.1 "DLAR Arabic",
+    Georgia,
     serif;
   letter-spacing: -1.8px;
   margin: 20px 0;
@@ -54,7 +55,8 @@
   border: 1px solid #9ea982;
   border-radius: 3px;
   font:
-    16px Inter,
+    16px "DLAR Arabic",
+    Inter,
     sans-serif;
 }
 .cloud-login form .button {
@@ -115,7 +117,8 @@
   border-radius: 4px;
   color: #292b27;
   font:
-    13px Inter,
+    13px "DLAR Arabic",
+    Inter,
     sans-serif;
 }
 .cloud-output-links p {
@@ -125,7 +128,8 @@
 }
 .cloud-output-links h2 {
   font:
-    25px Georgia,
+    25px "DLAR Arabic",
+    Georgia,
     serif;
   margin: 0 0 15px;
 }

@@ -23,13 +23,15 @@
 }
 .bracket-studio h2 {
   font:
-    25px/1.3 Georgia,
+    25px/1.3 "DLAR Arabic",
+    Georgia,
     serif;
   margin: 0 0 7px;
 }
 .bracket-studio h3 {
   font:
-    20px/1.3 Georgia,
+    20px/1.3 "DLAR Arabic",
+    Georgia,
     serif;
   margin: 0 0 14px;
 }
@@ -285,7 +287,8 @@
 }
 .brk-empty-entrants strong {
   font:
-    21px Georgia,
+    21px "DLAR Arabic",
+    Georgia,
     serif;
   color: #677a50;
 }
@@ -363,7 +366,8 @@
   display: inline-block;
   color: #7a8665;
   font:
-    600 11px/1.3 Inter,
+    600 11px/1.3 "DLAR Arabic",
+    Inter,
     Arial,
     sans-serif;
   border: 1px solid #d5dcc8;

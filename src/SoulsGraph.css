@@ -21,20 +21,23 @@
 }
 .souls-graph header b {
   font:
-    600 17px "Barlow Condensed",
+    600 17px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 2.5px;
 }
 .souls-graph header span {
   color: #aeb49d;
   font:
-    10px Inter,
+    10px "DLAR Arabic",
+    Inter,
     sans-serif;
   letter-spacing: 1px;
 }
 .souls-graph header strong {
   font:
-    500 19px "Barlow Condensed",
+    500 19px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
 }
 .souls-graph svg {
@@ -46,7 +49,8 @@
 .souls-graph svg text {
   fill: #aeb49d;
   font:
-    11px Inter,
+    11px "DLAR Arabic",
+    Inter,
     sans-serif;
 }
 .souls-grid {
@@ -83,7 +87,8 @@
 .souls-graph-empty p {
   color: #b5bba5;
   font:
-    15px Inter,
+    15px "DLAR Arabic",
+    Inter,
     sans-serif;
   padding: 20px 0;
 }

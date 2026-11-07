@@ -32,14 +32,16 @@
 }
 
 .match-banner-svg .team-name {
-  font-family: var(--match-team-font, "Match Bodoni", Georgia, serif);
+  font-family:
+    "DLAR Arabic", var(--match-team-font, "Match Bodoni", Georgia, serif);
   font-size: 44px;
   font-weight: 800;
   letter-spacing: -1px;
 }
 
 .match-banner-svg .side-text {
-  font-family: "Arial Narrow", "Roboto Condensed", Arial, sans-serif;
+  font-family:
+    "DLAR Arabic", "Arial Narrow", "Roboto Condensed", Arial, sans-serif;
   font-weight: 600;
   fill: #eee9d9;
 }
@@ -55,7 +57,8 @@
 
 .match-banner-svg .empty-ban {
   font:
-    11px Arial,
+    11px "DLAR Arabic",
+    Arial,
     sans-serif;
   letter-spacing: 2px;
   fill: #879275;
@@ -88,7 +91,8 @@
   background: #8aa76514;
   color: #e2e9cf;
   font:
-    11px/1.2 Arial,
+    11px/1.2 "DLAR Arabic",
+    Arial,
     sans-serif;
   letter-spacing: 0.08em;
 }
@@ -137,7 +141,8 @@
   box-sizing: border-box;
   color: #faf8ee;
   font:
-    600 14px/1.15 Arial,
+    600 14px/1.15 "DLAR Arabic",
+    Arial,
     sans-serif;
   text-shadow: 0 1px 2px #000b;
 }

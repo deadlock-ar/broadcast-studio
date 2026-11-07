@@ -14,7 +14,8 @@
 }
 .rl-heading h2 {
   font:
-    27px Georgia,
+    27px "DLAR Arabic",
+    Georgia,
     serif;
   margin: 0 0 9px;
 }
@@ -61,7 +62,8 @@
 }
 .rl-card h3 {
   font:
-    23px Georgia,
+    23px "DLAR Arabic",
+    Georgia,
     serif;
   margin: 0 0 22px;
 }
@@ -158,7 +160,8 @@
 }
 .rl-empty strong {
   font:
-    20px Georgia,
+    20px "DLAR Arabic",
+    Georgia,
     serif;
   color: #74865b;
 }

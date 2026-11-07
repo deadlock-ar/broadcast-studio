@@ -213,11 +213,90 @@ export class Tournaments {
       )
     )
       throw Error("Choose a different tournament name.");
+    const store = this.store,
+      workspace = store.workspace,
+      active = workspace.activeTournamentId === id;
+    // Saved event labels can still contain the old name after a rename made
+    // with an older studio. Include them so saving the same name repairs it.
+    const previousNames = new Set(
+      [r.name, r.state.config.event, active && workspace.config.event].filter(
+        (value) => typeof value === "string" && value,
+      ),
+    );
+    const renameLabel = (value) => (previousNames.has(value) ? name : value);
+    const nextWorkspace = structuredClone(workspace);
+    if (active) nextWorkspace.config.event = name;
+    nextWorkspace.revision++;
+    nextWorkspace.tournaments = [...this.records.values()].map((record) => ({
+      id: record.id,
+      name: record.id === id ? name : record.name,
+      createdAt: record.createdAt,
+    }));
+    const nextRecord = structuredClone(r);
+    nextRecord.name = name;
+    if (active) nextRecord.state = stateOf(nextWorkspace);
+    else nextRecord.state.config.event = name;
+    const games = [...store.sessions.values()]
+      .filter((session) => session.tournamentId === id)
+      .flatMap((session) => {
+        const tournament = renameLabel(session.tournament),
+          event = renameLabel(session.published?.event);
+        if (
+          tournament === session.tournament &&
+          event === session.published?.event
+        )
+          return [];
+        return [
+          {
+            current: session,
+            next: {
+              ...session,
+              tournament,
+              ...(session.published
+                ? { published: { ...session.published, event } }
+                : {}),
+            },
+          },
+        ];
+      });
+    const drafts = store.archive.list().filter((draft) => {
+      if (draft.tournamentId !== id) return false;
+      const tournament = renameLabel(draft.tournament),
+        event = renameLabel(draft.config?.event);
+      const changed =
+        tournament !== draft.tournament || event !== draft.config?.event;
+      draft.tournament = tournament;
+      if (draft.config) draft.config.event = event;
+      return changed;
+    });
+    // Keep manual titles and archive labels independent, and commit every
+    // identity label together before exposing the rename to connected admins.
+    store.db.exec("BEGIN IMMEDIATE");
+    try {
+      this.put(nextRecord);
+      for (const { next } of games)
+        store.db
+          .prepare("INSERT OR REPLACE INTO matches VALUES (?,?)")
+          .run(next.id, JSON.stringify(next));
+      for (const draft of drafts)
+        store.db
+          .prepare("UPDATE drafts SET value=? WHERE id=?")
+          .run(JSON.stringify(draft), draft.id);
+      store.write("workspace", nextWorkspace);
+      store.db.exec("COMMIT");
+    } catch (error) {
+      store.db.exec("ROLLBACK");
+      throw error;
+    }
     r.name = name;
-    this.put(r);
-    this.index();
-    this.store.workspace.revision++;
-    this.store.saveWorkspace();
+    r.state = nextRecord.state;
+    if (active) workspace.config.event = name;
+    workspace.tournaments = nextWorkspace.tournaments;
+    workspace.revision = nextWorkspace.revision;
+    for (const { current, next } of games) {
+      current.tournament = next.tournament;
+      if (current.published) current.published.event = next.published.event;
+    }
   }
   listTrash() {
     return this.store.db

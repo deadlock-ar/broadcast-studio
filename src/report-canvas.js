@@ -12,16 +12,16 @@ const palette = {
   unknownBan: "#7c705e",
 };
 const displayFont = (size, weight = 600) =>
-  `${weight} ${size}px "DLAR Display", "Cairo", Georgia, serif`;
+  `${weight} ${size}px "DLAR Arabic", "DLAR Display", "Cairo", Georgia, serif`;
 const condensedFont = (size, weight = 500) =>
-  `${weight} ${size}px "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif`;
+  `${weight} ${size}px "DLAR Arabic", "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif`;
 async function prepareFonts() {
   const fonts = globalThis.document?.fonts;
   if (!fonts?.load) return;
   await Promise.allSettled([
     fonts.load(displayFont(58), "DEADLOCK AR البطولة"),
     fonts.load(condensedFont(28), "0123456789 HERO PRIORITY"),
-    fonts.load('700 28px "Cairo"', "البطولة اللاعب"),
+    fonts.load('700 28px "DLAR Arabic"', "البطولة اللاعب"),
   ]);
 }
 function priorityMark(c, key, x, y, size = 5.5) {

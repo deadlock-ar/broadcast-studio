@@ -8,7 +8,7 @@
   display: grid;
   grid-template-rows: 94px minmax(0, 1fr) 174px 32px;
   gap: 12px;
-  font-family: Inter, Cairo, sans-serif;
+  font-family: "DLAR Arabic", Inter, Cairo, sans-serif;
 }
 .deadlock-scoreboard::before {
   content: "";
@@ -55,7 +55,8 @@
 }
 .ds-team-title h2 {
   font:
-    600 29px "Barlow Condensed",
+    600 29px "DLAR Arabic",
+    "Barlow Condensed",
     Cairo,
     sans-serif;
   white-space: nowrap;
@@ -65,7 +66,8 @@
 }
 .ds-team-heading small {
   font:
-    600 10px Inter,
+    600 10px "DLAR Arabic",
+    Inter,
     sans-serif;
   letter-spacing: 1.6px;
   display: block;
@@ -80,7 +82,8 @@
 .ds-team-total b {
   display: block;
   font:
-    600 30px "Barlow Condensed",
+    600 30px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   margin-top: 4px;
 }
@@ -91,7 +94,8 @@
 }
 .ds-series b {
   font:
-    600 35px "Barlow Condensed",
+    600 35px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
 }
 .ds-series small {
@@ -115,7 +119,8 @@
 }
 .ds-match-clock b {
   font:
-    500 42px "Barlow Condensed",
+    500 42px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   line-height: 1;
 }
@@ -190,7 +195,8 @@
   text-align: center;
   color: #293124;
   font:
-    600 11px Inter,
+    600 11px "DLAR Arabic",
+    Inter,
     sans-serif;
   letter-spacing: 2px;
 }
@@ -201,7 +207,8 @@
   text-align: center;
   line-height: 1.15;
   font:
-    600 16px/1.15 "Barlow Condensed",
+    600 16px/1.15 "DLAR Arabic",
+    "Barlow Condensed",
     Cairo,
     sans-serif;
   padding: 4px;
@@ -218,7 +225,8 @@
   align-items: center;
   justify-content: center;
   font:
-    500 25px/1 "Barlow Condensed",
+    500 25px/1 "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   font-variant-numeric: tabular-nums;
   background: #ffffff04;
@@ -353,7 +361,8 @@
 }
 .ds-community-mark span {
   font:
-    500 14px/1.4 "Barlow Condensed",
+    500 14px/1.4 "DLAR Arabic",
+    "Barlow Condensed",
     Cairo,
     sans-serif;
   letter-spacing: 1px;
@@ -362,7 +371,8 @@
   border-block: 1px solid #c5bf8055;
   padding: 8px 4px;
   font:
-    500 16px "Barlow Condensed",
+    500 16px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 3px;
   color: #ded6b6;
@@ -372,7 +382,8 @@
   justify-content: center;
   align-items: center;
   font:
-    500 15px "Barlow Condensed",
+    500 15px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 1px;
 }
@@ -382,7 +393,8 @@
   justify-content: space-between;
   gap: 24px;
   font:
-    10px Inter,
+    10px "DLAR Arabic",
+    Inter,
     sans-serif;
   letter-spacing: 1px;
   color: #9aa78f;

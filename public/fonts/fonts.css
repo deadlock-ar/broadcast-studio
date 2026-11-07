@@ -40,6 +40,30 @@
   font-display: swap;
   src: url(/fonts/font-5.ttf) format('truetype');
 }
+/* Only Arabic glyphs use this smaller face. The remaining characters keep
+   the original font in each studio, broadcast, and report font stack. */
+@font-face {
+  font-family: 'DLAR Arabic';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(/fonts/font-4.ttf) format('truetype');
+  size-adjust: 85%;
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+0870-089F, U+08A0-08FF, U+FB50-FDFF,
+    U+FE70-FEFF, U+10EC0-10EFF, U+1EE00-1EEFF;
+}
+@font-face {
+  font-family: 'DLAR Arabic';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url(/fonts/font-5.ttf) format('truetype');
+  size-adjust: 85%;
+  unicode-range:
+    U+0600-06FF, U+0750-077F, U+0870-089F, U+08A0-08FF, U+FB50-FDFF,
+    U+FE70-FEFF, U+10EC0-10EFF, U+1EE00-1EEFF;
+}
 @font-face {
   font-family: 'Inter';
   font-style: normal;

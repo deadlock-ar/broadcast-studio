@@ -5,7 +5,7 @@
   height: 1080px;
   overflow: hidden;
   color: #f0e9d8;
-  font-family: Inter, Arial, sans-serif;
+  font-family: "DLAR Arabic", Inter, Arial, sans-serif;
 }
 .caster-screen *,
 .caster-screen *::before,
@@ -57,7 +57,8 @@
   text-overflow: ellipsis;
   margin: 0;
   font:
-    64px/1 Georgia,
+    64px/1 "DLAR Arabic",
+    Georgia,
     serif;
   letter-spacing: -2px;
 }
@@ -132,7 +133,8 @@
   place-items: center;
   color: #bdbb96;
   font:
-    84px Georgia,
+    84px "DLAR Arabic",
+    Georgia,
     serif;
 }
 .caster-screen-person.is-speaking .caster-screen-avatar {
@@ -176,7 +178,8 @@
 }
 .caster-screen-nameplate h2 {
   font:
-    34px/1.2 "Barlow Condensed",
+    34px/1.2 "DLAR Arabic",
+    "Barlow Condensed",
     Inter,
     Arial,
     sans-serif;
@@ -281,7 +284,8 @@
 .caster-screen-team h2 {
   margin: 0;
   font:
-    44px/1.1 "Barlow Condensed",
+    44px/1.1 "DLAR Arabic",
+    "Barlow Condensed",
     Inter,
     Arial,
     sans-serif;
@@ -313,7 +317,8 @@
   display: grid;
   place-items: center;
   font:
-    italic 23px Georgia,
+    italic 23px "DLAR Arabic",
+    Georgia,
     serif;
   color: #7d8866;
 }

@@ -22,7 +22,7 @@
   border-right-color: #9b9c7059;
 }
 .studio-app .sidebar-brand > span:last-child {
-  font-family: "DLAR Display", "Cairo", Georgia, serif;
+  font-family: "DLAR Arabic", "DLAR Display", "Cairo", Georgia, serif;
 }
 .studio-app .sidebar nav button {
   border-radius: 1px;
@@ -38,7 +38,8 @@
 }
 .studio-app .sidebar-section,
 .studio-app .workspace-bar > :first-child {
-  font-family: "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif;
+  font-family:
+    "DLAR Arabic", "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif;
 }
 .studio-app
   :is(
@@ -51,7 +52,7 @@
     .data-library > .page-heading
   )
   h1 {
-  font-family: "DLAR Display", "Cairo", Georgia, serif;
+  font-family: "DLAR Arabic", "DLAR Display", "Cairo", Georgia, serif;
   font-weight: 600;
 }
 .studio-app
@@ -87,7 +88,7 @@
     .analytics-selection h2,
     .analytics-options h2
   ) {
-  font-family: "DLAR Display", "Cairo", Georgia, serif;
+  font-family: "DLAR Arabic", "DLAR Display", "Cairo", Georgia, serif;
   font-weight: 600;
 }
 .studio-app .stats-template {
@@ -101,7 +102,7 @@
     0 0 0 1px #697a4f;
 }
 .studio-app .stats-template > strong {
-  font-family: "DLAR Display", "Cairo", Georgia, serif;
+  font-family: "DLAR Arabic", "DLAR Display", "Cairo", Georgia, serif;
 }
 .studio-app .report-preview {
   border-color: #8a96746b;
@@ -126,7 +127,7 @@
     linear-gradient(#c2b783, #c2b783) right bottom / 1px 80px no-repeat;
 }
 .draft-canvas .broadcast-heading h2 {
-  font-family: "DLAR Display", "Cairo", Georgia, serif;
+  font-family: "DLAR Arabic", "DLAR Display", "Cairo", Georgia, serif;
   font-weight: 600;
 }
 .draft-canvas .draft-frame {
@@ -151,7 +152,8 @@
 .draft-canvas .draft-team-header h3,
 .draft-canvas .draft-group-label,
 .draft-canvas .hero-label {
-  font-family: "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif;
+  font-family:
+    "DLAR Arabic", "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif;
 }
 .draft-canvas .hero-slot:not(.active) {
   border-color: #8d9a766b;
@@ -183,11 +185,11 @@
   box-shadow: inset 0 -1px var(--rule);
 }
 .stat-canvas .stat-box h2 {
-  font-family: "DLAR Display", "Cairo", Georgia, serif;
+  font-family: "DLAR Arabic", "DLAR Display", "Cairo", Georgia, serif;
   font-weight: 600;
 }
 .stat-canvas .stat-value {
-  font-family: "DLAR Condensed", "Barlow Condensed", sans-serif;
+  font-family: "DLAR Arabic", "DLAR Condensed", "Barlow Condensed", sans-serif;
 }
 .stat-canvas .stat-player .stat-hero-icon {
   border-left-color: #b78d48;
@@ -213,7 +215,7 @@
 .bracket-screen .bracket-screen-heading h1,
 .player-banners-screen .player-banners-screen-heading h1,
 .player-banners-screen .player-banners-team-heading h2 {
-  font-family: "DLAR Display", "Cairo", Georgia, serif;
+  font-family: "DLAR Arabic", "DLAR Display", "Cairo", Georgia, serif;
   font-weight: 600;
 }
 .bracket-screen .bracket-screen-heading,
@@ -234,7 +236,8 @@
 .bracket-screen .bracket-screen-team-name,
 .bracket-screen .bracket-screen-team strong,
 .player-banners-screen .player-banners-player-heading h3 {
-  font-family: "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif;
+  font-family:
+    "DLAR Arabic", "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif;
 }
 .player-banners-screen .player-banners-team {
   --player-banner-accent: #c5a15c;
@@ -252,7 +255,8 @@
 }
 .player-banners-screen .player-banners-match-count,
 .player-banners-screen .player-banners-win-rate {
-  font-family: "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif;
+  font-family:
+    "DLAR Arabic", "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif;
 }
 
 /* The HTML MVP output shares the display typography. Canvas-exported reports
@@ -263,8 +267,9 @@
 }
 .mvp-canvas .mvp-card header > span,
 .mvp-canvas .mvp-content h1 {
-  font-family: "DLAR Display", "Cairo", Georgia, serif;
+  font-family: "DLAR Arabic", "DLAR Display", "Cairo", Georgia, serif;
 }
 .mvp-canvas .mvp-totals strong {
-  font-family: "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif;
+  font-family:
+    "DLAR Arabic", "DLAR Condensed", "Cairo", "Barlow Condensed", sans-serif;
 }

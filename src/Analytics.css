@@ -45,11 +45,15 @@
   width: 90px;
 }
 .mvp-card header span {
-  font: 30px Georgia;
+  font:
+    30px "DLAR Arabic",
+    Georgia;
   flex: 1;
 }
 .mvp-card header strong {
-  font: bold 43px Georgia;
+  font:
+    bold 43px "DLAR Arabic",
+    Georgia;
   color: #c7b47d;
   letter-spacing: 4px;
 }
@@ -65,7 +69,9 @@
   object-fit: cover;
 }
 .mvp-content h1 {
-  font: 74px Georgia;
+  font:
+    74px "DLAR Arabic",
+    Georgia;
   margin: 22px 0;
 }
 .mvp-content p {
@@ -78,11 +84,15 @@
   padding-top: 28px;
 }
 .mvp-totals strong {
-  font: 34px Georgia;
+  font:
+    34px "DLAR Arabic",
+    Georgia;
 }
 .mvp-totals small {
   display: block;
-  font: 12px sans-serif;
+  font:
+    12px "DLAR Arabic",
+    sans-serif;
   color: #adb990;
   margin-top: 12px;
 }
@@ -106,7 +116,9 @@
 }
 .analytics-selection h2,
 .analytics-options h2 {
-  font: 26px Georgia;
+  font:
+    26px "DLAR Arabic",
+    Georgia;
   margin: 0 0 20px;
 }
 .analytics-selection p,
@@ -228,7 +240,9 @@
   margin-bottom: 24px;
 }
 .observer-connect h2 {
-  font: 32px Georgia;
+  font:
+    32px "DLAR Arabic",
+    Georgia;
   margin: 9px 0;
 }
 .observer-connect p {
@@ -244,10 +258,14 @@
 }
 .observer-steps > div > b {
   color: #8c9c70;
-  font: 34px Georgia;
+  font:
+    34px "DLAR Arabic",
+    Georgia;
 }
 .observer-steps h3 {
-  font: 20px Georgia;
+  font:
+    20px "DLAR Arabic",
+    Georgia;
   margin: 10px 0;
 }
 .observer-steps .button {
@@ -301,7 +319,9 @@
   border: 2px solid #655d37;
   border-radius: 50%;
   color: #24251b;
-  font: bold 14px sans-serif;
+  font:
+    bold 14px "DLAR Arabic",
+    sans-serif;
   text-shadow: none;
 }
 .hud-bridges {
@@ -312,7 +332,9 @@
   gap: 3px;
 }
 .hud-bridge {
-  font: bold 12px sans-serif;
+  font:
+    bold 12px "DLAR Arabic",
+    sans-serif;
   border-radius: 4px;
   padding: 3px 5px;
   background: #8081d8;

@@ -6,7 +6,8 @@
 }
 .production-studio h2 {
   font:
-    26px/1.3 Georgia,
+    26px/1.3 "DLAR Arabic",
+    Georgia,
     serif;
   margin: 6px 0 12px;
 }
@@ -31,7 +32,8 @@
   padding: 11px 12px;
   background: #fffdf8;
   font:
-    13px Inter,
+    13px "DLAR Arabic",
+    Inter,
     sans-serif;
   color: #292b27;
 }
@@ -128,7 +130,8 @@
   border: 0;
   padding: 16px 2px;
   font:
-    600 13px Inter,
+    600 13px "DLAR Arabic",
+    Inter,
     sans-serif;
   color: #8b927d;
   border-bottom: 3px solid transparent;
@@ -315,7 +318,8 @@
   margin-left: -24px;
   text-align: center;
   font:
-    12px Inter,
+    12px "DLAR Arabic",
+    Inter,
     sans-serif;
   color: #faf8e9;
   overflow: hidden;
@@ -390,14 +394,16 @@
 }
 .postmatch-heading span {
   font:
-    16px "Barlow Condensed",
+    16px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 3px;
   text-transform: uppercase;
 }
 .postmatch-heading h1 {
   font:
-    54px/1.1 Georgia,
+    54px/1.1 "DLAR Arabic",
+    Georgia,
     serif;
   margin: 8px 0 0;
 }
@@ -415,7 +421,8 @@
 }
 .postmatch-details strong {
   font:
-    24px "Barlow Condensed",
+    24px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 2px;
 }
@@ -454,7 +461,8 @@
 }
 .postmatch-team > header span {
   font:
-    14px "Barlow Condensed",
+    14px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 3px;
   opacity: 0.8;
@@ -462,7 +470,8 @@
 .postmatch-team h2 {
   margin: 6px 0 0;
   font:
-    34px/1.2 Georgia,
+    34px/1.2 "DLAR Arabic",
+    Georgia,
     serif;
   max-width: 410px;
   overflow: hidden;
@@ -471,7 +480,8 @@
 }
 .postmatch-series {
   font:
-    40px/1 "Barlow Condensed",
+    40px/1 "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   margin-left: auto;
   text-align: center;
@@ -492,13 +502,15 @@
   border-bottom: 1px solid #c5cbb688;
   text-align: right;
   font:
-    19px Inter,
+    19px "DLAR Arabic",
+    Inter,
     sans-serif;
 }
 .postmatch-labels {
   min-height: 43px;
   font:
-    12px "Barlow Condensed",
+    12px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 1px;
   color: #768061;
@@ -550,13 +562,15 @@
 }
 .postmatch-team > footer > span {
   font:
-    14px "Barlow Condensed",
+    14px "DLAR Arabic",
+    "Barlow Condensed",
     sans-serif;
   letter-spacing: 2px;
 }
 .postmatch-team > footer strong {
   font:
-    22px Inter,
+    22px "DLAR Arabic",
+    Inter,
     sans-serif;
 }
 .postmatch-team > footer small {
@@ -570,7 +584,8 @@
   padding-top: 18px;
   border-top: 1px solid #aab197;
   font:
-    14px Inter,
+    14px "DLAR Arabic",
+    Inter,
     sans-serif;
   color: #7a8564;
 }
@@ -582,7 +597,8 @@
   display: grid;
   place-items: center;
   font:
-    24px Inter,
+    24px "DLAR Arabic",
+    Inter,
     sans-serif;
   color: #d7dfc4;
 }

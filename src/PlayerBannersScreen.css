@@ -13,7 +13,7 @@
   background:
     radial-gradient(ellipse at top right, #546c434d, transparent 55%),
     linear-gradient(135deg, #1b2b23, #111c18);
-  font-family: "Inter", Arial, sans-serif;
+  font-family: "DLAR Arabic", "Inter", Arial, sans-serif;
 }
 .player-banners-screen *,
 .player-banners-screen *::before,
@@ -56,7 +56,8 @@
   text-overflow: ellipsis;
   margin: 7px 0 0;
   font:
-    31px/1.05 Georgia,
+    31px/1.05 "DLAR Arabic",
+    Georgia,
     serif;
   letter-spacing: -0.5px;
 }
@@ -95,7 +96,8 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   font:
-    34px/1.15 Georgia,
+    34px/1.15 "DLAR Arabic",
+    Georgia,
     serif;
   color: #f6edda;
 }
@@ -348,7 +350,8 @@
 .player-banners-versus strong {
   padding: 3px 10px;
   font:
-    italic 37px/1 Georgia,
+    italic 37px/1 "DLAR Arabic",
+    Georgia,
     serif;
   color: #e2d6b7;
 }

@@ -21,12 +21,14 @@
 .caster-studio-card legend {
   padding: 0 9px;
   font:
-    24px Georgia,
+    24px "DLAR Arabic",
+    Georgia,
     serif;
 }
 .caster-studio-card h2 {
   font:
-    24px/1.3 Georgia,
+    24px/1.3 "DLAR Arabic",
+    Georgia,
     serif;
   margin: 0 0 10px;
 }

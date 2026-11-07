@@ -8,7 +8,7 @@
     radial-gradient(ellipse at top right, #60714c88, transparent 58%),
     linear-gradient(135deg, #1b2b23, #111c18);
   color: #f4eedf;
-  font-family: "Inter", Arial, sans-serif;
+  font-family: "DLAR Arabic", "Inter", Arial, sans-serif;
 }
 .bracket-screen::before {
   content: "";
@@ -44,7 +44,8 @@
 }
 .bracket-screen-heading h1 {
   font:
-    52px/1.14 Georgia,
+    52px/1.14 "DLAR Arabic",
+    Georgia,
     serif;
   letter-spacing: -1px;
   margin: 10px 0 0;
@@ -200,7 +201,8 @@
 }
 .bracket-screen-footer strong {
   font:
-    25px Georgia,
+    25px "DLAR Arabic",
+    Georgia,
     serif;
   color: #e1d6a5;
   letter-spacing: 0;
@@ -225,7 +227,8 @@
 }
 .bracket-screen-empty h2 {
   font:
-    39px Georgia,
+    39px "DLAR Arabic",
+    Georgia,
     serif;
   margin: 24px 0 12px;
 }
