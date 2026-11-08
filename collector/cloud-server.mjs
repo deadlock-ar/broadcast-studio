@@ -173,7 +173,12 @@ export async function createBroadcastServer(options = {}) {
           id: s.id,
           mode: s.mode,
           status: s.status,
-          match: publicCollectorMatch(s.result?.match || s.match, channel),
+          match: publicCollectorMatch(
+            s.result?.match || s.match,
+            channel === "deadem" && w.deadem.panel.content === "souls-graph"
+              ? "momentum"
+              : channel,
+          ),
           updatedAt: s.updatedAt,
           settings: s.settings,
           effects: channel === "ultimates" ? s.effects : [],
@@ -228,13 +233,17 @@ export async function createBroadcastServer(options = {}) {
             c.channel,
           ));
       if (relevant) {
+        const graphOutput =
+          c.channel === "momentum" ||
+          (c.channel === "deadem" &&
+            store.workspace.deadem.panel.content === "souls-graph");
         const momentumLive =
-          c.channel === "momentum" &&
+          graphOutput &&
           section === "collector" &&
           session()?.status === "live" &&
           !session()?.result;
         if (momentumLive && Date.now() - (c.lastMomentum || 0) < 1000) continue;
-        if (c.channel === "momentum") c.lastMomentum = Date.now();
+        if (graphOutput) c.lastMomentum = Date.now();
         send(c, output(c.channel));
       }
     }

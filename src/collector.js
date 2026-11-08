@@ -47,7 +47,12 @@ export async function collectorRequest(path, id, value, signal) {
     throw Error(result.error || `Collector HTTP ${response.status}`);
   return result;
 }
-export function collectorOverlayUrl(view, id, metric = "damage") {
+export function collectorOverlayUrl(
+  view,
+  id,
+  metric = "damage",
+  content = "players",
+) {
   if (globalThis.__DLAR_CLOUD__)
     return new URL(
       {
@@ -61,6 +66,8 @@ export function collectorOverlayUrl(view, id, metric = "damage") {
   url.searchParams.set("view", view);
   url.searchParams.set("match", id);
   if (view === "collector-panel") url.searchParams.set("metric", metric);
+  if (view === "collector-panel" && content === "souls-graph")
+    url.searchParams.set("content", content);
   return url.href;
 }
 export function visibleUltimateBadges(session, now) {

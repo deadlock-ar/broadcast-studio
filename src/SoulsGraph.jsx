@@ -6,8 +6,22 @@ import "./SoulsGraph.css";
 export default function SoulsGraph({
   telemetry,
   teamNames = ["Amber", "Sapphire"],
+  width: requestedWidth = 1600,
+  height: requestedHeight = 104,
+  fontSize: requestedFontSize = 11,
 }) {
   const id = useId().replaceAll(":", "");
+  const width = Number.isFinite(requestedWidth)
+      ? Math.max(160, requestedWidth)
+      : 1600,
+    height = Number.isFinite(requestedHeight)
+      ? Math.max(64, requestedHeight)
+      : 104,
+    fontSize = Number.isFinite(requestedFontSize)
+      ? Math.max(8, Math.min(24, requestedFontSize))
+      : 11,
+    resized = width !== 1600 || height !== 104 || fontSize !== 11;
+  const subtitle = `OBSERVED NET WORTH · ${teamNames[0]} − ${teamNames[1]}`;
   const segments = soulsSegments(telemetry),
     points = segments.flat();
   if (points.length < 2 || !segments.some((segment) => segment.length > 1))
@@ -15,9 +29,7 @@ export default function SoulsGraph({
       <section className="souls-graph souls-graph-empty">
         <header>
           <b>SOULS DIFFERENCE</b>
-          <span>
-            OBSERVED NET WORTH · {teamNames[0]} − {teamNames[1]}
-          </span>
+          <span title={subtitle}>{subtitle}</span>
         </header>
         <p>
           Waiting for two complete team samples. Earlier history is unavailable.
@@ -26,10 +38,11 @@ export default function SoulsGraph({
     );
   const first = points[0],
     last = points.at(-1);
-  const width = 1600,
-    height = 104,
-    left = 64,
+  const left = resized ? Math.max(64, fontSize * 5.2) : 64,
     right = width - 16;
+  const axisText = resized ? { fontSize } : undefined;
+  const ticks =
+    width < 360 ? [0, 1] : width < 800 ? [0, 0.5, 1] : [0, 0.25, 0.5, 0.75, 1];
   const limit = Math.max(1000, ...points.map((p) => Math.abs(p.value))) * 1.12;
   const x = (time) =>
     left +
@@ -48,9 +61,7 @@ export default function SoulsGraph({
       <header>
         <div>
           <b>SOULS DIFFERENCE</b>
-          <span>
-            OBSERVED NET WORTH · {teamNames[0]} − {teamNames[1]}
-          </span>
+          <span title={subtitle}>{subtitle}</span>
         </div>
         <strong
           className={last.value < 0 ? "souls-negative" : "souls-positive"}
@@ -59,7 +70,7 @@ export default function SoulsGraph({
         </strong>
       </header>
       <svg
-        viewBox={`0 0 ${width} ${height + 21}`}
+        viewBox={`0 0 ${width} ${height + (resized ? fontSize + 10 : 21)}`}
         role="img"
         aria-label="Observed team net worth difference over game time"
       >
@@ -81,13 +92,13 @@ export default function SoulsGraph({
             className={fraction === 0.5 ? "souls-zero" : "souls-grid"}
           />
         ))}
-        <text x="0" y="13">
+        <text x="0" y={resized ? fontSize + 2 : 13} style={axisText}>
           +{displayNumber(Math.round(limit))}
         </text>
-        <text x="24" y={height / 2 + 4}>
+        <text x="24" y={height / 2 + 4} style={axisText}>
           0
         </text>
-        <text x="0" y={height - 4}>
+        <text x="0" y={height - 4} style={axisText}>
           −{displayNumber(Math.round(limit))}
         </text>
         {segments.map((segment, index) => {
@@ -110,12 +121,19 @@ export default function SoulsGraph({
             </g>
           );
         })}
-        {[0, 0.25, 0.5, 0.75, 1].map((fraction) => (
+        {ticks.map((fraction) => (
           <text
             key={fraction}
             x={left + fraction * (right - left)}
-            y={height + 18}
-            textAnchor={fraction === 1 ? "end" : "start"}
+            y={height + (resized ? fontSize + 6 : 18)}
+            style={axisText}
+            textAnchor={
+              fraction === 1
+                ? "end"
+                : resized && fraction !== 0
+                  ? "middle"
+                  : "start"
+            }
           >
             {clock(first.time + fraction * (last.time - first.time))}
           </text>

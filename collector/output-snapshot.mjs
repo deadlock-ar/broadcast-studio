@@ -9,6 +9,14 @@ export function publicCollectorMatch(match, channel) {
   if (!match) return null;
   const { telemetry, metricFrame, ...current } = match;
   const output = structuredClone(current);
+  if (channel === "deadem" && metricFrame) {
+    const latest = telemetry?.points?.at(-1)?.time;
+    output.metricFrame =
+      finiteTime(metricFrame.time) &&
+      (!finiteTime(latest) || metricFrame.time >= latest)
+        ? structuredClone(metricFrame)
+        : null;
+  }
   if (channel !== "momentum") return output;
   if (metricFrame) output.metricFrame = structuredClone(metricFrame);
   if (!telemetry) return output;

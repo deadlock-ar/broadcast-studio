@@ -37,12 +37,25 @@ test("stat and ultimate outputs omit history without changing the source or fina
   for (const channel of ["deadem", "ultimates"]) {
     const output = publicCollectorMatch(match, channel);
     assert.equal(Object.hasOwn(output, "telemetry"), false);
-    assert.equal(Object.hasOwn(output, "metricFrame"), false);
+    assert.equal(Object.hasOwn(output, "metricFrame"), channel === "deadem");
+    if (channel === "deadem") {
+      assert.deepEqual(output.metricFrame, match.metricFrame);
+      output.metricFrame.players[0].souls = 1;
+    }
     assert.deepEqual(output.players, match.players);
     output.players[0].items.push(100);
     assert.deepEqual(match, original);
   }
   assert.equal(publicCollectorMatch(null, "momentum"), null);
+});
+
+test("stat-window output rejects an older raw observation without repeating history", () => {
+  const match = matchAt();
+  match.metricFrame.time = 100;
+  const output = publicCollectorMatch(match, "deadem");
+  assert.equal(output.metricFrame, null);
+  assert.equal(Object.hasOwn(output, "telemetry"), false);
+  assert.equal(match.metricFrame.time, 100);
 });
 
 test("momentum keeps graph coverage and rate math with only recent player souls", () => {

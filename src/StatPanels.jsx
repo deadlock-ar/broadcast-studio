@@ -58,8 +58,10 @@ export function StatGraphic({
   status,
   stale = false,
   visible = true,
+  rangeStart = null,
 }) {
-  const rows = sortPlayers(playersAt(match, time), panel);
+  const signed = rangeStart !== null && panel.metric === "souls";
+  const rows = sortPlayers(playersAt(match, time), panel, signed);
   const heroRoster = { ...match?.heroInfo, ...roster };
   const metric = METRICS[panel.metric],
     max = Math.max(1, ...rows.map((p) => p[panel.metric] || 0));
@@ -101,7 +103,13 @@ export function StatGraphic({
             `Player ${p.slot}`}
         </strong>
       </div>
-      <b className="stat-value">{displayNumber(p[panel.metric])}</b>
+      <b className="stat-value">
+        {signed && Number.isFinite(p[panel.metric])
+          ? new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(
+              p[panel.metric],
+            )
+          : displayNumber(p[panel.metric])}
+      </b>
       <span
         className="stat-meter"
         style={{
@@ -134,10 +142,13 @@ export function StatGraphic({
           <h2 title={panel.title || metric.label}>
             {panel.title || metric.label}
           </h2>
-          <span
-            className={`stat-source-label ${live ? "live" : ""} ${stale || ["error", "ended", "disconnected"].includes(status) ? "delayed" : ""}`}
-          >
-            {stateLabel}
+          <span className="stat-source-meta">
+            <span
+              className={`stat-source-label ${live ? "live" : ""} ${stale || ["error", "ended", "disconnected"].includes(status) ? "delayed" : ""}`}
+            >
+              {stateLabel}
+            </span>
+            {rangeStart !== null && <small>SINCE {clock(rangeStart)}</small>}
           </span>
         </header>
         {unsupported ? (

@@ -968,10 +968,6 @@ export default function App() {
             <Icon name="settings" />
             Broadcast settings
           </button>
-          <button onClick={() => setGuide(true)}>
-            <Icon name="help" />
-            Setup guide
-          </button>
           {cloud && (
             <button
               className={tab === "analytics" ? "selected" : ""}

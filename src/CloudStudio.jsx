@@ -20,7 +20,8 @@ import MatchOverlay from "./MatchOverlay.jsx";
 import BracketScreen from "./BracketScreen.jsx";
 import PlayerBannersScreen from "./PlayerBannersScreen.jsx";
 import CasterScreen from "./CasterScreen.jsx";
-import { LiveMetricsGraphic } from "./LiveMetrics.jsx";
+import CollectorPanel from "./CollectorPanel.jsx";
+import SoulsDifferencePanel from "./SoulsDifferencePanel.jsx";
 
 function WorkspaceProvider({ initial, children, logout }) {
   const canonical = useRef(initial),
@@ -214,7 +215,9 @@ function CloudBroadcast({ channel }) {
             next,
             Date.now(),
             nextDelay,
-            channel === "momentum" ? 1000 : 100,
+            channel === "momentum" || next.panel?.content === "souls-graph"
+              ? 1000
+              : 100,
           );
         else setValue(next);
         setError(false);
@@ -278,9 +281,9 @@ function CloudBroadcast({ channel }) {
     return (
       <BroadcastFrame>
         {value?.visible !== false && (
-          <LiveMetricsGraphic
+          <SoulsDifferencePanel
             session={value?.session}
-            teamNames={value?.panel?.teamNames}
+            panel={cleanPanel(value?.panel)}
             stale={
               error ||
               (value?.session &&
@@ -329,6 +332,19 @@ function CloudBroadcast({ channel }) {
           session={error ? null : session}
           catalog={ultimateCatalog}
           delayed
+        />
+      ) : channel === "deadem" ? (
+        <CollectorPanel
+          session={session}
+          panel={panel}
+          stale={
+            error ||
+            (session &&
+              !session.ended &&
+              (session.status !== "live" ||
+                now - session.updatedAt >
+                  15000 + (session.settings.delayMs || 0)))
+          }
         />
       ) : match ? (
         <StatGraphic

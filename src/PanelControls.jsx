@@ -6,27 +6,31 @@ export default function PanelControls({ panel, setPanel }) {
     <section className="production-card panel-customization">
       <h3>Panel appearance & placement</h3>
       <div className="production-calibration">
-        <label>
-          Layout
-          <select
-            value={panel.layout}
-            onChange={(e) => update("layout", e.target.value)}
-          >
-            <option value="boxes">Player tiles</option>
-            <option value="ranking">Ranked list</option>
-            <option value="teams">Team columns</option>
-          </select>
-        </label>
-        <label>
-          Sort
-          <select
-            value={panel.sort}
-            onChange={(e) => update("sort", e.target.value)}
-          >
-            <option value="value">Highest value</option>
-            <option value="team">By team</option>
-          </select>
-        </label>
+        {panel.content !== "souls-graph" && (
+          <>
+            <label>
+              Layout
+              <select
+                value={panel.layout}
+                onChange={(e) => update("layout", e.target.value)}
+              >
+                <option value="boxes">Player tiles</option>
+                <option value="ranking">Ranked list</option>
+                <option value="teams">Team columns</option>
+              </select>
+            </label>
+            <label>
+              Sort
+              <select
+                value={panel.sort}
+                onChange={(e) => update("sort", e.target.value)}
+              >
+                <option value="value">Highest value</option>
+                <option value="team">By team</option>
+              </select>
+            </label>
+          </>
+        )}
         <label>
           Theme
           <select

@@ -10,6 +10,7 @@ export const METRIC_FIELDS = [
   "kills",
   "deaths",
   "assists",
+  "buffs",
 ];
 const known = (value) => Number.isFinite(value) && value >= 0;
 export function metricFrame(frame) {
@@ -104,7 +105,13 @@ export function changesSince(match, baseline) {
     clean = cleanMetricsBaseline(baseline);
   if (current?.time < (match?.telemetry?.points?.at(-1)?.time ?? 0))
     return null;
-  if (!current?.teams || !clean || current.time < clean.time) return null;
+  if (
+    !current?.teams ||
+    !known(current.time) ||
+    !clean ||
+    current.time < clean.time
+  )
+    return null;
   const before = new Map(clean.players.map((p) => [p.id, p]));
   if (current.players.some((p) => before.get(p.id)?.team !== p.team))
     return null;
@@ -116,7 +123,9 @@ export function changesSince(match, baseline) {
         Object.fromEntries(
           METRIC_FIELDS.map((key) => [
             key,
-            known(p[key]) && known(old[key]) && p[key] >= old[key]
+            known(p[key]) &&
+            known(old[key]) &&
+            (key === "souls" || p[key] >= old[key])
               ? p[key] - old[key]
               : null,
           ]),

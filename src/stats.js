@@ -85,6 +85,7 @@ export function cleanPanel(value = {}) {
   for (const [key, name] of Object.entries(v.names || {}).slice(0, 24))
     if (/^\d{1,20}$/.test(key) && text(name)) names[key] = text(name);
   return {
+    content: v.content === "souls-graph" ? "souls-graph" : "players",
     metric: Object.hasOwn(METRICS, v.metric) ? v.metric : "damage",
     layout: ["boxes", "teams", "ranking"].includes(v.layout)
       ? v.layout
@@ -249,15 +250,19 @@ export function playersAt(match, time = match?.duration) {
     };
   });
 }
-export function sortPlayers(players, panel) {
+export function sortPlayers(players, panel, allowNegative = false) {
   return [...players].sort((a, b) => {
     if (panel.sort === "team" || panel.layout === "teams") {
       const team = a.team - b.team;
       if (team) return team;
     }
     if (panel.sort === "value") {
-      const av = nonnegative(a[panel.metric]),
-        bv = nonnegative(b[panel.metric]);
+      const value = (p) =>
+        allowNegative && Number.isFinite(p[panel.metric])
+          ? p[panel.metric]
+          : nonnegative(p[panel.metric]);
+      const av = value(a),
+        bv = value(b);
       if (av === null && bv !== null) return 1;
       if (bv === null && av !== null) return -1;
       if (av !== bv) return (bv || 0) - (av || 0);

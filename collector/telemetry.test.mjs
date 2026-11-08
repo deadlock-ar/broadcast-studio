@@ -106,6 +106,26 @@ test("from-now comparisons fence identity changes, backwards clocks and counter 
     null,
   );
 });
+
+test("window changes keep falling net worth signed, include buffs and reject an unknown source clock", () => {
+  const s = emptySession("7");
+  const start = frame(0);
+  start.players.forEach((player) => {
+    player.buffs = 1;
+  });
+  applyFrame(s, start);
+  const baseline = captureBaseline(s.match);
+  const next = frame(5);
+  next.players.forEach((player) => {
+    player.buffs = 3;
+  });
+  next.players[0].souls = 900;
+  applyFrame(s, next);
+  assert.equal(changesSince(s.match, baseline).get("1").souls, -100);
+  assert.equal(changesSince(s.match, baseline).get("1").buffs, 2);
+  s.match.metricFrame.time = null;
+  assert.equal(changesSince(s.match, baseline), null);
+});
 test("net worth growth uses source seconds and allows a real negative net change", () => {
   const s = emptySession("4");
   for (let time = 0; time <= 60; time += 5) applyFrame(s, frame(time));

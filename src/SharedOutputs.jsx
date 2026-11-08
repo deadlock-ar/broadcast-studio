@@ -8,7 +8,7 @@ const labels = {
   bracket: "Tournament bracket",
   "player-banners": "Player banners",
   casters: "Caster desk & upcoming match",
-  momentum: "Live momentum & souls difference",
+  momentum: "Souls difference graph",
   "live-events": "Deadlock API stats",
   deadem: "Live stats panel",
   scoreboard: "Post-match scoreboard",

@@ -16,7 +16,7 @@ import {
   parseMatchId,
   METRICS,
 } from "./stats";
-import { StatGraphic } from "./StatPanels";
+import CollectorPanel from "./CollectorPanel.jsx";
 import "./ProductionStudio.css";
 import { useWorkspace, useWorkspaceField } from "./workspace-context.js";
 import { diffFields } from "./workspace-model.js";
@@ -26,7 +26,6 @@ import PanelControls from "./PanelControls.jsx";
 import MatchScoreboard from "./MatchScoreboard.jsx";
 import RecordingEvidence from "./RecordingEvidence.jsx";
 import "./RecordingEvidence.css";
-import { LiveMetricsGraphic } from "./LiveMetrics.jsx";
 import { captureBaseline } from "../collector/telemetry.mjs";
 
 const roster = {
@@ -221,9 +220,9 @@ function Preview({ children, label }) {
     </div>
   );
 }
-function ObsLink({ view, id, metric, label }) {
+function ObsLink({ view, id, metric, content, label }) {
   const [notice, setNotice] = useState("");
-  const url = collectorOverlayUrl(view, id, metric);
+  const url = collectorOverlayUrl(view, id, metric, content);
   return (
     <div className="production-obs-link">
       <div>
@@ -273,10 +272,6 @@ export default function ProductionStudio({ active, config }) {
   const [id, setId] = useWorkspaceField(["deadem", "id"], ""),
     [mode, setMode] = useState("live"),
     [section, setSection] = useState("panels"),
-    [metric, setMetric] = useWorkspaceField(
-      ["deadem", "panel", "metric"],
-      "damage",
-    ),
     [notice, setNotice] = useState(""),
     [busy, setBusy] = useState(false),
     [winner, setWinner] = useState("");
@@ -284,6 +279,8 @@ export default function ProductionStudio({ active, config }) {
   const { session, error } = useCollector(id, active);
   const rawMatch = session?.result?.match || session?.match;
   const match = rawMatch ? { ...rawMatch, heroInfo: roster } : null;
+  const metric = panel.metric;
+  const graphPanel = panel.content === "souls-graph";
   const catalog = health?.catalog || [];
   const action = async (path, value = {}) => {
     setBusy(true);
@@ -516,7 +513,6 @@ export default function ProductionStudio({ active, config }) {
           <div className="production-tabs">
             {[
               ["panels", "Live stat panels"],
-              ["metrics", "Momentum & fight tracker"],
               ["hud", "Ultimate HUD"],
               ["scoreboard", "Post-match scoreboard"],
             ].map(([key, label]) => (
@@ -534,22 +530,79 @@ export default function ProductionStudio({ active, config }) {
               <div className="production-section-heading">
                 <div>
                   <h2>Small panels. Clear numbers.</h2>
-                  <p>All twelve players, with permanent pickups included.</p>
+                  <p>Choose player statistics or the souls difference graph.</p>
                 </div>
                 <label>
-                  Statistic
+                  Panel
                   <select
-                    value={metric}
-                    onChange={(e) => setMetric(e.target.value)}
+                    aria-label="Live panel"
+                    value={graphPanel ? "souls-graph" : metric}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setPanel((old) =>
+                        cleanPanel({
+                          ...old,
+                          content:
+                            value === "souls-graph" ? "souls-graph" : "players",
+                          metric: value === "souls-graph" ? old.metric : value,
+                        }),
+                      );
+                    }}
                   >
                     {Object.entries(METRICS).map(([key, v]) => (
                       <option key={key} value={key}>
                         {v.label}
                       </option>
                     ))}
+                    <option value="souls-graph">Souls difference graph</option>
                   </select>
                 </label>
               </div>
+              {!graphPanel && (
+                <div className="production-range-controls">
+                  <div>
+                    <strong>
+                      {session.settings.metricsBaseline
+                        ? `Stats since ${clock(session.settings.metricsBaseline.time)}`
+                        : "Whole-match stats"}
+                    </strong>
+                    <p>
+                      Start just before a fight to show only stats gained from
+                      that point.
+                    </p>
+                  </div>
+                  <button
+                    className="button primary"
+                    disabled={
+                      busy ||
+                      session.status !== "live" ||
+                      metricsNow - session.updatedAt > 15000 ||
+                      !captureBaseline(match)
+                    }
+                    onClick={() => {
+                      const baseline = captureBaseline(match);
+                      if (Date.now() - session.updatedAt > 15000 || !baseline)
+                        setNotice(
+                          "Wait for fresh player stats before starting.",
+                        );
+                      else action("settings", { metricsBaseline: baseline });
+                    }}
+                  >
+                    {session.settings.metricsBaseline
+                      ? "Restart recording from now"
+                      : "Start recording from now"}
+                  </button>
+                  <button
+                    className="button secondary"
+                    disabled={busy || !session.settings.metricsBaseline}
+                    onClick={() =>
+                      action("settings", { metricsBaseline: null })
+                    }
+                  >
+                    Show whole-match stats
+                  </button>
+                </div>
+              )}
               {shared && (
                 <button
                   className="button secondary"
@@ -562,16 +615,21 @@ export default function ProductionStudio({ active, config }) {
                     : "Show stats on stream"}
                 </button>
               )}
-              <Preview label="Deadem stat panel preview">
-                <StatGraphic
-                  match={match}
+              <Preview
+                label={
+                  graphPanel
+                    ? "Souls difference panel preview"
+                    : "Live stat panel preview"
+                }
+              >
+                <CollectorPanel
+                  session={session}
                   panel={cleanPanel({
                     ...panel,
                     metric,
                     names: session.settings.names,
                     teamNames: config.teams.map((t) => t.name),
                   })}
-                  time={match?.duration}
                   status={
                     session.status === "finished"
                       ? "finished"
@@ -584,101 +642,29 @@ export default function ProductionStudio({ active, config }) {
                           : "error"
                   }
                   stale={
-                    session.status !== "live" && session.status !== "finished"
+                    !session.result &&
+                    (session.status !== "live" ||
+                      metricsNow - session.updatedAt > 15000)
                   }
                 />
               </Preview>
+              {graphPanel && (
+                <p className="production-hint">
+                  Shows the difference in team net worth across the recorded
+                  match. The graph starts when collection starts and leaves gaps
+                  where observations are missing.
+                </p>
+              )}
               <PanelControls panel={cleanPanel(panel)} setPanel={setPanel} />
               <ObsLink
                 id={id}
                 metric={metric}
+                content={panel.content}
                 view="collector-panel"
-                label="Live stats panel"
+                label={
+                  graphPanel ? "Souls difference panel" : "Live stats panel"
+                }
               />
-            </>
-          )}
-          {section === "metrics" && (
-            <>
-              <div className="production-section-heading">
-                <div>
-                  <h2>Follow the lead. Measure the next fight.</h2>
-                  <p>
-                    Souls difference, objective damage, kills, deaths and
-                    assists. Net worth per minute uses up to sixty observed game
-                    seconds.
-                  </p>
-                </div>
-              </div>
-              <div className="production-metrics-controls">
-                <button
-                  className="button primary"
-                  disabled={
-                    busy ||
-                    session.status !== "live" ||
-                    metricsNow - session.updatedAt > 15000 ||
-                    !captureBaseline(match)
-                  }
-                  onClick={() =>
-                    Date.now() - session.updatedAt > 15000
-                      ? setNotice(
-                          "Wait for a fresh complete observation before marking the fight.",
-                        )
-                      : action("settings", {
-                          metricsBaseline: captureBaseline(match),
-                        })
-                  }
-                >
-                  Track from now
-                </button>
-                <button
-                  className="button secondary"
-                  disabled={busy || !session.settings.metricsBaseline}
-                  onClick={() => action("settings", { metricsBaseline: null })}
-                >
-                  Show match totals
-                </button>
-                <span>
-                  {session.settings.metricsBaseline
-                    ? `Comparing from ${clock(session.settings.metricsBaseline.time)}. Reset the mark before the next fight.`
-                    : "Mark a start to compare damage, objectives and K/D/A during a fight."}
-                </span>
-              </div>
-              <Preview label="Souls difference and fight tracker preview">
-                <LiveMetricsGraphic
-                  session={session}
-                  teamNames={config.teams.map((t) => t.name)}
-                  stale={
-                    !session.result && metricsNow - session.updatedAt > 15000
-                  }
-                />
-              </Preview>
-              <p className="production-hint">
-                Samples begin when collection starts. Missing team observations
-                stay blank; the graph does not recreate earlier play. Net worth
-                change is not gross souls income. Souls by source is shown on
-                the scoreboard when finished metadata provides it.
-              </p>
-              {shared && (
-                <div className="production-obs-link">
-                  <div>
-                    <strong>Momentum & fight tracker OBS URL</strong>
-                    <input
-                      aria-label="Momentum OBS URL"
-                      readOnly
-                      value={`${window.location.origin}/obs/momentum`}
-                      onFocus={(e) => e.target.select()}
-                    />
-                  </div>
-                  <a
-                    className="button secondary"
-                    href="/obs/momentum"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Open ↗
-                  </a>
-                </div>
-              )}
             </>
           )}
           {section === "hud" && (
@@ -1045,14 +1031,14 @@ export function ProductionOverlay() {
         ) : view === "scoreboard" ? (
           <Scoreboard result={session?.published} />
         ) : match ? (
-          <StatGraphic
-            match={match}
+          <CollectorPanel
+            session={session}
             panel={cleanPanel({
               metric,
+              content: params.get("content"),
               theme: "ink",
               names: session.settings.names,
             })}
-            time={match.duration}
             status={session.status === "finished" ? "finished" : "live"}
             stale={
               Boolean(error) ||
