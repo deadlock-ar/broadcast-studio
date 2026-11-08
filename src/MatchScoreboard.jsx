@@ -40,12 +40,12 @@ function Sources({ player }) {
     Number.isFinite(s.gold)
       ? n(s.gold)
       : Number.isFinite(s.knownGold)
-        ? `≥${n(s.knownGold)}`
+        ? n(s.knownGold)
         : "—";
   return (
     <div
       className="ds-sources"
-      aria-label={`${player.name} souls by source; greater-than signs are partial subtotals`}
+      aria-label={`${player.name} souls by source; incomplete amounts are recorded subtotals`}
     >
       {sources
         .toSorted((a, b) => amount(b) - amount(a))
@@ -53,7 +53,7 @@ function Sources({ player }) {
         .map((s) => (
           <div
             key={s.source ?? s.label}
-            title={`${s.label}: ${label(s)} souls${s.complete === false ? "; incomplete source data" : ""}`}
+            title={`${s.label}: ${label(s)} souls${!Number.isFinite(s.gold) && Number.isFinite(s.knownGold) ? "; recorded subtotal" : ""}${s.complete === false ? "; incomplete source data" : ""}`}
           >
             <span>{s.label}</span>
             <b>{label(s)}</b>
@@ -62,7 +62,7 @@ function Sources({ player }) {
     </div>
   );
 }
-function PlayerColumn({ player, name, mvp, best }) {
+function PlayerColumn({ player, name, mvp, keyPlayer, best }) {
   const hero = heroMap.get(player.heroId),
     held = player.items;
   const itemSlots = Array.isArray(held)
@@ -80,6 +80,11 @@ function PlayerColumn({ player, name, mvp, best }) {
           <span>HERO {player.heroId}</span>
         )}
         {mvp && <b>✦ MVP</b>}
+        {!mvp && keyPlayer && (
+          <span className="ds-key-player-badge" title={keyPlayer}>
+            KEY PLAYER
+          </span>
+        )}
       </div>
       <strong className="ds-player-name" dir="auto" title={name}>
         {name}
@@ -178,6 +183,22 @@ export default function MatchScoreboard({ result }) {
   const official = match.players
     .filter((p) => [2, 3].includes(p.mvpRank))
     .toSorted((a, b) => a.mvpRank - b.mvpRank);
+  const keyPlayerLabels = new Map();
+  if (official.length) {
+    for (const player of official)
+      keyPlayerLabels.set(
+        player.id,
+        `Match key player (rank ${player.mvpRank})`,
+      );
+  } else {
+    for (const leader of leaders)
+      keyPlayerLabels.set(
+        leader.playerId,
+        [keyPlayerLabels.get(leader.playerId), leader.label]
+          .filter(Boolean)
+          .join(" · "),
+      );
+  }
   return (
     <div className="production-canvas deadlock-scoreboard">
       <header className="ds-ribbon">
@@ -228,6 +249,7 @@ export default function MatchScoreboard({ result }) {
                 player={p}
                 name={name(p)}
                 mvp={p.id === result.mvpId}
+                keyPlayer={keyPlayerLabels.get(p.id)}
                 best={best}
               />
             ))}
@@ -254,22 +276,6 @@ export default function MatchScoreboard({ result }) {
           {match.matchId ||
             (/^\d+$/.test(match.id) ? match.id : "ID UNAVAILABLE")}
         </span>
-        <div>
-          {official.length
-            ? official.map((p) => (
-                <span key={p.id}>
-                  KEY PLAYER <b dir="auto">{name(p)}</b>
-                </span>
-              ))
-            : leaders.map((leader) => (
-                <span key={leader.metric}>
-                  {leader.label.toUpperCase()}{" "}
-                  <b dir="auto">
-                    {name(match.players.find((p) => p.id === leader.playerId))}
-                  </b>
-                </span>
-              ))}
-        </div>
         <span>
           {match.telemetry?.points?.length
             ? "RECORDED SAMPLES"

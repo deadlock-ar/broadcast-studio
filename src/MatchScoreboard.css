@@ -39,10 +39,12 @@
 }
 .ds-team-heading.ds-team-1 {
   grid-column: 3;
+  flex-direction: row-reverse;
 }
 .ds-team-heading > img {
   width: 56px;
   height: 56px;
+  flex: 0 0 56px;
   object-fit: contain;
 }
 .ds-team-sigil {
@@ -52,6 +54,9 @@
 .ds-team-title {
   flex: 1;
   min-width: 0;
+}
+.ds-team-1 .ds-team-title {
+  text-align: right;
 }
 .ds-team-title h2 {
   font:
@@ -91,6 +96,12 @@
   border-left: 1px solid #69755944;
   padding-left: 16px;
   text-align: center;
+}
+.ds-team-1 .ds-series {
+  border-left: 0;
+  border-right: 1px solid #69755944;
+  padding-left: 0;
+  padding-right: 16px;
 }
 .ds-series b {
   font:
@@ -199,6 +210,23 @@
     Inter,
     sans-serif;
   letter-spacing: 2px;
+}
+.ds-key-player-badge {
+  position: absolute;
+  z-index: 1;
+  top: 8px;
+  left: 6px;
+  max-width: calc(100% - 12px);
+  padding: 3px 5px;
+  border: 1px solid #9baa7f70;
+  background: #253127eb;
+  color: #d6ddc6;
+  font:
+    600 9px/1.2 "DLAR Arabic",
+    Inter,
+    sans-serif;
+  letter-spacing: 0.7px;
+  white-space: nowrap;
 }
 .ds-player-name {
   display: flex;
@@ -400,20 +428,4 @@
   color: #9aa78f;
   border-top: 1px solid #c5c8a333;
   padding-top: 8px;
-}
-.ds-footer > div {
-  display: flex;
-  gap: 24px;
-  min-width: 0;
-}
-.ds-footer > div > span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.ds-footer b {
-  color: #e1dcc7;
-  margin-left: 6px;
-  font-size: 12px;
-  letter-spacing: 0;
 }
