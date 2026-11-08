@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { safeImage } from "../src/draft.js";
+import { isSubstitute } from "../src/bracket.js";
 
 const STEAM_BASE = 76561197960265728n;
 const MAX_ACCOUNT = 4294967295n;
@@ -81,17 +82,30 @@ function cleanPlayer(value) {
 
 function cleanTeam(value) {
   if (!value || typeof value !== "object") throw Error("Invalid saved team.");
-  if (!Array.isArray(value.playerIds) || value.playerIds.length > 6)
-    throw Error("A saved team can have up to six players.");
+  if (!Array.isArray(value.playerIds) || value.playerIds.length > 8)
+    throw Error(
+      "A saved team can have six active players and two substitutes.",
+    );
   const playerIds = value.playerIds.map(idOf);
   if (new Set(playerIds).size !== playerIds.length)
     throw Error("A player cannot occupy two positions on the same team.");
+  if (value.substituteIds !== undefined && !Array.isArray(value.substituteIds))
+    throw Error("Invalid team substitute list.");
+  const substituteIds = (value.substituteIds ?? playerIds.slice(6)).map(idOf);
+  if (
+    new Set(substituteIds).size !== substituteIds.length ||
+    substituteIds.some((id) => !playerIds.includes(id)) ||
+    substituteIds.length > 2 ||
+    playerIds.length - substituteIds.length > 6
+  )
+    throw Error("Choose up to six active players and two substitutes.");
   return {
     id: idOf(value.id),
     name: nameOf(value.name, "team"),
     tag: text(value.tag, 16),
     logo: safeImage(value.logo),
     playerIds,
+    substituteIds,
     createdAt: stamp(value.createdAt),
     updatedAt: stamp(value.updatedAt),
   };
@@ -173,7 +187,7 @@ export class RosterLibrary {
     const row = this.store.db
       .prepare("SELECT value FROM roster_teams WHERE id=?")
       .get(idOf(id));
-    return row ? JSON.parse(row.value) : null;
+    return row ? cleanTeam(JSON.parse(row.value)) : null;
   }
 
   resolveTeam(id) {
@@ -181,7 +195,10 @@ export class RosterLibrary {
     return team
       ? {
           ...team,
-          players: team.playerIds.map((playerId) => this.getPlayer(playerId)),
+          players: team.playerIds.map((playerId) => ({
+            ...this.getPlayer(playerId),
+            substitute: team.substituteIds.includes(playerId),
+          })),
         }
       : null;
   }
@@ -204,6 +221,7 @@ export class RosterLibrary {
         .filter((player) => playerMatches.has(player.id))
         .sort((a, b) => a.name.localeCompare(b.name)),
       teams: this.rows("roster_teams")
+        .map(cleanTeam)
         .filter(
           (team) =>
             `${team.name} ${team.tag}`.toLowerCase().includes(query) ||
@@ -268,21 +286,39 @@ export class RosterLibrary {
         return matching;
       const previous = explicit || matching;
       let playerIds = value.playerIds ?? previous?.playerIds ?? [];
+      let substituteIds =
+        value.substituteIds ??
+        (value.playerIds === undefined ? previous?.substituteIds : undefined);
       if (value.players !== undefined) {
         if (value.savePlayers !== true)
           throw Error(
             "Choose to save the players before adding them to a saved team.",
           );
-        if (!Array.isArray(value.players) || value.players.length > 6)
-          throw Error("A saved team can have up to six players.");
-        playerIds = value.players.map((player) => this.putPlayer(player).id);
+        if (!Array.isArray(value.players) || value.players.length > 8)
+          throw Error(
+            "A saved team can have six active players and two substitutes.",
+          );
+        const saved = value.players.flatMap((player, index) => {
+          if (!text(player?.name) && !text(player?.steamId)) return [];
+          return [
+            {
+              id: this.putPlayer(player).id,
+              substitute: isSubstitute(player, index),
+            },
+          ];
+        });
+        playerIds = saved.map((player) => player.id);
+        substituteIds = saved
+          .filter((player) => player.substitute)
+          .map((player) => player.id);
       }
       const team = cleanTeam({
         id: previous?.id || randomUUID(),
         name,
         tag: value.tag ?? previous?.tag,
-        logo: value.logo ?? previous?.logo,
+        logo: value.logo !== undefined ? value.logo : previous?.logo,
         playerIds,
+        substituteIds,
         createdAt: previous?.createdAt || Date.now(),
         updatedAt: Date.now(),
       });
@@ -301,7 +337,7 @@ export class RosterLibrary {
     return {
       version: 1,
       players: this.rows("roster_players"),
-      teams: this.rows("roster_teams"),
+      teams: this.rows("roster_teams").map(cleanTeam),
     };
   }
 
@@ -351,7 +387,12 @@ export class RosterLibrary {
           teams.push(byName);
           continue;
         }
-        const next = { ...team, id: byId ? randomUUID() : team.id, playerIds };
+        const next = {
+          ...team,
+          id: byId ? randomUUID() : team.id,
+          playerIds,
+          substituteIds: team.substituteIds.map((id) => remap.get(id)),
+        };
         if (this.count("roster_teams") >= MAX_TEAMS)
           throw Error("The saved team library is full.");
         this.store.db

@@ -136,6 +136,111 @@ test("tournament entrant preparation validates player identity and canonical Ste
   );
 });
 
+test("team identity and substitution saves keep an underway draw and broadcast scores", async (t) => {
+  const { app, command, setup } = await fixture(t);
+  await setup();
+  await command("prepare", { matchId: "r1-m1", startDraft: true });
+  await command("result", { matchId: "r1-m1", scores: [1, 0] });
+  app.store.workspace.draft.snapshot.steps[0].heroId = 1;
+  app.store.saveWorkspace();
+  const before = structuredClone(app.store.workspace.bracket),
+    draft = structuredClone(app.store.workspace.draft);
+  const edited = structuredClone(before.entrants);
+  edited[0].name = "Updated Alpha";
+  edited[0].logo = "data:image/png;base64,AAAA";
+  edited[0].players = Array.from({ length: 8 }, (_, index) => ({
+    id: randomUUID(),
+    name: `Lineup ${index + 1}`,
+    substitute: index >= 6,
+  }));
+  // One action substitutes player 7 for player 2 without changing identities.
+  edited[0].players[1].substitute = true;
+  edited[0].players[6].substitute = false;
+  app.store.workspace.config.teams.reverse();
+  const response = await command("teams", {
+    entrants: edited,
+    saveToLibrary: true,
+  });
+  assert.equal(
+    response.status,
+    200,
+    JSON.stringify(await response.clone().json()),
+  );
+  const after = app.store.workspace.bracket;
+  assert.deepEqual(after.slots, before.slots);
+  assert.deepEqual(after.matches, before.matches);
+  assert.deepEqual(after.processedGameIds, before.processedGameIds);
+  assert.equal(after.activeMatchId, before.activeMatchId);
+  assert.deepEqual(app.store.workspace.draft, draft);
+  assert.equal(app.store.workspace.config.teams[1].name, "Updated Alpha");
+  assert.equal(app.store.workspace.config.teams[1].logo, edited[0].logo);
+  assert.equal(app.store.workspace.config.teams[1].score, 1);
+  assert.equal(after.entrants[0].players.length, 8);
+  assert.equal(
+    after.entrants[0].players.find((player) => player.name === "Lineup 7")
+      .substitute,
+    false,
+  );
+  const count = app.store.rosterLibrary.list().players.length;
+  assert.equal(
+    (await command("teams", { entrants: after.entrants, saveToLibrary: true }))
+      .status,
+    200,
+  );
+  assert.equal(app.store.rosterLibrary.list().players.length, count);
+  const invalid = structuredClone(after.entrants).reverse();
+  assert.equal((await command("teams", { entrants: invalid })).status, 400);
+  assert.equal(
+    (await command("teams", { entrants: after.entrants }, before.revision))
+      .status,
+    409,
+  );
+});
+
+test("roster normalization retains a substitute beside empty starter slots and enforces role limits", () => {
+  const bracket = prepareTournamentBracket({
+    entrants: [
+      {
+        name: "Sparse",
+        players: [
+          { name: "Starter" },
+          {},
+          {},
+          {},
+          {},
+          {},
+          { name: "Substitute" },
+        ],
+      },
+    ],
+  });
+  assert.deepEqual(
+    bracket.entrants[0].players.map((player) => [
+      player.name,
+      player.substitute,
+    ]),
+    [
+      ["Starter", false],
+      ["Substitute", true],
+    ],
+  );
+  assert.throws(
+    () =>
+      prepareTournamentBracket({
+        entrants: [
+          {
+            name: "Overfilled",
+            players: Array.from({ length: 7 }, (_, index) => ({
+              name: `Player ${index}`,
+              substitute: false,
+            })),
+          },
+        ],
+      }),
+    /six active/,
+  );
+});
+
 test("roster and bracket routes protect writes and use the independent bracket revision", async (t) => {
   const { app, base, post, cookie, command, setup } = await fixture(t);
   assert.equal((await fetch(base + "/api/roster-library")).status, 401);

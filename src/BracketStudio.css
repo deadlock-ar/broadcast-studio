@@ -221,6 +221,33 @@
 .brk-team-name-label {
   flex: 1;
 }
+.brk-team-logo-edit {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  flex: 0 0 76px;
+}
+.brk-team-logo-edit img {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+}
+.brk-logo-upload {
+  cursor: pointer;
+  color: #61734a;
+  font-size: 10px;
+  text-decoration: underline;
+}
+.brk-logo-upload input {
+  display: none;
+}
+.brk-substitution {
+  grid-column: 2 / -1;
+}
+.brk-player-edit.is-substitute {
+  padding-top: 12px;
+  border-top: 1px dashed #cdd5bd;
+}
 .brk-tag-label {
   width: 120px;
 }

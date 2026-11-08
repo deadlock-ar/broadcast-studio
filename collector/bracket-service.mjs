@@ -8,6 +8,7 @@ import {
   bracketMatch,
   bracketOutput,
   setBracketFormats,
+  isSubstitute,
 } from "../src/bracket.js";
 import { normalizeSteamId } from "./roster-library.mjs";
 import { blankDraft } from "../src/workspace-model.js";
@@ -55,10 +56,10 @@ export function prepareTournamentBracket(options = {}, library) {
     teamNames.add(label(name));
     if (
       raw.players !== undefined &&
-      (!Array.isArray(raw.players) || raw.players.length > 6)
+      (!Array.isArray(raw.players) || raw.players.length > 8)
     )
-      throw Error("Each team can have up to six players.");
-    const players = (raw.players || []).flatMap((player) => {
+      throw Error("Each team can have six active players and two substitutes.");
+    const players = (raw.players || []).flatMap((player, index) => {
       if (!player || typeof player !== "object")
         throw Error("Invalid player details.");
       const playerName = text(player.name, 48);
@@ -71,8 +72,20 @@ export function prepareTournamentBracket(options = {}, library) {
         throw Error("A player can appear only once in the tournament roster.");
       usedPlayerIds.add(playerId);
       if (steamId) steamIds.add(steamId);
-      return [{ id: playerId, name: playerName, steamId }];
+      return [
+        {
+          id: playerId,
+          name: playerName,
+          steamId,
+          substitute: isSubstitute(player, index),
+        },
+      ];
     });
+    if (
+      players.filter((player) => player.substitute).length > 2 ||
+      players.filter((player) => !player.substitute).length > 6
+    )
+      throw Error("Choose up to six active players and two substitutes.");
     return {
       id: teamId,
       name,
@@ -98,37 +111,41 @@ export function prepareTournamentBracket(options = {}, library) {
       };
     }
   }
-  const bracket =
-    options.generate && entrants.length >= 2
-      ? generateBracket(entrants, {
-          ...settings,
-          random: () => randomInt(0, 2 ** 32) / 2 ** 32,
-        })
-      : cleanBracket(settings);
   if (options.saveToLibrary === true) {
     if (!library) throw Error("The saved roster library is unavailable.");
     library.transaction(() => {
       for (const team of entrants) {
-        const playerIds = team.players.map(
-          (player) =>
-            library.savePlayer({
-              ...(library.getPlayer(player.id) ? { id: player.id } : {}),
-              name: player.name,
-              steamId: player.steamId,
-            }).id,
-        );
+        const savedPlayers = team.players.map((player) => ({
+          id: library.savePlayer({
+            ...(library.getPlayer(player.id) ? { id: player.id } : {}),
+            name: player.name,
+            steamId: player.steamId,
+          }).id,
+          substitute: player.substitute,
+        }));
+        team.players.forEach((player, index) => {
+          player.id = savedPlayers[index].id;
+        });
         library.saveTeam({
           ...(library.getTeam(team.id) ? { id: team.id } : {}),
           name: team.name,
           tag: team.tag,
           logo: team.logo,
-          playerIds,
+          playerIds: savedPlayers.map((player) => player.id),
+          substituteIds: savedPlayers
+            .filter((player) => player.substitute)
+            .map((player) => player.id),
           updateExisting: true,
         });
       }
     });
   }
-  return bracket;
+  return options.generate && entrants.length >= 2
+    ? generateBracket(entrants, {
+        ...settings,
+        random: () => randomInt(0, 2 ** 32) / 2 ** 32,
+      })
+    : cleanBracket(settings);
 }
 
 export class BracketService {
@@ -202,6 +219,54 @@ export class BracketService {
     if (action === "formats") {
       const next = setBracketFormats(current, value.roundFormats);
       return this.commit(next, (config) => this.mirrorScores(next, config));
+    }
+    if (action === "teams") {
+      if (
+        !Array.isArray(value.entrants) ||
+        value.entrants.length !== current.entrants.length ||
+        value.entrants.some(
+          (team, index) => team?.id !== current.entrants[index].id,
+        )
+      )
+        throw Error(
+          "Keep the same teams and seed order when saving team details. Use a new draw to change the field.",
+        );
+      return store.rosterLibrary.transaction(() => {
+        const next = prepareTournamentBracket(
+          {
+            ...current,
+            entrants: value.entrants,
+            generate: false,
+            saveToLibrary: value.saveToLibrary === true,
+          },
+          store.rosterLibrary,
+        );
+        const prepared = bracketMatch(current, current.activeMatchId);
+        return this.commit(next, (config) => {
+          if (!prepared) return;
+          const previousTeams = prepared.teamIds.map((teamId) =>
+            current.entrants.find((team) => team.id === teamId),
+          );
+          const sides = config.teams.map((team) =>
+            previousTeams.findIndex(
+              (previous) =>
+                previous && label(previous.name) === label(team.name),
+            ),
+          );
+          if (sides.some((side) => side < 0) || new Set(sides).size !== 2)
+            return;
+          config.teams.forEach((team, index) => {
+            const entrant = next.entrants.find(
+              (item) => item.id === previousTeams[sides[index]].id,
+            );
+            Object.assign(team, {
+              name: entrant.name,
+              tag: entrant.tag,
+              logo: entrant.logo,
+            });
+          });
+        });
+      });
     }
     if (action === "entrants" || action === "generate") {
       if (played(current) && value.resetConfirmed !== true)

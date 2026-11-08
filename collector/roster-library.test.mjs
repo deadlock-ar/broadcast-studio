@@ -114,7 +114,7 @@ test("saving teams and inline players is atomic, bounded and reusable across nam
     library.saveTeam({
       name: "Too many",
       savePlayers: true,
-      players: Array.from({ length: 7 }, (_, i) => ({ name: `Player ${i}` })),
+      players: Array.from({ length: 9 }, (_, i) => ({ name: `Player ${i}` })),
     }),
   );
   assert.throws(() =>
@@ -154,6 +154,104 @@ test("roster backup merge remaps duplicate Steam identities and respects outer r
       ...input,
       teams: [{ ...input.teams[0], playerIds: [randomUUID()] }],
     }),
+  );
+});
+
+test("eight-player team roles stay team-specific through edits, blank slots and backup remapping", async (t) => {
+  const { library } = await setup(t);
+  const team = library.saveTeam({
+    name: "Eight players",
+    savePlayers: true,
+    players: Array.from({ length: 8 }, (_, index) => ({
+      name: `Player ${index + 1}`,
+    })),
+    logo: "data:image/png;base64,AAAA",
+  });
+  assert.equal(team.playerIds.length, 8);
+  assert.deepEqual(team.substituteIds, team.playerIds.slice(6));
+  assert.equal(
+    library.resolveTeam(team.id).players.filter((player) => !player.substitute)
+      .length,
+    6,
+  );
+  const other = library.saveTeam({
+    name: "Different lineup",
+    playerIds: [team.playerIds[0]],
+    substituteIds: [team.playerIds[0]],
+  });
+  assert.equal(library.resolveTeam(other.id).players[0].substitute, true);
+  assert.equal(library.resolveTeam(team.id).players[0].substitute, false);
+  assert.equal(
+    Object.hasOwn(library.getPlayer(team.playerIds[0]), "substitute"),
+    false,
+  );
+  assert.equal(
+    library.saveTeam({ id: team.id, name: team.name, logo: null }).logo,
+    "",
+  );
+  const sparse = library.saveTeam({
+    name: "Sparse lineup",
+    savePlayers: true,
+    players: [
+      { name: "Active", substitute: false },
+      {},
+      {},
+      {},
+      {},
+      {},
+      { name: "Bench", substitute: true },
+    ],
+  });
+  assert.equal(
+    library
+      .resolveTeam(sparse.id)
+      .players.find((player) => player.name === "Bench").substitute,
+    true,
+  );
+  const snapshot = library.snapshot();
+  assert.deepEqual(
+    cleanRosterSnapshot(snapshot).teams.find((item) => item.id === team.id)
+      .substituteIds,
+    team.substituteIds,
+  );
+  const incomingId = randomUUID(),
+    existing = library.savePlayer({ name: "Existing Steam", steamId: "4000" });
+  const restored = library.restore({
+    version: 1,
+    players: [
+      { id: incomingId, name: "Old Steam alias", steamId: existing.steamId },
+    ],
+    teams: [
+      {
+        id: randomUUID(),
+        name: "Restored bench",
+        playerIds: [incomingId],
+        substituteIds: [incomingId],
+      },
+    ],
+  });
+  assert.deepEqual(
+    restored.library.teams.find((item) => item.name === "Restored bench")
+      .substituteIds,
+    [existing.id],
+  );
+  assert.throws(
+    () =>
+      library.saveTeam({
+        name: "Seven active",
+        playerIds: team.playerIds.slice(0, 7),
+        substituteIds: [],
+      }),
+    /six active/,
+  );
+  assert.throws(
+    () =>
+      library.saveTeam({
+        name: "Three substitutes",
+        playerIds: team.playerIds,
+        substituteIds: team.playerIds.slice(5),
+      }),
+    /two substitutes/,
   );
 });
 

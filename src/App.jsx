@@ -16,6 +16,7 @@ import {
 } from "./draft";
 import "./App.css";
 import "./FeedbackUpdates.css";
+import TeamLogo from "./TeamLogo.jsx";
 import StatPanels from "./StatPanels";
 import ProductionStudio from "./ProductionStudio";
 import MatchOverlayControls from "./MatchOverlayControls.jsx";
@@ -156,15 +157,7 @@ function TeamMark({ team, number }) {
   return (
     <span className={`team-mark team-${number}`}>
       <span>{team.tag || team.name?.slice(0, 3) || `T${number}`}</span>
-      {team.logo && (
-        <img
-          src={team.logo}
-          alt=""
-          onError={(e) => {
-            e.currentTarget.style.display = "none";
-          }}
-        />
-      )}
+      <TeamLogo logo={team.logo} />
     </span>
   );
 }

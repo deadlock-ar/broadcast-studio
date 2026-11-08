@@ -1,6 +1,7 @@
 import { useState } from "react";
 import heroes from "./heroes.json";
 import "./PlayerBannersScreen.css";
+import TeamLogo from "./TeamLogo.jsx";
 
 const heroById = new Map(heroes.map((hero) => [hero.id, hero]));
 const count = new Intl.NumberFormat("en");
@@ -133,7 +134,9 @@ function TeamRow({ team = {}, side, showRanks }) {
     >
       <header className="player-banners-team-heading">
         <span className="player-banners-team-line" />
-        <BannerImage src={team.logo} className="player-banners-team-logo" />
+        {team.resolved === true && (
+          <TeamLogo logo={team.logo} className="player-banners-team-logo" />
+        )}
         <h2 title={team.name || undefined}>
           {team.name || `Team ${side + 1}`}
         </h2>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { casterSlots } from "./caster-stage.js";
+import TeamLogo from "./TeamLogo.jsx";
 import "./CasterScreen.css";
 
 function StageImage({ src, className = "" }) {
@@ -143,11 +144,19 @@ export default function CasterScreen({
         <div className="caster-screen-matchup">
           {[0, 1].map((side) => (
             <div className={`caster-screen-team team-${side}`} key={side}>
-              <StageImage src={stage.teams?.[side]?.logo} />
+              {stage.teams?.[side]?.resolved !== false &&
+                stage.teams?.[side]?.name && (
+                  <TeamLogo logo={stage.teams[side].logo} alt="" />
+                )}
               <h2 dir="auto">{stage.teams?.[side]?.name || "To be decided"}</h2>
             </div>
           ))}
-          <span className="caster-screen-vs">VS</span>
+          <div className="caster-screen-series" aria-label="Series score">
+            <strong>{stage.teams?.[0]?.score ?? "—"}</strong>
+            <span aria-hidden="true">–</span>
+            <strong>{stage.teams?.[1]?.score ?? "—"}</strong>
+            <small>SERIES</small>
+          </div>
         </div>
       </section>
       <footer className="caster-screen-footer">

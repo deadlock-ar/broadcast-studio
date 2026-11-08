@@ -1,4 +1,5 @@
 import { MATCH_OVERLAY_FONTS, matchOverlayWins } from "./match-overlay.js";
+import { DEFAULT_TEAM_ICON, teamLogo } from "./team-identity.js";
 const SVG_NS = "http://www.w3.org/2000/svg";
 let instance = 0;
 
@@ -63,7 +64,7 @@ function scaffold(root) {
  <rect x="1609" y="29" width="224" height="93" rx="20" fill="#101b13" stroke="#657253" stroke-width="1.5"/>
  <path d="M240 33H426M1628 33H1814" stroke="#9fa88b" stroke-width=".7" opacity=".35"/>
  <!-- Central plate and its olive wing ornament. -->
- <path d="M809 12H1239L1174 126Q1168 139 1151 139H895Q879 139 871 126Z" fill="url(#${key}-paper)" stroke="#bfc2ad" stroke-width="1.3"/>
+ <path d="M789 12H1259L1204 126Q1198 139 1181 139H867Q851 139 844 126Z" fill="url(#${key}-paper)" stroke="#bfc2ad" stroke-width="1.3"/>
  <g fill="#657450">
   <path d="M814 14C844 30 874 34 908 21C883 44 846 43 814 14Z"/>
   <path d="M820 23C839 42 856 49 879 48C857 59 836 48 820 23Z"/>
@@ -84,11 +85,13 @@ function scaffold(root) {
 <text class="side-text side-heading sponsor-heading" x="1979" y="26" text-anchor="middle"></text>
 <text class="side-text side-detail sponsor-name" x="1979" y="49" text-anchor="middle"></text>
 <image class="sponsor-logo" x="1920" y="39" width="118" height="26" preserveAspectRatio="xMidYMid meet"/>
-<text class="team-name team-left" x="643" y="52" text-anchor="middle" fill="#182119"></text>
-<text class="team-name team-right" x="1405" y="52" text-anchor="middle" fill="#182119"></text>
+<image class="team-logo team-logo-left" x="452" y="12" width="48" height="48" preserveAspectRatio="xMidYMid meet"/>
+<image class="team-logo team-logo-right" x="1548" y="12" width="48" height="48" preserveAspectRatio="xMidYMid meet"/>
+<text class="team-name team-left" x="655" y="52" text-anchor="middle" fill="#182119"></text>
+<text class="team-name team-right" x="1393" y="52" text-anchor="middle" fill="#182119"></text>
 <g class="score-boxes score-boxes-left"></g><g class="score-boxes score-boxes-right"></g>
 <!-- The center remains blank until the user uploads their own logo. -->
-<g class="custom-crest" style="display:none"><image x="970" y="14" width="108" height="42" preserveAspectRatio="xMidYMid meet"/></g>
+<g class="custom-crest" style="display:none"><image x="916" y="5" width="216" height="64" preserveAspectRatio="xMidYMid meet"/></g>
 </svg><div class="match-player-names" aria-label="Player names in live topbar order"></div>`;
 
   const updateSize = () => {
@@ -261,7 +264,7 @@ function scoreBoxes(group, team, side, format) {
   const count = matchOverlayWins(format);
   const size = count > 2 ? 16 : 20;
   const gap = count > 2 ? 7 : 10;
-  const middle = side === 0 ? 909 : 1139;
+  const middle = side === 0 ? 881 : 1167;
   const start = middle - (count * size + (count - 1) * gap) / 2;
   const positions = Array.from(
     { length: count },
@@ -317,13 +320,25 @@ export function renderMatchBanner(root, state, heroes) {
   fitText(
     query(".team-left"),
     safeText(left.name, "TEAM ALPHA").toUpperCase(),
-    302,
+    264,
   );
   fitText(
     query(".team-right"),
     safeText(right.name, "TEAM OMEGA").toUpperCase(),
-    302,
+    264,
   );
+  for (const [side, team] of [
+    ["left", left],
+    ["right", right],
+  ]) {
+    const logo = query(`.team-logo-${side}`);
+    logo.setAttribute("href", teamLogo(team.logo));
+    logo.setAttribute("aria-label", `${safeText(team.name, "Team")} logo`);
+    logo.onerror = () => {
+      if (logo.getAttribute("href") !== DEFAULT_TEAM_ICON)
+        logo.setAttribute("href", DEFAULT_TEAM_ICON);
+    };
+  }
   scoreBoxes(query(".score-boxes-left"), left, 0, state.format);
   scoreBoxes(query(".score-boxes-right"), right, 1, state.format);
   fitText(
@@ -358,7 +373,11 @@ export function renderMatchBanner(root, state, heroes) {
   query(".sponsor-name").style.display = sponsorLogo ? "none" : "";
   const centerLogo = imageSource(center.logo);
   query(".custom-crest").style.display = centerLogo ? "" : "none";
-  query(".custom-crest image").setAttribute("href", centerLogo);
+  const crest = query(".custom-crest image");
+  const crestWidth = [216, 216, 200, 177][matchOverlayWins(state.format) - 1];
+  crest.setAttribute("x", (2048 - crestWidth) / 2);
+  crest.setAttribute("width", crestWidth);
+  crest.setAttribute("href", centerLogo);
   root
     .querySelectorAll(".left-accent")
     .forEach((el) => el.setAttribute("fill", color(left.accent, "#e49d21")));

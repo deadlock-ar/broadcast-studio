@@ -165,6 +165,53 @@ test("tournament creation normalizes optional players and saves reusable records
   assert.deepEqual(app.store.rosterLibrary.snapshot(), saved);
 });
 
+test("eight-player lineups and edited logos survive restart and backup preparation", async (t) => {
+  const { app, close, start } = await fixture(t);
+  const teams = entrants(2);
+  teams[0].players = Array.from({ length: 8 }, (_, index) => ({
+    name: `Player ${index + 1}`,
+    substitute: index >= 6,
+  }));
+  app.store.tournaments.create({
+    name: "Roster cup",
+    entrants: teams,
+    generate: true,
+    saveToLibrary: true,
+  });
+  command(app, "result", { matchId: "r1-m1", scores: [1, 0] });
+  const edited = structuredClone(app.store.workspace.bracket.entrants);
+  edited[0].logo = "data:image/png;base64,AAAA";
+  edited[0].players[0].substitute = true;
+  edited[0].players[7].substitute = false;
+  command(app, "teams", { entrants: edited, saveToLibrary: true });
+  const before = structuredClone(app.store.workspace.bracket);
+  const snapshot = exportBackup(app.store),
+    prepared = prepareRestore(snapshot, app.store);
+  assert.deepEqual(prepared.workspace.bracket, before);
+  assert.equal(
+    prepared.rosterLibrary.teams.find((team) => team.name === teams[0].name)
+      .substituteIds.length,
+    2,
+  );
+  await close(app);
+  const restarted = await start();
+  assert.deepEqual(restarted.store.workspace.bracket, before);
+  const saved = restarted.store.rosterLibrary
+    .list()
+    .teams.find((team) => team.name === teams[0].name);
+  const players = restarted.store.rosterLibrary.resolveTeam(saved.id).players;
+  assert.equal(players.length, 8);
+  assert.equal(
+    players.find((player) => player.name === "Player 8").substitute,
+    false,
+  );
+  assert.equal(
+    players.find((player) => player.name === "Player 1").substitute,
+    true,
+  );
+  assert.equal(saved.logo, edited[0].logo);
+});
+
 test("bracket results, display settings and the independent roster library survive server restart", async (t) => {
   const { app, start, close } = await fixture(t);
   const cup = app.store.tournaments.create({

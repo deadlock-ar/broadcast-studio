@@ -1,5 +1,6 @@
 import { safeImage } from "./draft.js";
 import { cleanBracket } from "./bracket.js";
+import { teamLogo } from "./team-identity.js";
 
 const text = (value, limit = 80) =>
   typeof value === "string" ? value.trim().slice(0, limit) : "";
@@ -7,6 +8,10 @@ const identifier = (value) =>
   typeof value === "string" && /^[a-zA-Z0-9_-]{1,100}$/.test(value)
     ? value
     : "";
+const score = (value) =>
+  typeof value === "number" && Number.isFinite(value)
+    ? Math.max(0, Math.min(99, Math.floor(value)))
+    : 0;
 
 // This URL is an operator's external OBS source, never a server fetch or iframe.
 export function discordVoiceUrl(value) {
@@ -45,6 +50,7 @@ export function cleanCasterStage(value = {}) {
     teams: [0, 1].map((side) => ({
       name: text(value?.teams?.[side]?.name),
       logo: safeImage(value?.teams?.[side]?.logo),
+      score: score(value?.teams?.[side]?.score),
     })),
     casterCount: [1, 2, 3, 4].includes(value?.casterCount)
       ? value.casterCount
@@ -77,10 +83,24 @@ export function casterStageOutput(workspace = {}) {
   let round = "";
   let format = "";
   if (settings.source === "broadcast") {
-    teams = [0, 1].map((side) => ({
-      name: text(workspace.config?.teams?.[side]?.name),
-      logo: safeImage(workspace.config?.teams?.[side]?.logo),
-    }));
+    teams = [0, 1].map((side) => {
+      const configured = workspace.config?.teams?.[side] || {};
+      const source = workspace.draft?.snapshot?.teams?.find(
+        (team) => Number(team.teamNumber) === side + 1,
+      );
+      return {
+        name: text(
+          workspace.config?.useSourceNames && source?.displayName
+            ? source.displayName
+            : configured.name,
+        ),
+        logo: safeImage(
+          configured.logo ||
+            (workspace.config?.useSourceNames ? source?.teamLogo : ""),
+        ),
+        score: score(configured.score),
+      };
+    });
     round = text(workspace.config?.round);
     format = text(workspace.config?.format, 8);
   } else if (settings.source === "bracket") {
@@ -91,7 +111,14 @@ export function casterStageOutput(workspace = {}) {
         match?.required && match.status !== "bye"
           ? bracket.entrants.find((item) => item.id === match.teamIds[side])
           : null;
-      return { name: text(entrant?.name), logo: safeImage(entrant?.logo) };
+      return {
+        name: text(entrant?.name),
+        logo: safeImage(entrant?.logo),
+        score:
+          entrant && match.status !== "waiting"
+            ? score(match.scores[side])
+            : null,
+      };
     });
     if (match?.required && match.status !== "bye") {
       round = `Round ${match.round + 1}`;
@@ -109,8 +136,10 @@ export function casterStageOutput(workspace = {}) {
     round,
     format,
     teams: teams.map((team) => ({
-      ...team,
       name: team.name || "To be decided",
+      resolved: Boolean(team.name),
+      logo: team.name ? teamLogo(team.logo) : "",
+      score: team.name ? team.score : null,
     })),
     casters: settings.casters.slice(0, settings.casterCount),
   };

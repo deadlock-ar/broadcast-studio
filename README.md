@@ -129,12 +129,24 @@ and tournament switches clear the previous roster instead of keeping old names.
 ## Brackets and reusable rosters
 
 Open **Bracket** to manage a single-elimination tournament for 2–32 teams.
-The **New tournament** form can include team names and up to six optional
-players per team, with names and Steam accounts. Choose whether to save these
+The **New tournament** form can include team names, logos, six active players,
+and two optional substitutes, with optional names and Steam accounts. Choose whether to save these
 records for later tournaments. **Data library → Teams & players** also saves
 individual players independently of a team and edits existing saved rosters.
 SteamID64 strings, numeric account IDs and numeric Steam profile URLs are
 accepted; vanity profile URLs require their numeric profile ID.
+
+Team logo uploads and lineup edits remain available after creating the teams.
+**Save teams** keeps the draw and its results when team identities and seed order
+are unchanged. Use each substitute's **Swap into active lineup** selector, then
+save; only the active six appear in player banners. Teams without a custom icon
+use the bundled Deadlock icon in the draft, bracket, overlay, scoreboard, banners,
+and caster desk. The match overlay places team logos between each ban group and
+team name. Its uploaded center mark has a larger reserved area, clear of the win boxes.
+
+The caster desk shows the linked match's series score, with team icons on the far
+outer sides. A selected bracket fixture uses its own scores; a manual matchup has
+editable scores and logo uploads.
 
 Arrange the teams in seed order, choose **By seed**, **Random draw** or
 **Manual pairings**, then generate the bracket. Manual pairing matches adjacent

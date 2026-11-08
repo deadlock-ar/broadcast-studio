@@ -9,6 +9,9 @@ import {
 } from "./match-overlay.js";
 import { useWorkspace, useWorkspaceField } from "./workspace-context.js";
 import { useCollector } from "./use-collector.js";
+import TeamLogo from "./TeamLogo.jsx";
+import { DEFAULT_TEAM_ICON } from "./team-identity.js";
+import { readLogoFile } from "./logo-upload.js";
 import "./MatchOverlayControls.css";
 
 const roster = Object.fromEntries(heroes.map((hero) => [hero.id, hero]));
@@ -107,30 +110,52 @@ function HeroPicker({ value, title, onSelect, onClose }) {
   );
 }
 
-function LogoField({ title, value, onUpload, onRemove }) {
+function LogoField({
+  title,
+  value,
+  preview = value,
+  team = false,
+  disabled = false,
+  onUpload,
+  onRemove,
+}) {
   return (
     <div className="mo-logo-field">
       <span className="mo-logo-preview">
-        {value ? <img src={value} alt={title} /> : "＋"}
+        {team ? (
+          <TeamLogo logo={preview} alt={title} />
+        ) : preview ? (
+          <img src={preview} alt={title} />
+        ) : (
+          "＋"
+        )}
       </span>
       <div>
         <span className="mo-team-caption">{title}</span>
         <div className="mo-actions">
-          <label className="button secondary mo-upload">
+          <label
+            className={`button secondary mo-upload${disabled ? " is-disabled" : ""}`}
+            aria-disabled={disabled}
+          >
             Upload logo
             <input
               type="file"
               aria-label={`Upload ${title.toLowerCase()}`}
               accept="image/png,image/jpeg,image/webp"
+              disabled={disabled}
               onChange={(event) => {
                 onUpload(event.target.files?.[0]);
                 event.target.value = "";
               }}
             />
           </label>
-          {value && (
-            <button className="mo-text-button" onClick={onRemove}>
-              Remove logo
+          {value && !disabled && (
+            <button
+              className="mo-text-button"
+              aria-label={`Remove ${title.toLowerCase()}`}
+              onClick={onRemove}
+            >
+              {team ? "Use default" : "Remove logo"}
             </button>
           )}
         </div>
@@ -233,6 +258,14 @@ export default function MatchOverlayControls({
             teams: next.teams.map((team, index) => ({
               ...team,
               ...(key === "names" ? { name: displayed.teams[index].name } : {}),
+              ...(key === "logos" && !team.logo
+                ? {
+                    logo:
+                      displayed.teams[index].logo === DEFAULT_TEAM_ICON
+                        ? null
+                        : displayed.teams[index].logo,
+                  }
+                : {}),
               ...(key === "bans"
                 ? { bans: [...displayed.teams[index].bans] }
                 : {}),
@@ -244,29 +277,11 @@ export default function MatchOverlayControls({
       }
       return { ...next, links: { ...next.links, [key]: linked } };
     });
-  const uploadLogo = async (file, key) => {
+  const uploadLogo = async (file, key, teamIndex) => {
     if (!file || readOnly) return;
     const tournamentId = shared?.data.activeTournamentId;
-    if (
-      !["image/png", "image/jpeg", "image/webp"].includes(file.type) ||
-      file.size > 5 * 1024 * 1024
-    ) {
-      setNotice("Choose a PNG, JPEG, or WebP image under 5 MB.");
-      return;
-    }
-    const url = URL.createObjectURL(file);
     try {
-      const image = new Image();
-      image.src = url;
-      await image.decode();
-      const ratio = Math.min(320 / image.width, 320 / image.height, 1);
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.max(1, Math.round(image.width * ratio));
-      canvas.height = Math.max(1, Math.round(image.height * ratio));
-      canvas
-        .getContext("2d")
-        .drawImage(image, 0, 0, canvas.width, canvas.height);
-      const logo = canvas.toDataURL("image/webp", 0.88);
+      const logo = await readLogoFile(file);
       if (logo.length > 300000) throw new Error("large-image");
       if (
         !mounted.current ||
@@ -274,20 +289,22 @@ export default function MatchOverlayControls({
         editingContext.current?.tournamentId !== tournamentId
       )
         return;
-      update((current) => ({
-        ...current,
-        [key]: { ...current[key], logo },
-      }));
-      setNotice(`${key === "center" ? "Center" : "Sponsor"} logo updated.`);
+      if (key === "team") updateTeam(teamIndex, { logo });
+      else
+        update((current) => ({
+          ...current,
+          [key]: { ...current[key], logo },
+        }));
+      setNotice(
+        `${key === "team" ? (teamIndex === 0 ? "Left team" : "Right team") : key === "center" ? "Center" : "Sponsor"} logo updated.`,
+      );
     } catch (error) {
       if (mounted.current)
         setNotice(
           error.message === "large-image"
             ? "Try a smaller or simpler logo image."
-            : "That image could not be opened. Try another file.",
+            : error.message,
         );
-    } finally {
-      URL.revokeObjectURL(url);
     }
   };
   const outputUrl = new URL("/obs/match-overlay", window.location.origin).href;
@@ -339,7 +356,7 @@ export default function MatchOverlayControls({
             Match overlay<span>✦</span>
           </h1>
           <p>
-            Team names, bans, and series wins in a compact banner. Linked
+            Team names, logos, bans, and series wins in a compact banner. Linked
             details follow your draft and broadcast settings as they change.
           </p>
         </div>
@@ -527,6 +544,32 @@ export default function MatchOverlayControls({
                       }
                     />
                   </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="mo-section">
+              <div className="mo-section-head">
+                <h3>Team logos</h3>
+                {linkSwitch("logos", "Follow team logos")}
+              </div>
+              <p className="mo-linked-note">
+                {settings.links.logos
+                  ? "Logos follow the teams selected in your draft. Turn off this link to upload logos just for this overlay."
+                  : "These uploads stay saved when you turn the team logo link back on."}
+              </p>
+              <div className="mo-stack">
+                {resolved.teams.map((team, index) => (
+                  <LogoField
+                    key={index}
+                    title={`${index === 0 ? "Left" : "Right"} team logo`}
+                    team
+                    preview={team.logo}
+                    value={settings.teams[index].logo}
+                    disabled={settings.links.logos}
+                    onUpload={(file) => uploadLogo(file, "team", index)}
+                    onRemove={() => updateTeam(index, { logo: null })}
+                  />
                 ))}
               </div>
             </div>
@@ -773,7 +816,11 @@ export default function MatchOverlayControls({
                   }))
                 }
               />
-              <p>Upload your own mark to show it between the teams.</p>
+              <p>
+                Upload your own mark to show it between the teams. It fills a
+                larger space while keeping the win boxes clear. Use a tightly
+                cropped logo for the clearest result.
+              </p>
             </div>
             <div className="mo-section">
               <div className="mo-section-head">

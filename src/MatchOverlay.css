@@ -39,6 +39,10 @@
   letter-spacing: -1px;
 }
 
+.match-banner-svg .team-logo {
+  filter: drop-shadow(0 1px 1px #0003);
+}
+
 .match-banner-svg .side-text {
   font-family:
     "DLAR Arabic", "Arial Narrow", "Roboto Condensed", Arial, sans-serif;

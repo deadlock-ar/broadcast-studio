@@ -5,6 +5,7 @@ import {
   resolveMatchOverlay,
   matchOverlayWins,
 } from "../src/match-overlay.js";
+import { DEFAULT_TEAM_ICON } from "../src/team-identity.js";
 
 function workspace() {
   return {
@@ -75,6 +76,61 @@ test("manual override fields remain independent of the draft and shared branding
   assert.deepEqual(result.teams[0].scoreBoxes, [false, true, false, false]);
   assert.equal(result.tournament.name, "Manual tournament");
   assert.deepEqual(source, before);
+});
+
+test("team logos link independently and keep manual uploads across source changes", () => {
+  const source = workspace();
+  const configured = "https://example.test/configured.png";
+  const manual = "data:image/webp;base64,AAAA";
+  const draft = "https://example.test/draft.png";
+  source.config.teams[0].logo = configured;
+  source.draft.snapshot.teams[0].teamLogo = draft;
+  source.matchOverlay.teams[0].logo = manual;
+  source.matchOverlay.links.names = false;
+  const before = structuredClone(source);
+  assert.equal(resolveMatchOverlay(source).teams[0].logo, configured);
+  assert.equal(resolveMatchOverlay(source).teams[1].logo, DEFAULT_TEAM_ICON);
+  assert.deepEqual(source, before);
+
+  source.matchOverlay.links.logos = false;
+  assert.equal(resolveMatchOverlay(source).teams[0].logo, manual);
+  source.config.teams[0].logo = "https://example.test/new-team.png";
+  assert.equal(resolveMatchOverlay(source).teams[0].logo, manual);
+  source.matchOverlay.links.logos = true;
+  assert.equal(
+    resolveMatchOverlay(source).teams[0].logo,
+    "https://example.test/new-team.png",
+  );
+  source.matchOverlay.links.logos = false;
+  assert.equal(resolveMatchOverlay(source).teams[0].logo, manual);
+  assert.equal(source.matchOverlay.teams[0].logo, manual);
+
+  source.matchOverlay.links.logos = true;
+  source.config.teams[0].logo = "";
+  assert.equal(resolveMatchOverlay(source).teams[0].logo, DEFAULT_TEAM_ICON);
+  source.config.useSourceNames = true;
+  assert.equal(resolveMatchOverlay(source).teams[0].logo, draft);
+  source.draft.snapshot.teams = [];
+  assert.equal(resolveMatchOverlay(source).teams[0].logo, DEFAULT_TEAM_ICON);
+});
+
+test("legacy overlay defaults link logos and unsafe logo values cannot reach the output", () => {
+  const settings = cleanMatchOverlay({
+    teams: [
+      { logo: "javascript:alert(1)" },
+      { logo: "data:image/svg+xml;base64,AAAA" },
+    ],
+  });
+  assert.equal(settings.links.logos, true);
+  assert.equal(settings.teams[0].logo, null);
+  assert.equal(settings.teams[1].logo, null);
+  assert.equal(cleanMatchOverlay(settings).teams[0].logo, null);
+  const source = workspace();
+  source.config.teams[0].logo = "javascript:alert(1)";
+  source.matchOverlay = settings;
+  assert.equal(resolveMatchOverlay(source).teams[0].logo, DEFAULT_TEAM_ICON);
+  source.matchOverlay.links.logos = false;
+  assert.equal(resolveMatchOverlay(source).teams[1].logo, DEFAULT_TEAM_ICON);
 });
 
 test("BO1/BO3 overrides switch win-box counts without modifying the source format", () => {

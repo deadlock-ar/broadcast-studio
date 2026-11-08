@@ -9,6 +9,8 @@ import {
   discordVoiceUrl,
 } from "./caster-stage.js";
 import CasterScreen from "./CasterScreen.jsx";
+import TeamLogo from "./TeamLogo.jsx";
+import { readLogoFile } from "./logo-upload.js";
 import "./CasterStudio.css";
 
 export default function CasterStudio({ active = true }) {
@@ -53,6 +55,21 @@ export default function CasterStudio({ active = true }) {
         index === slot ? { ...person, [key]: next } : person,
       ),
     );
+  const editTeam = (side, key, next) =>
+    edit(
+      "teams",
+      value.teams.map((team, index) =>
+        index === side ? { ...team, [key]: next } : team,
+      ),
+    );
+  const uploadTeamLogo = async (side, file) => {
+    if (!file) return;
+    try {
+      editTeam(side, "logo", await readLogoFile(file));
+    } catch (error) {
+      setNotice(error.message);
+    }
+  };
   const save = () => {
     if (!draft || disabled) return;
     if (draft.base !== JSON.stringify(settings)) {
@@ -74,6 +91,15 @@ export default function CasterStudio({ active = true }) {
     ) {
       setNotice(
         "Caster avatars need an HTTPS image URL or a PNG, JPEG or WebP data image.",
+      );
+      return;
+    }
+    if (
+      value.source === "manual" &&
+      value.teams.some((team) => team.logo.trim() && !safeImage(team.logo))
+    ) {
+      setNotice(
+        "Team logos need an HTTPS image URL or a PNG, JPEG or WebP data image.",
       );
       return;
     }
@@ -312,31 +338,82 @@ export default function CasterStudio({ active = true }) {
               </select>
             </label>
           )}
-          {value.source === "manual" &&
-            [0, 1].map((side) => (
-              <label key={side}>
-                Team {side + 1}
-                <input
-                  value={value.teams[side].name}
-                  maxLength={80}
-                  onChange={(event) =>
-                    edit(
-                      "teams",
-                      value.teams.map((team, index) =>
-                        index === side
-                          ? { ...team, name: event.target.value }
-                          : team,
-                      ),
-                    )
-                  }
-                />
-              </label>
-            ))}
         </div>
+        {value.source === "manual" && (
+          <div className="caster-studio-manual-teams">
+            {[0, 1].map((side) => (
+              <article key={side}>
+                <div className="caster-studio-manual-heading">
+                  <TeamLogo logo={value.teams[side].logo} alt="" />
+                  <h3>TEAM 0{side + 1}</h3>
+                </div>
+                <label>
+                  Team {side + 1} name
+                  <input
+                    value={value.teams[side].name}
+                    maxLength={80}
+                    onChange={(event) =>
+                      editTeam(side, "name", event.target.value)
+                    }
+                  />
+                </label>
+                <label>
+                  Series score
+                  <input
+                    type="number"
+                    min={0}
+                    max={99}
+                    step={1}
+                    aria-label={`Caster team ${side + 1} series score`}
+                    value={value.teams[side].score}
+                    onChange={(event) =>
+                      editTeam(side, "score", Number(event.target.value))
+                    }
+                  />
+                </label>
+                <label>
+                  Logo image URL
+                  <input
+                    type="url"
+                    aria-label={`Caster team ${side + 1} logo URL`}
+                    value={value.teams[side].logo}
+                    maxLength={300000}
+                    placeholder="https://…"
+                    onChange={(event) =>
+                      editTeam(side, "logo", event.target.value)
+                    }
+                  />
+                </label>
+                <label className="button secondary caster-studio-upload">
+                  Upload logo
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    aria-label={`Upload caster team ${side + 1} logo`}
+                    hidden
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      event.target.value = "";
+                      void uploadTeamLogo(side, file);
+                    }}
+                  />
+                </label>
+              </article>
+            ))}
+          </div>
+        )}
         {value.source === "broadcast" && (
           <p className="caster-studio-help">
-            This follows the current broadcast teams. Choose a bracket match to
-            promote a different upcoming fixture.
+            This follows the current broadcast names, logos and display scores.
+            Choose a bracket match to use that fixture's teams and recorded
+            series scores instead.
+          </p>
+        )}
+        {value.source === "bracket" && (
+          <p className="caster-studio-help">
+            Scores come from the selected bracket fixture. Broadcast display
+            scores do not change its recorded result. Unresolved teams stay
+            unassigned.
           </p>
         )}
         {value.layout === "discord" && (

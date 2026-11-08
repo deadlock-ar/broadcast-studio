@@ -457,6 +457,10 @@
   display: inline-flex;
   cursor: pointer;
 }
+.match-overlay-controls .mo-upload.is-disabled {
+  opacity: 0.5;
+  cursor: default;
+}
 .match-overlay-controls .mo-upload input {
   width: 1px;
   height: 1px;

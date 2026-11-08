@@ -2,6 +2,23 @@ import { safeImage } from "./draft.js";
 
 const formats = ["BO1", "BO3", "BO5", "BO7"];
 const methods = ["seeded", "random", "manual"];
+export const isSubstitute = (player, index) =>
+  typeof player?.substitute === "boolean" ? player.substitute : index >= 6;
+
+// Roles belong to a team's lineup. Keep blank active positions separate from
+// the bench so missing names can never promote a substitute on a broadcast.
+export function rosterSlots(players = []) {
+  const roster = Array.isArray(players) ? players.slice(0, 8) : [];
+  return [false, true].flatMap((substitute) => {
+    const group = roster.filter(
+      (player, index) => isSubstitute(player, index) === substitute,
+    );
+    return Array.from({ length: substitute ? 2 : 6 }, (_, index) => ({
+      ...group[index],
+      substitute,
+    }));
+  });
+}
 const text = (value, maximum = 80) =>
   typeof value === "string" ? value.slice(0, maximum) : "";
 const identifier = (value) =>
@@ -52,8 +69,8 @@ function entrant(value) {
     tag: text(team.tag, 8),
     logo: safeImage(team.logo),
     players: (Array.isArray(team.players) ? team.players : [])
-      .slice(0, 6)
-      .map((player) => ({
+      .slice(0, 8)
+      .map((player, index) => ({
         id: identifier(player?.id),
         name: text(player?.name, 48),
         steamId:
@@ -61,6 +78,7 @@ function entrant(value) {
           /^\d{1,20}$/.test(player.steamId)
             ? player.steamId
             : "",
+        substitute: isSubstitute(player, index),
       })),
   };
 }

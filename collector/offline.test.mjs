@@ -210,6 +210,11 @@ test("caster settings survive tournament/backup persistence and public output ex
     ...before,
     title: "The night desk",
     layout: "discord",
+    source: "manual",
+    teams: [
+      { name: "Orange", score: 2, logo: "https://teams.test/orange.png" },
+      { name: "Blue", score: 1, logo: "" },
+    ],
     discordUrl:
       "https://streamkit.discord.com/overlay/voice/123456789012345678/234567890123456789",
   };
@@ -223,15 +228,22 @@ test("caster settings survive tournament/backup persistence and public output ex
     await fetch(base + "/api/broadcast?channel=casters")
   ).json();
   assert.equal(output.stage.title, "The night desk");
+  assert.deepEqual(
+    output.stage.teams.map((team) => team.score),
+    [2, 1],
+  );
+  assert.equal(output.stage.teams[0].logo, stage.teams[0].logo);
   assert.equal(JSON.stringify(output).includes("streamkit.discord.com"), false);
   const tournamentId = app.store.workspace.activeTournamentId;
   app.store.tournaments.create({ name: "Other show" });
   assert.notEqual(app.store.workspace.casterStage.title, "The night desk");
   app.store.tournaments.select(tournamentId);
   assert.equal(app.store.workspace.casterStage.title, "The night desk");
+  assert.deepEqual(app.store.workspace.casterStage.teams, stage.teams);
   const backup = exportBackup(app.store),
     restored = prepareRestore(backup, app.store);
   assert.equal(restored.workspace.casterStage.discordUrl, stage.discordUrl);
+  assert.deepEqual(restored.workspace.casterStage.teams, stage.teams);
   assert.equal(
     restored.tournaments.find((p) => p.id === tournamentId).state.casterStage
       .title,

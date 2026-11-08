@@ -94,6 +94,12 @@ test("SQLite adds defaults to an older workspace and retains new match overlay e
     },
     { path: ["matchOverlay", "backgroundOpacity"], before: 100, value: 85 },
     {
+      path: ["matchOverlay", "teams", 0, "logo"],
+      before: null,
+      value: "https://example.test/manual-team.png",
+    },
+    { path: ["matchOverlay", "links", "logos"], before: true, value: false },
+    {
       path: ["matchOverlay", "playerNames", "enabled"],
       before: false,
       value: true,
@@ -117,6 +123,11 @@ test("SQLite adds defaults to an older workspace and retains new match overlay e
   assert.equal(restarted.workspace.matchOverlay.visible, false);
   assert.equal(restarted.workspace.matchOverlay.font, "arial");
   assert.equal(restarted.workspace.matchOverlay.backgroundOpacity, 85);
+  assert.equal(restarted.workspace.matchOverlay.links.logos, false);
+  assert.equal(
+    restarted.workspace.matchOverlay.teams[0].logo,
+    "https://example.test/manual-team.png",
+  );
   assert.equal(restarted.workspace.matchOverlay.playerNames.enabled, true);
   assert.equal(
     restarted.workspace.matchOverlay.playerNames.overrides["7"],
@@ -136,6 +147,9 @@ test("tournaments isolate overlay settings and older tournament/trash snapshots 
   store.workspace.matchOverlay.visible = false;
   store.workspace.matchOverlay.font = "arial";
   store.workspace.matchOverlay.backgroundOpacity = 85;
+  store.workspace.matchOverlay.links.logos = false;
+  store.workspace.matchOverlay.teams[0].logo =
+    "https://example.test/cup-one.png";
   store.workspace.matchOverlay.playerNames.enabled = true;
   store.workspace.matchOverlay.playerNames.overrides["1"] = "First cup name";
   store.saveWorkspace();
@@ -147,6 +161,11 @@ test("tournaments isolate overlay settings and older tournament/trash snapshots 
   assert.equal(store.workspace.matchOverlay.visible, false);
   assert.equal(store.workspace.matchOverlay.font, "arial");
   assert.equal(store.workspace.matchOverlay.backgroundOpacity, 85);
+  assert.equal(store.workspace.matchOverlay.links.logos, false);
+  assert.equal(
+    store.workspace.matchOverlay.teams[0].logo,
+    "https://example.test/cup-one.png",
+  );
   assert.equal(
     store.workspace.matchOverlay.playerNames.overrides["1"],
     "First cup name",
@@ -154,6 +173,8 @@ test("tournaments isolate overlay settings and older tournament/trash snapshots 
   store.tournaments.select(second.id);
   assert.equal(store.workspace.matchOverlay.font, "georgia");
   assert.equal(store.workspace.matchOverlay.backgroundOpacity, 100);
+  assert.equal(store.workspace.matchOverlay.links.logos, true);
+  assert.equal(store.workspace.matchOverlay.teams[0].logo, null);
   assert.deepEqual(store.workspace.matchOverlay.playerNames.overrides, {});
 
   const older = store.tournaments.records.get(first);

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { EntrantEditor, blankEntrant } from "./BracketStudio.jsx";
 import { useWorkspace, workspaceRequest } from "./workspace-context.js";
 import "./RosterLibraryPanel.css";
+import TeamLogo from "./TeamLogo.jsx";
 
 export default function RosterLibraryPanel({ active = true }) {
   const shared = useWorkspace();
@@ -51,7 +52,10 @@ export default function RosterLibraryPanel({ active = true }) {
       players: saved.playerIds
         .map((id) => library.players.find((item) => item.id === id))
         .filter(Boolean)
-        .map((item) => ({ ...item })),
+        .map((item) => ({
+          ...item,
+          substitute: (saved.substituteIds || []).includes(item.id),
+        })),
     });
   const query = search.toLocaleLowerCase().trim();
   const rows = (kind === "teams" ? library.teams : library.players).filter(
@@ -125,7 +129,14 @@ export default function RosterLibraryPanel({ active = true }) {
               rows.map((record) => (
                 <article key={record.id}>
                   <span className="rl-record-mark">
-                    {record.tag || record.name?.slice(0, 2)}
+                    {kind === "teams" ? (
+                      <TeamLogo
+                        logo={record.logo}
+                        alt={`${record.name} logo`}
+                      />
+                    ) : (
+                      record.name?.slice(0, 2)
+                    )}
                   </span>
                   <div>
                     <strong>{record.name}</strong>

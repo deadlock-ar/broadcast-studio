@@ -1,5 +1,6 @@
 import { safeImage } from "./draft.js";
 import { liveRoster } from "./roster-order.js";
+import { teamLogo } from "./team-identity.js";
 import heroes from "./heroes.json" with { type: "json" };
 
 export const MATCH_OVERLAY_FONTS = [
@@ -91,7 +92,7 @@ export function cleanMatchOverlay(value = {}) {
       ? value.font
       : "bodoni",
     links: Object.fromEntries(
-      ["names", "bans", "scores", "event"].map((key) => [
+      ["names", "logos", "bans", "scores", "event"].map((key) => [
         key,
         value.links?.[key] !== false,
       ]),
@@ -100,6 +101,7 @@ export function cleanMatchOverlay(value = {}) {
       const team = value.teams?.[index] || {};
       return {
         name: string(team.name, fallback.name, 48),
+        logo: image(team.logo),
         accent: /^#[a-f0-9]{6}$/i.test(team.accent || "")
           ? team.accent
           : fallback.accent,
@@ -161,6 +163,12 @@ export function resolveMatchOverlay(workspace = {}, session = null) {
       name: settings.links.names
         ? string(linkedName, manual.name, 48)
         : manual.name,
+      logo: teamLogo(
+        settings.links.logos
+          ? image(configured.logo) ||
+              (config.useSourceNames ? image(source?.teamLogo) : null)
+          : manual.logo,
+      ),
       bans: settings.links.bans
         ? Array.from({ length: 3 }, (_, slot) =>
             heroId(draftBans[slot]?.heroId),

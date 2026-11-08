@@ -1,4 +1,5 @@
 import "./BracketScreen.css";
+import TeamLogo from "./TeamLogo.jsx";
 
 export default function BracketScreen({ bracket }) {
   if (!bracket || bracket.visible === false) return null;
@@ -147,8 +148,11 @@ export default function BracketScreen({ bracket }) {
                               className={`bracket-screen-team${won ? " is-winner" : ""}${!team ? " is-empty" : ""}`}
                               key={side}
                             >
-                              {team?.logo ? (
-                                <img src={team.logo} alt="" />
+                              {team ? (
+                                <TeamLogo
+                                  logo={team.logo}
+                                  alt={`${team.name} logo`}
+                                />
                               ) : (
                                 <span className="bracket-screen-team-mark">
                                   {team?.tag || team?.name?.slice(0, 2) || "—"}

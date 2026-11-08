@@ -220,3 +220,8 @@
     grid-template-columns: 15px minmax(0, 1fr);
   }
 }
+.rl-record-mark img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}

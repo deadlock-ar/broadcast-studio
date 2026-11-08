@@ -70,6 +70,52 @@ test("broadcast banners follow uniquely named entrants and keep the roster on th
   assert.equal(output[0].players.length, 6);
 });
 
+test("banner placeholders stay unassigned while an actual team can use the same display name", () => {
+  const w = workspace();
+  w.playerBanners.source = "bracket";
+  w.playerBanners.matchId = "missing";
+  assert.ok(
+    playerBannersOutput(w).teams.every((team) => team.resolved === false),
+  );
+  w.playerBanners.source = "manual";
+  w.playerBanners.teams[0].name = "To be decided";
+  assert.equal(playerBannersOutput(w).teams[0].resolved, true);
+  w.playerBanners.teams[0].name = "";
+  assert.equal(playerBannersOutput(w).teams[0].resolved, false);
+});
+
+test("only six active players appear and substitutes never fill unnamed starter gaps", () => {
+  const w = workspace();
+  w.bracket.entrants[0].players = [
+    { id: "one", name: "Starter", steamId: steam(1), substitute: false },
+    { id: "bench", name: "Bench", steamId: steam(7), substitute: true },
+  ];
+  let output = playerBannersOutput(w).teams[0].players;
+  assert.equal(output.length, 6);
+  assert.equal(output[0].name, "Starter");
+  assert.equal(
+    output.some((player) => player.name === "Bench"),
+    false,
+  );
+  w.bracket.entrants[0].players[0].substitute = true;
+  w.bracket.entrants[0].players[1].substitute = false;
+  output = playerBannersOutput(w).teams[0].players;
+  assert.equal(output[0].name, "Bench");
+  assert.equal(
+    output.some((player) => player.name === "Starter"),
+    false,
+  );
+  w.bracket.entrants[0].players = Array.from({ length: 8 }, (_, index) => ({
+    id: `person-${index}`,
+    name: `Player ${index + 1}`,
+  }));
+  output = playerBannersOutput(w).teams[0].players;
+  assert.deepEqual(
+    output.map((player) => player.name),
+    ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6"],
+  );
+});
+
 test("stale or ambiguous branding never attaches an unrelated active match roster", () => {
   const w = workspace();
   w.bracket.activeMatchId = "r1-m1";

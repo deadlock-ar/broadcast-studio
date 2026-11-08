@@ -1,5 +1,5 @@
 import { safeImage } from "./draft.js";
-import { cleanBracket } from "./bracket.js";
+import { cleanBracket, rosterSlots } from "./bracket.js";
 
 const STEAM_BASE = 76561197960265728n;
 const MAX_ACCOUNT = 4294967295n;
@@ -81,9 +81,7 @@ function team(value) {
     name: text(value?.name),
     tag: text(value?.tag, 8),
     logo: safeImage(value?.logo),
-    players: Array.from({ length: 6 }, (_, index) =>
-      player(value?.players?.[index]),
-    ),
+    players: rosterSlots(value?.players).slice(0, 6).map(player),
   };
 }
 
@@ -169,9 +167,13 @@ export function cleanPlayerBanners(value = {}) {
 // swap in broadcast branding therefore moves the whole roster with its team.
 export function resolveBannerTeams(workspace = {}) {
   const settings = cleanPlayerBanners(workspace.playerBanners);
-  if (settings.source === "manual") return settings.teams;
+  const assigned = (value) => ({
+    ...team(value),
+    resolved: Boolean(text(value?.name)),
+  });
+  if (settings.source === "manual") return settings.teams.map(assigned);
   const bracket = cleanBracket(workspace.bracket);
-  const empty = () => team({ name: "To be decided" });
+  const empty = () => ({ ...team({ name: "To be decided" }), resolved: false });
   if (settings.source === "bracket") {
     const match = bracket.matches.find((item) => item.id === settings.matchId);
     if (!match || !match.required || match.status === "bye")
@@ -180,11 +182,11 @@ export function resolveBannerTeams(workspace = {}) {
       const entrant = bracket.entrants.find(
         (item) => item.id === match.teamIds[index],
       );
-      return entrant ? team(entrant) : empty();
+      return entrant ? assigned(entrant) : empty();
     });
   }
   const branding = [0, 1].map((index) =>
-    team({
+    assigned({
       ...workspace.config?.teams?.[index],
       players: [],
     }),
@@ -211,7 +213,7 @@ export function resolveBannerTeams(workspace = {}) {
       (entrant) => label(entrant.name) === label(item.name),
     );
     if (!item.name || matches.length !== 1) return item;
-    const entrant = team(matches[0]);
+    const entrant = assigned(matches[0]);
     return {
       ...entrant,
       name: item.name,
@@ -236,6 +238,7 @@ export function playerBannersOutput(workspace = {}) {
       name: item.name,
       tag: item.tag,
       logo: item.logo,
+      resolved: item.resolved,
       players: item.players.map((person) => {
         const stats = person.steamId ? settings.profiles[person.steamId] : null;
         return {

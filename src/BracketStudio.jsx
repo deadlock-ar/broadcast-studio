@@ -1,7 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useWorkspace, workspaceRequest } from "./workspace-context.js";
-import { bracketOutput, cleanBracket, winsRequired } from "./bracket.js";
+import {
+  bracketOutput,
+  cleanBracket,
+  winsRequired,
+  rosterSlots,
+} from "./bracket.js";
 import BracketScreen from "./BracketScreen.jsx";
+import TeamLogo from "./TeamLogo.jsx";
+import { readLogoFile } from "./logo-upload.js";
 import "./BracketStudio.css";
 
 // Shared with the tournament creation form; this factory contains no React state.
@@ -18,6 +25,7 @@ const playerRecord = (player = {}) => ({
   id: player.id || crypto.randomUUID(),
   name: player.name || "",
   steamId: player.steamId || "",
+  substitute: player.substitute === true,
 });
 
 export function EntrantEditor({
@@ -29,6 +37,8 @@ export function EntrantEditor({
 }) {
   const teams = library.teams || [];
   const players = library.players || [];
+  const [uploading, setUploading] = useState(false);
+  const [notice, setNotice] = useState("");
   const update = (index, changes) =>
     onChange(
       entrants.map((team, at) =>
@@ -41,15 +51,42 @@ export function EntrantEditor({
     onChange(next);
   };
   const updatePlayer = (teamIndex, slot, changes) => {
-    const roster = Array.from(
-      { length: 6 },
-      (_, index) => entrants[teamIndex].players?.[index] || {},
-    );
-    roster[slot] = { ...playerRecord(roster[slot]), ...changes };
+    const roster = rosterSlots(entrants[teamIndex].players);
+    roster[slot] = {
+      ...playerRecord(roster[slot]),
+      ...changes,
+      substitute: slot >= 6,
+    };
     update(teamIndex, { players: roster });
   };
+  const swapPlayer = (teamIndex, substituteSlot, activeSlot) => {
+    const roster = rosterSlots(entrants[teamIndex].players);
+    [roster[activeSlot], roster[substituteSlot]] = [
+      { ...roster[substituteSlot], substitute: false },
+      { ...roster[activeSlot], substitute: true },
+    ];
+    update(teamIndex, { players: roster });
+  };
+  const uploadLogo = async (index, file) => {
+    if (!file) return;
+    setUploading(true);
+    setNotice("");
+    try {
+      update(index, { logo: await readLogoFile(file) });
+      setNotice("Logo ready. Save the team to apply it.");
+    } catch (error) {
+      setNotice(error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
   return (
-    <fieldset className="brk-entrant-editor" disabled={disabled}>
+    <fieldset className="brk-entrant-editor" disabled={disabled || uploading}>
+      {notice && (
+        <p className="brk-help" role="status">
+          {notice}
+        </p>
+      )}
       <div className="brk-entrant-toolbar">
         {maximum > 1 && (
           <label>
@@ -76,7 +113,14 @@ export function EntrantEditor({
                     name: team.name,
                     tag: team.tag || "",
                     logo: team.logo || null,
-                    players: roster.map(playerRecord),
+                    players: roster.map((player) =>
+                      playerRecord({
+                        ...player,
+                        substitute: (team.substituteIds || []).includes(
+                          player.id,
+                        ),
+                      }),
+                    ),
                   },
                 ]);
               }}
@@ -121,6 +165,35 @@ export function EntrantEditor({
               <span className="brk-seed" title="Seed and manual draw position">
                 {index + 1}
               </span>
+              <div className="brk-team-logo-edit">
+                <TeamLogo
+                  logo={team.logo}
+                  alt={`${team.name || "Team"} logo`}
+                />
+                <label className="brk-logo-upload">
+                  {team.logo ? "Change logo" : "Upload logo"}
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    aria-label={`Team ${index + 1} logo`}
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      event.target.value = "";
+                      uploadLogo(index, file);
+                    }}
+                  />
+                </label>
+                {team.logo && (
+                  <button
+                    type="button"
+                    className="brk-text-button"
+                    aria-label={`Remove team ${index + 1} logo`}
+                    onClick={() => update(index, { logo: null })}
+                  >
+                    Use default
+                  </button>
+                )}
+              </div>
               <label className="brk-team-name-label">
                 Team name
                 <input
@@ -182,21 +255,24 @@ export function EntrantEditor({
                   {team.players?.filter(
                     (player) => player.name || player.steamId,
                   ).length || 0}{" "}
-                  of 6
+                  of 8 · 6 active + 2 substitutes
                 </span>
               </summary>
               <p>
-                Keep names and Steam accounts together for future broadcasts.
-                Use a SteamID64, numeric account ID, or a Steam profile link.
+                Only the active six appear in player banners. Swap a substitute
+                with an active player below, then save the team. Steam accounts
+                are optional.
               </p>
               <div className="brk-player-grid">
-                {Array.from({ length: 6 }, (_, slot) => {
-                  const player = team.players?.[slot] || {};
+                {rosterSlots(team.players).map((player, slot) => {
                   return (
-                    <div className="brk-player-edit" key={slot}>
-                      <span>{slot + 1}</span>
+                    <div
+                      className={`brk-player-edit${slot >= 6 ? " is-substitute" : ""}`}
+                      key={slot}
+                    >
+                      <span>{slot >= 6 ? `S${slot - 5}` : slot + 1}</span>
                       <label>
-                        Player name
+                        {slot >= 6 ? "Substitute name" : "Active player name"}
                         <input
                           aria-label={`Team ${index + 1} player ${slot + 1} name`}
                           maxLength={64}
@@ -243,6 +319,34 @@ export function EntrantEditor({
                                 {item.name || item.steamId}
                               </option>
                             ))}
+                          </select>
+                        </label>
+                      )}
+                      {slot >= 6 && (
+                        <label className="brk-substitution">
+                          Swap into active lineup
+                          <select
+                            aria-label={`Team ${index + 1} substitute ${slot - 5} swap`}
+                            value=""
+                            disabled={!player.name && !player.steamId}
+                            onChange={(event) => {
+                              if (event.target.value !== "")
+                                swapPlayer(
+                                  index,
+                                  slot,
+                                  Number(event.target.value),
+                                );
+                            }}
+                          >
+                            <option value="">Choose active player…</option>
+                            {rosterSlots(team.players)
+                              .slice(0, 6)
+                              .map((activePlayer, activeSlot) => (
+                                <option key={activeSlot} value={activeSlot}>
+                                  {activeSlot + 1}.{" "}
+                                  {activePlayer.name || "Empty active slot"}
+                                </option>
+                              ))}
                           </select>
                         </label>
                       )}
@@ -576,6 +680,9 @@ export default function BracketStudio({ active }) {
   const entrants = draft || state.entrants;
   const dirty =
     draft !== null && JSON.stringify(draft) !== JSON.stringify(state.entrants);
+  const sameTeams =
+    entrants.length === state.entrants.length &&
+    entrants.every((team, index) => team.id === state.entrants[index].id);
   const disabled =
     busy ||
     Boolean(shared?.readOnly || shared?.changingTournament || shared?.saving);
@@ -610,11 +717,12 @@ export default function BracketStudio({ active }) {
       await shared.command(path, {
         ...value,
         expectedRevision:
-          path === "bracket/entrants" && draftRevision.current !== null
+          ["bracket/entrants", "bracket/teams"].includes(path) &&
+          draftRevision.current !== null
             ? draftRevision.current
             : (value.expectedRevision ?? state.revision),
       });
-      if (path === "bracket/entrants") {
+      if (["bracket/entrants", "bracket/teams"].includes(path)) {
         setDraft(null);
         draftRevision.current = null;
         setLibraryRefresh((current) => current + 1);
@@ -643,11 +751,13 @@ export default function BracketStudio({ active }) {
     );
   const saveEntrants = (resetConfirmed = false) =>
     action(
-      "bracket/entrants",
+      sameTeams ? "bracket/teams" : "bracket/entrants",
       { entrants, saveToLibrary, resetConfirmed },
       saveToLibrary
         ? "Teams and players saved, including reusable library records."
-        : "Tournament teams saved.",
+        : sameTeams
+          ? "Team details and active lineups saved. The draw and results are kept."
+          : "Tournament teams saved.",
     );
   return (
     <section className="bracket-studio" hidden={!active}>
@@ -822,7 +932,9 @@ export default function BracketStudio({ active }) {
               className="button primary"
               disabled={disabled || !dirty}
               onClick={() =>
-                state.matches.length ? setReplaceEntrants(true) : saveEntrants()
+                state.matches.length && !sameTeams
+                  ? setReplaceEntrants(true)
+                  : saveEntrants()
               }
             >
               Save teams
@@ -831,13 +943,13 @@ export default function BracketStudio({ active }) {
         </div>
         {dirty && (
           <p className="brk-help">
-            Save your team changes before generating the bracket.
+            Save your team changes to apply logos and active lineups.
           </p>
         )}
         {!!state.matches.length && (
           <p className="brk-help">
-            Changing the team list requires a new draw. Keep the current list if
-            matches are already under way.
+            Names, logos and lineup swaps keep the current draw and results.
+            Adding, removing or reordering teams requires a new draw.
           </p>
         )}
         {replaceEntrants && (

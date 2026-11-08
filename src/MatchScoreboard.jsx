@@ -5,6 +5,7 @@ import { keyPlayers } from "../collector/enrichment.mjs";
 import { clock, displayNumber as n } from "./stats.js";
 import SoulsGraph from "./SoulsGraph.jsx";
 import "./MatchScoreboard.css";
+import TeamLogo from "./TeamLogo.jsx";
 
 const heroMap = new Map(heroes.map((h) => [h.id, h]));
 const itemMap = new Map(items.map((i) => [i.id, i]));
@@ -185,11 +186,7 @@ export default function MatchScoreboard({ result }) {
             key={team}
             className={`ds-team-heading ds-team-${team} ${result.winner === team ? "ds-victory" : ""}`}
           >
-            {result.teams?.[team]?.logo ? (
-              <img src={result.teams[team].logo} alt="" />
-            ) : (
-              <span className="ds-team-sigil">✦</span>
-            )}
+            <TeamLogo logo={result.teams?.[team]?.logo} />
             <div className="ds-team-title">
               <small>{result.winner === team ? "VICTORY" : "DEFEAT"}</small>
               <h2 dir="auto" title={teamNames[team]}>
