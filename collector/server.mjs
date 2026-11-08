@@ -14,6 +14,7 @@ import {
   cleanSettings,
 } from "./model.mjs";
 import { normalizeMetadata, playersAt } from "../src/stats.js";
+import { collectorSessionView, selectStatBaseline } from "./stat-history.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const port = Number(process.env.DLAR_COLLECTOR_PORT || 8766);
@@ -44,7 +45,7 @@ const localOrigin = (origin) => {
 };
 function emit(id) {
   const state = store.sessions.get(id);
-  const event = `data: ${JSON.stringify(state)}\n\n`;
+  const event = `data: ${JSON.stringify(collectorSessionView(state))}\n\n`;
   for (const client of clients)
     if (client.id === id) {
       if (client.response.writableLength > 2000000) {
@@ -204,15 +205,17 @@ const server = http.createServer(async (request, response) => {
       json(
         response,
         200,
-        launch({
-          id,
-          mode,
-          broadcastUrl: broadcastUrl(v.broadcastUrl, id),
-          replaySpeed: [1, 4, 16, 32].includes(Number(v.replaySpeed))
-            ? Number(v.replaySpeed)
-            : 16,
-          replayFrom: Math.max(0, Math.min(7200, Number(v.replayFrom) || 0)),
-        }),
+        collectorSessionView(
+          launch({
+            id,
+            mode,
+            broadcastUrl: broadcastUrl(v.broadcastUrl, id),
+            replaySpeed: [1, 4, 16, 32].includes(Number(v.replaySpeed))
+              ? Number(v.replaySpeed)
+              : 16,
+            replayFrom: Math.max(0, Math.min(7200, Number(v.replayFrom) || 0)),
+          }),
+        ),
       );
       return;
     }
@@ -242,7 +245,7 @@ const server = http.createServer(async (request, response) => {
       return;
     }
     if (url.pathname === "/api/collector/state") {
-      json(response, 200, state);
+      json(response, 200, collectorSessionView(state));
       return;
     }
     if (url.pathname === "/api/collector/events") {
@@ -251,7 +254,9 @@ const server = http.createServer(async (request, response) => {
         "Cache-Control": "no-cache, no-transform",
         Connection: "keep-alive",
       });
-      response.write(`data: ${JSON.stringify(state)}\n\n`);
+      response.write(
+        `data: ${JSON.stringify(collectorSessionView(state))}\n\n`,
+      );
       const client = { id, response };
       clients.add(client);
       const beat = setInterval(() => response.write(": heartbeat\n\n"), 10000);
@@ -262,13 +267,24 @@ const server = http.createServer(async (request, response) => {
       return;
     }
     if (
+      url.pathname === "/api/collector/stat-window" &&
+      request.method === "POST"
+    ) {
+      const baseline = selectStatBaseline(state, await body(request));
+      state.settings = { ...state.settings, metricsBaseline: baseline };
+      await store.save(state);
+      emit(id);
+      json(response, 200, collectorSessionView(state));
+      return;
+    }
+    if (
       url.pathname === "/api/collector/settings" &&
       request.method === "POST"
     ) {
       state.settings = cleanSettings(await body(request), state.settings);
       await store.save(state);
       emit(id);
-      json(response, 200, state);
+      json(response, 200, collectorSessionView(state));
       return;
     }
     if (
@@ -278,7 +294,7 @@ const server = http.createServer(async (request, response) => {
       publishResult(state, await body(request));
       await store.save(state);
       emit(id);
-      json(response, 200, state);
+      json(response, 200, collectorSessionView(state));
       return;
     }
     if (url.pathname === "/api/collector/verify" && request.method === "POST") {
@@ -329,7 +345,7 @@ const server = http.createServer(async (request, response) => {
       };
       await store.save(state);
       emit(id);
-      json(response, 200, state);
+      json(response, 200, collectorSessionView(state));
       return;
     }
     if (url.pathname.startsWith("/api/")) {

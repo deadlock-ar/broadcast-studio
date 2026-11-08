@@ -54,6 +54,7 @@ for (const name of [
   "ultimates.mjs",
   "model.mjs",
   "telemetry.mjs",
+  "stat-history.mjs",
   "console-entries.mjs",
   "purchases.mjs",
   "enrichment.mjs",

@@ -3,6 +3,7 @@ import {
   recordTelemetry,
   cleanMetricsBaseline,
 } from "./telemetry.mjs";
+import { recordStatHistory } from "./stat-history.mjs";
 
 export const number = (value) =>
   Number.isFinite(value) && value >= 0 ? value : null;
@@ -88,6 +89,11 @@ export function applyFrame(session, frame, now = Date.now()) {
   if (session.result) return session; // Frozen result cannot be overwritten by disconnects or restart.
   const players = mergePlayers(session.match?.players, frame.players);
   const measured = metricFrame(frame);
+  session.statHistory = recordStatHistory(
+    session.statHistory,
+    measured,
+    frame.endObserved,
+  );
   const telemetry = recordTelemetry(
     session.match?.telemetry,
     measured,

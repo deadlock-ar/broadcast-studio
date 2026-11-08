@@ -30,6 +30,7 @@ import { playerBannersOutput } from "../src/player-banners.js";
 import { OfflineImporter, importedMatch } from "./offline.mjs";
 import { casterStageOutput } from "../src/caster-stage.js";
 import { publicCollectorMatch } from "./output-snapshot.mjs";
+import { collectorSessionView, selectStatBaseline } from "./stat-history.mjs";
 import {
   patchWorkspace,
   applyOperations,
@@ -201,7 +202,9 @@ export async function createBroadcastServer(options = {}) {
       client.res.destroy();
       return;
     }
-    client.res.write(`data: ${JSON.stringify(data)}\n\n`);
+    client.res.write(
+      `data: ${JSON.stringify(client.kind === "collector" ? collectorSessionView(data) : data)}\n\n`,
+    );
   }
   function changed(section = "workspace") {
     for (const c of clients) {
@@ -899,7 +902,7 @@ export async function createBroadcastServer(options = {}) {
           store.workspace.revision++;
           store.saveWorkspace();
           changed();
-          json(res, 200, s);
+          json(res, 200, collectorSessionView(s));
           return;
         }
         if (url.pathname === "/api/collector/stop" && method === "POST") {
@@ -917,11 +920,23 @@ export async function createBroadcastServer(options = {}) {
         if (!inTournament(s, store))
           throw Error("Select this game’s tournament first.");
         if (url.pathname === "/api/collector/state" && method === "GET") {
-          json(res, 200, s);
+          json(res, 200, collectorSessionView(s));
           return;
         }
         if (url.pathname === "/api/collector/events" && method === "GET") {
           events(req, res, { kind: "collector", id }, s);
+          return;
+        }
+        if (
+          url.pathname === "/api/collector/stat-window" &&
+          method === "POST"
+        ) {
+          const value = await tournamentBody(req);
+          const baseline = selectStatBaseline(s, value);
+          s.settings = { ...s.settings, metricsBaseline: baseline };
+          await store.save(s);
+          changed("collector");
+          json(res, 200, collectorSessionView(s));
           return;
         }
         if (url.pathname === "/api/collector/settings" && method === "POST") {
@@ -934,7 +949,7 @@ export async function createBroadcastServer(options = {}) {
           );
           await store.save(s);
           changed("collector");
-          json(res, 200, s);
+          json(res, 200, collectorSessionView(s));
           return;
         }
         if (url.pathname === "/api/collector/publish" && method === "POST") {
@@ -975,7 +990,7 @@ export async function createBroadcastServer(options = {}) {
           store.workspace.revision++;
           store.saveWorkspace();
           changed("scoreboard");
-          json(res, 200, s);
+          json(res, 200, collectorSessionView(s));
           return;
         }
         if (url.pathname === "/api/collector/verify" && method === "POST") {
@@ -1052,7 +1067,7 @@ export async function createBroadcastServer(options = {}) {
           };
           await store.save(s);
           changed("collector");
-          json(res, 200, s);
+          json(res, 200, collectorSessionView(s));
           return;
         }
         json(res, 404, { error: "Unknown endpoint." });

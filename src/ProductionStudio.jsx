@@ -26,7 +26,7 @@ import PanelControls from "./PanelControls.jsx";
 import MatchScoreboard from "./MatchScoreboard.jsx";
 import RecordingEvidence from "./RecordingEvidence.jsx";
 import "./RecordingEvidence.css";
-import { captureBaseline } from "../collector/telemetry.mjs";
+import StatWindowControls from "./StatWindowControls.jsx";
 
 const roster = {
   ...Object.fromEntries(
@@ -559,49 +559,14 @@ export default function ProductionStudio({ active, config }) {
                 </label>
               </div>
               {!graphPanel && (
-                <div className="production-range-controls">
-                  <div>
-                    <strong>
-                      {session.settings.metricsBaseline
-                        ? `Stats since ${clock(session.settings.metricsBaseline.time)}`
-                        : "Whole-match stats"}
-                    </strong>
-                    <p>
-                      Start just before a fight to show only stats gained from
-                      that point.
-                    </p>
-                  </div>
-                  <button
-                    className="button primary"
-                    disabled={
-                      busy ||
-                      session.status !== "live" ||
-                      metricsNow - session.updatedAt > 15000 ||
-                      !captureBaseline(match)
-                    }
-                    onClick={() => {
-                      const baseline = captureBaseline(match);
-                      if (Date.now() - session.updatedAt > 15000 || !baseline)
-                        setNotice(
-                          "Wait for fresh player stats before starting.",
-                        );
-                      else action("settings", { metricsBaseline: baseline });
-                    }}
-                  >
-                    {session.settings.metricsBaseline
-                      ? "Restart recording from now"
-                      : "Start recording from now"}
-                  </button>
-                  <button
-                    className="button secondary"
-                    disabled={busy || !session.settings.metricsBaseline}
-                    onClick={() =>
-                      action("settings", { metricsBaseline: null })
-                    }
-                  >
-                    Show whole-match stats
-                  </button>
-                </div>
+                <StatWindowControls
+                  key={id}
+                  session={session}
+                  busy={busy}
+                  now={metricsNow}
+                  onStart={(request) => action("stat-window", request)}
+                  onTotals={() => action("settings", { metricsBaseline: null })}
+                />
               )}
               {shared && (
                 <button

@@ -79,8 +79,17 @@
   border: 1px solid #d1d6c2;
   border-radius: 6px;
 }
-.production-range-controls > div {
+.production-range-summary {
   flex: 1 1 240px;
+}
+.production-range-controls > label {
+  flex: 0 1 180px;
+}
+.production-range-coverage {
+  flex: 1 1 100%;
+  color: #69725c;
+  font-size: 11px;
+  line-height: 1.6;
 }
 .production-range-controls strong {
   font-size: 13px;
