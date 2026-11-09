@@ -74,11 +74,7 @@ export function reportOutput(store, channel, heroes, items) {
       baselineGames: baseline.length,
       ...itemReportDetails(games, baseline),
       rows: itemPriority(games, items, baseline),
-      visible:
-        games.length > 0 &&
-        ![...games, ...baseline].some((g) =>
-          g.purchases.some((p) => ["pending", "review"].includes(p.status)),
-        ),
+      visible: games.length > 0,
     };
   const appearances = games.flatMap((g) =>
     g.players.filter((p) => p.id === settings.mvpPlayerId),

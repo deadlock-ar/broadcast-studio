@@ -49,6 +49,7 @@ await dependencies(
 );
 for (const name of [
   "local-reader.mjs",
+  "end-settlement.mjs",
   "pov-compat.mjs",
   "extract.mjs",
   "ultimates.mjs",
@@ -70,7 +71,7 @@ for (const name of [
   files[`collector/${name}`] = new Uint8Array(
     await readFile(new URL(`../collector/${name}`, import.meta.url)),
   );
-for (const name of ["observer.mjs", "observer.html"])
+for (const name of ["observer.mjs", "observer.html", "sample-buffer.mjs"])
   files[`companion/${name}`] = new Uint8Array(
     await readFile(new URL(`../companion/${name}`, import.meta.url)),
   );

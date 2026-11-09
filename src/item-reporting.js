@@ -58,7 +58,22 @@ export function automaticItemHistory(session) {
 }
 
 export function itemReportDetails(games, baseline = []) {
-  const all = [...games, ...baseline];
+  const all = [
+    ...new Map(
+      [...games, ...baseline].map((game, index) => [game.id || index, game]),
+    ).values(),
+  ];
+  const unresolved = all.reduce(
+    (sum, game) =>
+      sum +
+      (game.purchases || []).filter((p) =>
+        ["pending", "review"].includes(p.status),
+      ).length,
+    0,
+  );
+  const omitted = unresolved
+    ? ` ${unresolved} unverified purchase${unresolved === 1 ? "" : "s"} omitted.`
+    : "";
   const metadata = (game) =>
     game.reportBasis === "recorded-item-picks" ||
     (game.purchases || []).some(isMetadataPurchase);
@@ -66,13 +81,13 @@ export function itemReportDetails(games, baseline = []) {
     return {
       reportBasis: "verified-purchases",
       metricLabel: "Confirmed purchases",
-      coverage: "Confirmed recorded purchases; known full refunds excluded.",
+      coverage: `Confirmed recorded purchases; known full refunds excluded.${omitted}`,
     };
   return {
     reportBasis: "recorded-item-picks",
     metricLabel: "Recorded item picks",
     coverage: all.some((game) => !metadata(game))
-      ? `${METADATA_COVERAGE} Live recordings count confirmed purchases after refund checks.`
-      : METADATA_COVERAGE,
+      ? `${METADATA_COVERAGE} Live recordings count confirmed purchases after refund checks.${omitted}`
+      : `${METADATA_COVERAGE}${omitted}`,
   };
 }

@@ -50,7 +50,8 @@ export function useCollector(id, enabled = true, delayed = false) {
   useEffect(() => {
     if (!enabled || !id) return;
     let queue = [],
-      currentDelay = null;
+      currentDelay = null,
+      clock = {};
     const source = new EventSource(collectorEndpoint("events", id));
     source.onmessage = (event) => {
       try {
@@ -61,7 +62,14 @@ export function useCollector(id, enabled = true, delayed = false) {
           queue = [];
           currentDelay = delay;
         }
-        queue = enqueueCollectorState(queue, value, Date.now(), delay);
+        queue = enqueueCollectorState(
+          queue,
+          value,
+          Date.now(),
+          delay,
+          100,
+          clock,
+        );
         setError("");
       } catch {
         setError("The collector sent an invalid update.");
@@ -71,6 +79,10 @@ export function useCollector(id, enabled = true, delayed = false) {
       setError(
         "Collector connection lost · reconnecting. Last values retained.",
       );
+    source.onopen = () => {
+      queue = [];
+      clock = {};
+    };
     const timer = setInterval(() => {
       let next;
       while (queue[0]?.at <= Date.now()) next = queue.shift().value;

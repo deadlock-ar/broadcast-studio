@@ -7,8 +7,43 @@ export function enqueueCollectorState(
   now,
   delay,
   intervalMs = 100,
+  clock = {},
 ) {
-  const next = { at: now + delay, value };
+  const session = value?.session || value;
+  const timing = session?.sourceTiming;
+  const sourceTimed =
+    timing?.basis === "recording-timeline" &&
+    Number.isFinite(timing.sourceAt) &&
+    Number.isFinite(timing.sentAt);
+  const identity = `${session?.id || ""}:${sourceTimed ? timing.timelineId : "receipt"}`;
+  if (clock.identity !== identity || clock.delay !== delay) {
+    if (clock.identity !== undefined) queue = [];
+    Object.assign(clock, { identity, delay, offset: null, lastSourceAt: null });
+  }
+  if (
+    sourceTimed &&
+    clock.lastSourceAt !== null &&
+    timing.sourceAt < clock.lastSourceAt
+  )
+    return queue;
+  if (clock.offset === null && Number.isFinite(timing?.sentAt))
+    clock.offset = now - timing.sentAt;
+  if (sourceTimed) clock.lastSourceAt = timing.sourceAt;
+  const due = sourceTimed
+    ? timing.sourceAt + delay + clock.offset
+    : now + delay;
+  const playout = {
+    mode: sourceTimed ? "recording-timeline" : "receipt",
+    targetMs: delay,
+    clockOffsetMs: clock.offset || 0,
+    scheduledAt: due,
+    lateByMs: Math.max(0, now - due),
+  };
+  const projected = { ...session, playout };
+  const next = {
+    at: Math.max(now, due),
+    value: value?.session ? { ...value, session: projected } : projected,
+  };
   const last = queue.at(-1);
   const interval =
     Number.isFinite(intervalMs) && intervalMs > 0
@@ -20,6 +55,22 @@ export function enqueueCollectorState(
   else queue.push(next);
   return queue.slice(-(Math.ceil(120000 / interval) + 100));
 }
+// The target follows observed recording delivery, not a measured absolute
+// game-to-screen timestamp. Late source packets cannot meet an earlier target.
+export function collectorRenderNow(session, now, delayed = true) {
+  return (
+    now -
+    (session?.playout?.clockOffsetMs || 0) -
+    (delayed
+      ? (session?.playout?.targetMs ?? session?.settings?.delayMs ?? 0)
+      : 0)
+  );
+}
+export const collectorFreshAt = (session) =>
+  session?.sourceTiming?.basis === "recording-timeline" &&
+  Number.isFinite(session.sourceTiming.sourceAt)
+    ? session.sourceTiming.sourceAt
+    : session?.updatedAt;
 export function collectorEndpoint(path, id) {
   const url = new URL(
     `/api/collector/${path}`,
@@ -74,8 +125,8 @@ export function visibleUltimateBadges(session, now) {
   if (
     !session ||
     session.status !== "live" ||
-    !session.updatedAt ||
-    now - session.updatedAt > 10000
+    !collectorFreshAt(session) ||
+    now - collectorFreshAt(session) > 10000
   )
     return [];
   const active = [

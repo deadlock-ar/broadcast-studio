@@ -17,6 +17,7 @@ const finite = (value) => (Number.isFinite(value) ? value : null);
 export class Publisher {
   constructor(store, changed, collector) {
     Object.assign(this, { store, changed, collector, failures: new Map() });
+    this.timelines = new Map();
     store.db
       .exec(`CREATE TABLE IF NOT EXISTS publishers (hash TEXT PRIMARY KEY, value TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS pairing (hash TEXT PRIMARY KEY, expires INTEGER NOT NULL, label TEXT NOT NULL);`);
@@ -177,6 +178,7 @@ export class Publisher {
     const s = old || emptySession(id, value.rehearsal ? "rehearsal" : "local");
     // Reconnect always fences the previous process, including an older process on the same PC.
     const lease = randomBytes(24).toString("hex");
+    this.timelines.delete(id);
     s.publisher = {
       id: p.id,
       label: p.label,
@@ -224,6 +226,48 @@ export class Publisher {
     if (value.sequence <= s.publisher.sequence)
       return { ack: s.publisher.sequence };
     const now = Date.now();
+    const samples =
+      value.samples === undefined
+        ? value.frame
+          ? [value]
+          : []
+        : value.samples;
+    if (
+      !Array.isArray(samples) ||
+      samples.length > 32 ||
+      (value.samples !== undefined && value.frame)
+    )
+      fail("Invalid source sample batch.");
+    // Validate the complete batch before applying its first frame.
+    for (const sample of samples) {
+      const raw = sample?.frame;
+      if (
+        !raw ||
+        !Array.isArray(raw.players) ||
+        raw.players.length > 12 ||
+        raw.players.some(
+          (player) =>
+            !/^\d{1,10}$/.test(player?.id) ||
+            ![0, 1].includes(player.team) ||
+            !Number.isInteger(player.heroId),
+        ) ||
+        (sample.sourceClockMs !== undefined &&
+          sample.sourceClockMs !== null &&
+          (!Number.isFinite(sample.sourceClockMs) || sample.sourceClockMs < 0))
+      )
+        fail("Invalid source sample.");
+    }
+    const newestClock = samples
+      .filter((sample) => Number.isFinite(sample.sourceClockMs))
+      .at(-1)?.sourceClockMs;
+    const liveEdgeClock =
+      Number.isFinite(value.liveEdgeClockMs) &&
+      value.liveEdgeClockMs >= (newestClock ?? 0)
+        ? value.liveEdgeClockMs
+        : newestClock;
+    const outputSamples = [];
+    let workspaceChanged = false,
+      reportsChanged = false;
     if (
       value.frame &&
       Number.isFinite(s.match?.tick) &&
@@ -234,99 +278,166 @@ export class Publisher {
       this.store.save(s);
       return { ack: value.sequence, catchingUp: true };
     }
-    if (value.frame) {
-      const wasEnded = Boolean(s.result);
-      const raw = value.frame;
-      if (!Array.isArray(raw.players) || raw.players.length > 12)
-        fail("Invalid roster.");
-      const players = raw.players.map((p) => {
-        if (
-          !/^\d{1,10}$/.test(p.id) ||
-          ![0, 1].includes(p.team) ||
-          !Number.isInteger(p.heroId)
-        )
-          fail("Invalid player identity.");
-        const out = {
-          id: p.id,
-          name: label(p.name),
-          heroId: p.heroId,
-          team: p.team,
-          slot: finite(p.slot),
-        };
-        for (const k of [
-          "damage",
-          "objectiveDamage",
-          "healing",
-          "souls",
-          "kills",
-          "deaths",
-          "assists",
-          "buffs",
-          "lifeState",
-        ])
-          out[k] = finite(p[k]);
-        out.buffTypes = Object.fromEntries(
-          Object.entries(p.buffTypes || {}).filter(
-            ([k, v]) =>
-              /^[a-z0-9_]{1,50}$/.test(k) &&
-              Number.isInteger(v) &&
-              v >= 0 &&
-              v < 1000,
-          ),
+    for (const value of samples) {
+      if (Number.isFinite(s.match?.tick) && value.frame.tick < s.match.tick)
+        continue;
+      if (s.result) break;
+      if (value.frame) {
+        const wasEnded = Boolean(s.result);
+        const raw = value.frame;
+        if (!Array.isArray(raw.players) || raw.players.length > 12)
+          fail("Invalid roster.");
+        const players = raw.players.map((p) => {
+          if (
+            !/^\d{1,10}$/.test(p.id) ||
+            ![0, 1].includes(p.team) ||
+            !Number.isInteger(p.heroId)
+          )
+            fail("Invalid player identity.");
+          const out = {
+            id: p.id,
+            name: label(p.name),
+            heroId: p.heroId,
+            team: p.team,
+            slot: finite(p.slot),
+          };
+          for (const k of [
+            "damage",
+            "objectiveDamage",
+            "healing",
+            "souls",
+            "kills",
+            "deaths",
+            "assists",
+            "buffs",
+            "lifeState",
+          ])
+            out[k] = finite(p[k]);
+          out.buffTypes = Object.fromEntries(
+            Object.entries(p.buffTypes || {}).filter(
+              ([k, v]) =>
+                /^[a-z0-9_]{1,50}$/.test(k) &&
+                Number.isInteger(v) &&
+                v >= 0 &&
+                v < 1000,
+            ),
+          );
+          out.items = Array.isArray(p.items)
+            ? p.items.filter(Number.isSafeInteger).slice(0, 24)
+            : null;
+          out.abilities = Array.isArray(p.abilities)
+            ? p.abilities.slice(0, 4).map((a) => ({
+                slot: a.slot,
+                id: a.id,
+                level: [0, 1, 2, 3].includes(a.level) ? a.level : null,
+                unlocked: typeof a.unlocked === "boolean" ? a.unlocked : null,
+              }))
+            : null;
+          out.bridgeBuffs = (p.bridgeBuffs || []).slice(0, 4).map((b) => ({
+            id: b.id,
+            label: label(b.label),
+            remaining: finite(b.remaining),
+          }));
+          return out;
+        });
+        applyFrame(
+          s,
+          {
+            players,
+            tick: finite(raw.tick),
+            serverTick: finite(raw.serverTick),
+            duration: finite(raw.duration),
+            ...(raw.durationEvidence === "last-observed-before-game-over"
+              ? { durationEvidence: raw.durationEvidence }
+              : {}),
+            matchId: /^\d{1,15}$/.test(raw.matchId || "") ? raw.matchId : null,
+            paused: raw.paused === true,
+            winner: [0, 1].includes(raw.winner) ? raw.winner : null,
+            endObserved: raw.endObserved === true,
+          },
+          now,
         );
-        out.items = Array.isArray(p.items)
-          ? p.items.filter(Number.isSafeInteger).slice(0, 24)
-          : null;
-        out.abilities = Array.isArray(p.abilities)
-          ? p.abilities.slice(0, 4).map((a) => ({
-              slot: a.slot,
-              id: a.id,
-              level: [0, 1, 2, 3].includes(a.level) ? a.level : null,
-              unlocked: typeof a.unlocked === "boolean" ? a.unlocked : null,
-            }))
-          : null;
-        out.bridgeBuffs = (p.bridgeBuffs || []).slice(0, 4).map((b) => ({
-          id: b.id,
-          label: label(b.label),
-          remaining: finite(b.remaining),
-        }));
-        return out;
-      });
-      applyFrame(
-        s,
-        {
-          players,
-          tick: finite(raw.tick),
-          serverTick: finite(raw.serverTick),
-          duration: finite(raw.duration),
-          matchId: /^\d{1,15}$/.test(raw.matchId || "") ? raw.matchId : null,
-          paused: raw.paused === true,
-          winner: [0, 1].includes(raw.winner) ? raw.winner : null,
-          endObserved: raw.endObserved === true,
-        },
-        now,
-      );
-      s.match.provider = "local-client-demo";
-      if (s.result) s.result.match.provider = "local-client-demo";
-      if (!wasEnded && applySeriesWin(this.store, s)) this.changed("workspace");
-      if (!wasEnded && s.result) this.changed("reports");
-      s.sourceTiming = {
-        decodedAt: finite(value.decodedAt),
-        receivedAt: now,
-        sourceSeconds: finite(raw.duration),
-        sourceTick: finite(raw.serverTick),
-        fileLagMs: finite(value.fileLagMs),
-      };
-      if (!s.result) {
-        s.message =
-          s.mode === "rehearsal"
-            ? "Local recording rehearsal"
-            : "Receiving observer recording";
-        s.effects = (value.effects || []).slice(0, 100);
-        s.recentHits = (value.hits || []).slice(-40).map((h) => ({
-          ...h,
-          at: now - Math.max(0, Math.min(10000, value.decodedAt - h.at)),
-        }));
+        s.match.provider = "local-client-demo";
+        if (s.result) s.result.match.provider = "local-client-demo";
+        if (!wasEnded && applySeriesWin(this.store, s)) workspaceChanged = true;
+        if (!wasEnded && s.result) reportsChanged = true;
+        let timeline = this.timelines.get(s.id),
+          sourceAt = null;
+        if (Number.isFinite(value.sourceClockMs)) {
+          const predicted =
+            timeline &&
+            timeline.serverAt + value.sourceClockMs - timeline.sourceClockMs;
+          if (
+            !timeline ||
+            value.timingReset === true ||
+            value.sourceClockMs < timeline.lastClock ||
+            predicted > now + 1000
+          ) {
+            timeline = {
+              id: randomUUID(),
+              serverAt: now,
+              sourceClockMs: liveEdgeClock,
+              lastClock: value.sourceClockMs,
+            };
+            this.timelines.set(s.id, timeline);
+          }
+          sourceAt =
+            timeline.serverAt + value.sourceClockMs - timeline.sourceClockMs;
+          timeline.lastClock = value.sourceClockMs;
+        }
+        s.sourceTiming = {
+          basis: sourceAt === null ? "receipt" : "recording-timeline",
+          timelineId: sourceAt === null ? null : timeline.id,
+          sourceAt,
+          sourceClockMs: finite(value.sourceClockMs),
+          decodedAt: finite(value.decodedAt),
+          readAt: finite(value.readAt),
+          fileModifiedAt: finite(value.fileModifiedAt),
+          receivedAt: now,
+          sourceSeconds: finite(raw.duration),
+          sourceTick: finite(raw.serverTick),
+          fileLagMs: finite(value.fileLagMs),
+        };
+        if (!s.result) {
+          s.message =
+            s.mode === "rehearsal"
+              ? "Local recording rehearsal"
+              : "Receiving observer recording";
+          s.effects = (value.effects || []).slice(0, 100);
+          s.recentHits = (value.hits || []).slice(-40).map((h) => ({
+            ...h,
+            at:
+              sourceAt !== null &&
+              Number.isFinite(h.sourceTick) &&
+              Number.isFinite(raw.serverTick) &&
+              Number.isFinite(raw.sourceTickInterval)
+                ? sourceAt -
+                  Math.max(
+                    0,
+                    Math.min(
+                      10000,
+                      (raw.serverTick - h.sourceTick) *
+                        raw.sourceTickInterval *
+                        1000,
+                    ),
+                  )
+                : (sourceAt ?? now) -
+                  Math.max(0, Math.min(10000, (value.decodedAt ?? now) - h.at)),
+          }));
+        }
+        outputSamples.push({
+          version: 1,
+          id: s.id,
+          mode: s.mode,
+          status: s.status,
+          match: s.result?.match || s.match,
+          updatedAt: s.updatedAt,
+          settings: s.settings,
+          sourceTiming: s.sourceTiming,
+          effects: s.effects,
+          recentHits: s.recentHits,
+          ended: Boolean(s.result),
+        });
       }
     }
     if (value.items) {
@@ -378,7 +489,12 @@ export class Publisher {
       this.save(p);
       this.store.save(s);
     }
-    this.changed("collector");
+    this.changed(
+      "collector",
+      outputSamples.length > 1 ? outputSamples : undefined,
+    );
+    if (workspaceChanged) this.changed("workspace");
+    if (reportsChanged) this.changed("reports");
     return { ack: value.sequence, receivedAt: now, ended: Boolean(s.result) };
   }
   checkStale() {

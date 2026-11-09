@@ -33,6 +33,7 @@ import { publicCollectorMatch } from "./output-snapshot.mjs";
 import { isDraftReportSource } from "../src/report-sources.js";
 import { automaticItemHistory } from "../src/item-reporting.js";
 import { collectorSessionView, selectStatBaseline } from "./stat-history.mjs";
+import { repairRecording } from "./recording-repair.mjs";
 import {
   patchWorkspace,
   applyOperations,
@@ -140,9 +141,9 @@ export async function createBroadcastServer(options = {}) {
     const s = store.sessions.get(store.workspace.deadem.id);
     return inTournament(s, store) ? s || null : null;
   };
-  function output(channel) {
+  function output(channel, sourceSession = session()) {
     const w = store.workspace,
-      s = session();
+      s = sourceSession;
     if (["hero-priority", "top-items", "series-mvp"].includes(channel))
       return {
         report: reportOutput(store, channel, reportHeroes, reportItems),
@@ -183,10 +184,13 @@ export async function createBroadcastServer(options = {}) {
               : channel,
           ),
           updatedAt: s.updatedAt,
+          sourceTiming: s.sourceTiming
+            ? { ...s.sourceTiming, sentAt: Date.now() }
+            : null,
           settings: s.settings,
           effects: channel === "ultimates" ? s.effects : [],
           recentHits: channel === "ultimates" ? s.recentHits : [],
-          ended: Boolean(s.result),
+          ended: Boolean(s.result || s.ended),
         }
       : null;
     return {
@@ -204,11 +208,18 @@ export async function createBroadcastServer(options = {}) {
       client.res.destroy();
       return;
     }
-    client.res.write(
-      `data: ${JSON.stringify(client.kind === "collector" ? collectorSessionView(data) : data)}\n\n`,
-    );
+    let value = client.kind === "collector" ? collectorSessionView(data) : data;
+    if (client.kind === "collector" && value?.sourceTiming)
+      value = {
+        ...value,
+        sourceTiming: { ...value.sourceTiming, sentAt: Date.now() },
+      };
+    client.res.write(`data: ${JSON.stringify(value)}\n\n`);
   }
-  function changed(section = "workspace") {
+  function changed(section = "workspace", sourceSamples) {
+    const selectedSamples = sourceSamples?.filter(
+      (sample) => sample.id === session()?.id,
+    );
     for (const c of clients) {
       if (c.kind === "workspace" && section !== "collector")
         send(c, store.workspace);
@@ -249,7 +260,17 @@ export async function createBroadcastServer(options = {}) {
           !session()?.result;
         if (momentumLive && Date.now() - (c.lastMomentum || 0) < 1000) continue;
         if (graphOutput) c.lastMomentum = Date.now();
-        send(c, output(c.channel));
+        send(
+          c,
+          selectedSamples?.length &&
+            ["deadem", "ultimates", "momentum"].includes(c.channel)
+            ? {
+                samples: selectedSamples.map((sample) =>
+                  output(c.channel, sample),
+                ),
+              }
+            : output(c.channel),
+        );
       }
     }
   }
@@ -994,6 +1015,15 @@ export async function createBroadcastServer(options = {}) {
           store.workspace.revision++;
           store.saveWorkspace();
           changed("scoreboard");
+          json(res, 200, collectorSessionView(s));
+          return;
+        }
+        if (url.pathname === "/api/collector/repair" && method === "POST") {
+          const value = await tournamentBody(req);
+          repairRecording(s, value, reportItems);
+          await store.save(s);
+          changed("collector");
+          changed("reports");
           json(res, 200, collectorSessionView(s));
           return;
         }

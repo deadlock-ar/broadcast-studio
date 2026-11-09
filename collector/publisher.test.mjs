@@ -35,6 +35,104 @@ test("local game identities are distinct from numeric Valve match IDs", () => {
   assert.throws(() => matchId(id));
   assert.throws(() => sessionId("local-../settings"));
 });
+
+test("batched source samples keep source spacing, anchor at the known edge, and finalize in order", async (t) => {
+  const { pub, store } = await setup(t),
+    paired = pair(pub),
+    identity = paired.authenticated();
+  const begun = pub.begin(identity, { id: `local-${randomUUID()}` });
+  const notifications = [];
+  pub.changed = (section, samples) =>
+    notifications.push({
+      section,
+      samples: structuredClone(samples),
+      timing: structuredClone(store.sessions.get(begun.id).sourceTiming),
+    });
+  let wall = 100000;
+  t.mock.method(Date, "now", () => wall);
+  const players = Array.from({ length: 12 }, (_, index) => ({
+    id: String(index + 1),
+    heroId: 1,
+    team: index < 6 ? 0 : 1,
+  }));
+  const sample = (tick, sourceClockMs, endObserved = false) => ({
+    sourceClockMs,
+    decodedAt: wall,
+    readAt: wall - 10,
+    frame: {
+      tick,
+      serverTick: tick,
+      duration: tick,
+      players,
+      endObserved,
+      winner: 0,
+    },
+  });
+  pub.ingest(identity, {
+    ...begun,
+    sequence: 1,
+    liveEdgeClockMs: 10000,
+    samples: [sample(1, 1000), sample(2, 1250)],
+  });
+  const first = notifications.find((row) => row.samples).samples;
+  assert.deepEqual(
+    first.map((s) => s.sourceTiming.sourceAt),
+    [91000, 91250],
+  );
+  assert.equal(first.at(-1).sourceTiming.readAt, 99990);
+  wall += 1000;
+  notifications.length = 0;
+  pub.ingest(identity, {
+    ...begun,
+    sequence: 2,
+    liveEdgeClockMs: 11000,
+    samples: [sample(3, 10000), sample(4, 10250), sample(5, 10500, true)],
+  });
+  assert.equal(notifications[0].section, "collector");
+  assert.deepEqual(
+    notifications[0].samples.map((s) => s.sourceTiming.sourceAt),
+    [100000, 100250, 100500],
+  );
+  assert.equal(notifications.at(-1).timing.sourceAt, 100500);
+  assert.equal(store.sessions.get(begun.id).result.match.tick, 5);
+  assert.equal(store.workspace.config.teams[0].score, 1);
+  const sequence = store.sessions.get(begun.id).sequence;
+  pub.ingest(identity, { ...begun, sequence: 2, samples: [sample(6, 11000)] });
+  assert.equal(store.sessions.get(begun.id).sequence, sequence);
+});
+
+test("malformed batches do not partially apply and fast catchup cannot create distant future targets", async (t) => {
+  const { pub, store } = await setup(t),
+    paired = pair(pub),
+    identity = paired.authenticated();
+  const begun = pub.begin(identity, { id: `local-${randomUUID()}` });
+  t.mock.method(Date, "now", () => 100000);
+  const sample = (tick, clock) => ({
+    sourceClockMs: clock,
+    frame: { tick, duration: tick, players: [{ id: "1", heroId: 1, team: 0 }] },
+  });
+  assert.throws(
+    () =>
+      pub.ingest(identity, {
+        ...begun,
+        sequence: 1,
+        samples: [sample(1, 0), { frame: { players: [{}] } }],
+      }),
+    /Invalid source sample/,
+  );
+  assert.equal(store.sessions.get(begun.id).match, null);
+  pub.ingest(identity, { ...begun, sequence: 1, samples: [sample(1, 0)] });
+  const oldTimeline = store.sessions.get(begun.id).sourceTiming.timelineId;
+  pub.ingest(identity, {
+    ...begun,
+    sequence: 2,
+    liveEdgeClockMs: 1800000,
+    samples: [sample(2, 1799750), sample(3, 1800000)],
+  });
+  const timing = store.sessions.get(begun.id).sourceTiming;
+  assert.equal(timing.sourceAt, timing.receivedAt);
+  assert.notEqual(timing.timelineId, oldTimeline);
+});
 test("pairing is one-time, credentials are scoped and revocable", async (t) => {
   const { pub } = await setup(t);
   const code = pub.issue();

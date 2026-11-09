@@ -220,7 +220,7 @@ export default function Analytics({ active, config }) {
   const manualReady =
     manualMvp.name?.trim() && heroes.some((h) => h.id === manualMvp.heroId);
   const list = report === "heroes" ? drafts : games;
-  const blocked = report === "items" && unresolved.length > 0;
+  const hasUnresolved = report === "items" && unresolved.length > 0;
   return (
     <section className="analytics-studio" hidden={!active}>
       <div className="page-heading">
@@ -502,7 +502,6 @@ export default function Analytics({ active, config }) {
               disabled={
                 !ready ||
                 rendered !== chartKey ||
-                blocked ||
                 (manual
                   ? !manualReady
                   : !selected.length || (report === "mvp" && !mvp))
@@ -547,15 +546,18 @@ export default function Analytics({ active, config }) {
                 {itemDetails.coverage}
               </p>
             )}
-          {blocked && (
-            <section className="production-card purchase-review">
-              <h2>
-                Resolve {unresolved.length} purchase
-                {unresolved.length === 1 ? "" : "s"} before exporting
-              </h2>
+          {hasUnresolved && (
+            <details className="production-card purchase-review">
+              <summary>
+                {unresolved.length} unverified purchase
+                {unresolved.length === 1 ? "" : "s"} automatically omitted ·
+                optional review
+              </summary>
               <p>
                 The recording did not establish whether these were full refunds
-                or retained purchases.
+                or retained purchases. The report uses confirmed purchases and
+                can be exported now. You may review these entries if you have
+                additional evidence.
               </p>
               {unresolved.map((p) => (
                 <div key={`${p.gameId}:${p.id}`}>
@@ -588,7 +590,7 @@ export default function Analytics({ active, config }) {
                   </button>
                 </div>
               ))}
-            </section>
+            </details>
           )}
           {report === "items" && includePartial && (
             <p className="production-notice">

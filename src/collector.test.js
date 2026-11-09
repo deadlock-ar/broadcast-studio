@@ -5,6 +5,8 @@ import {
   visibleUltimateBadges,
   enqueueCollectorState,
   liveRoster,
+  collectorRenderNow,
+  collectorFreshAt,
 } from "./collector.js";
 test("portrait calibration reorders within teams without changing player identity", () => {
   const session = {
@@ -26,6 +28,94 @@ test("portrait calibration reorders within teams without changing player identit
     liveRoster(session).map((p) => p.id),
     ["2", "1", "3"],
   );
+});
+test("recording-timeline target smooths arrival bursts with a stable clock offset", () => {
+  const clock = {};
+  const sample = (sourceAt, sentAt, duration = 50) => ({
+    id: "game",
+    status: "live",
+    updatedAt: sentAt,
+    settings: { delayMs: 5000 },
+    match: { duration },
+    sourceTiming: {
+      basis: "recording-timeline",
+      timelineId: "one",
+      sourceAt,
+      sentAt,
+    },
+  });
+  let queue = enqueueCollectorState(
+    [],
+    sample(10000, 12000),
+    22000,
+    5000,
+    100,
+    clock,
+  );
+  queue = enqueueCollectorState(
+    queue,
+    sample(10250, 12000),
+    22010,
+    5000,
+    100,
+    clock,
+  );
+  queue = enqueueCollectorState(
+    queue,
+    sample(10500, 14000),
+    24000,
+    5000,
+    100,
+    clock,
+  );
+  assert.deepEqual(
+    queue.map((entry) => entry.at),
+    [25000, 25250, 25500],
+  );
+  assert.equal(collectorRenderNow(queue[1].value, 25250), 10250);
+  assert.equal(collectorFreshAt(queue[1].value), 10250);
+  // Paused game duration does not stop the independent recording timeline.
+  queue = enqueueCollectorState(
+    queue,
+    sample(10750, 14000),
+    24010,
+    5000,
+    100,
+    clock,
+  );
+  assert.equal(queue.at(-1).at, 25750);
+});
+test("late samples, source resets, replayed older samples and legacy fallback stay bounded", () => {
+  const clock = {};
+  const timed = (sourceAt, timelineId = "one") => ({
+    id: "game",
+    sourceTiming: {
+      basis: "recording-timeline",
+      timelineId,
+      sourceAt,
+      sentAt: 10000,
+    },
+  });
+  let queue = enqueueCollectorState([], timed(10000), 20000, 5000, 100, clock);
+  queue = enqueueCollectorState(queue, timed(10500), 30000, 5000, 100, clock);
+  assert.equal(queue.at(-1).at, 30000);
+  assert.equal(queue.at(-1).value.playout.lateByMs, 4500);
+  assert.equal(
+    enqueueCollectorState(queue, timed(10000), 30010, 5000, 100, clock).length,
+    queue.length,
+  );
+  queue = enqueueCollectorState(
+    queue,
+    timed(9000, "two"),
+    30020,
+    5000,
+    100,
+    clock,
+  );
+  assert.equal(queue.length, 1);
+  const legacy = enqueueCollectorState([], { id: "old" }, 10000, 5000);
+  assert.equal(legacy[0].at, 15000);
+  assert.equal(legacy[0].value.playout.mode, "receipt");
 });
 test("a long broadcast delay remains deliverable during rapid event bursts", () => {
   let queue = [];

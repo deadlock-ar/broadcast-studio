@@ -6,6 +6,8 @@ import {
   collectorRequest,
   liveRoster,
   visibleUltimateBadges,
+  collectorRenderNow,
+  collectorFreshAt,
   COLLECTOR_ORIGIN,
 } from "./collector";
 import { useCollector, useCollectorHealth } from "./use-collector";
@@ -66,10 +68,10 @@ export function Hud({
     teamGap: 145,
   };
   const players = liveRoster(session);
-  const badges = visibleUltimateBadges(
-    session,
-    now - (delayed ? session?.settings?.delayMs || 0 : 0),
-  );
+  const sourceNow = collectorRenderNow(session, now, delayed);
+  const badges = visibleUltimateBadges(session, sourceNow);
+  const bridgesFresh =
+    session?.status === "live" && sourceNow - collectorFreshAt(session) < 10000;
   return (
     <div
       className="production-canvas ultimate-hud"
@@ -81,7 +83,7 @@ export function Hud({
           .map((p, i) => (
             <div
               key={p.id}
-              className={`hud-player ${calibration ? "hud-calibration" : ""}`}
+              className={`hud-player ${calibration ? "hud-calibration" : ""}${bridgesFresh && p.bridgeBuffs?.length ? " hud-with-bridges" : ""}`}
               style={{
                 left:
                   settings.x +
@@ -122,34 +124,21 @@ export function Hud({
                     );
                   })}
               </div>
-              {session?.status === "live" &&
-                now -
-                  (delayed ? session.settings?.delayMs || 0 : 0) -
-                  session.updatedAt <
-                  10000 && (
-                  <>
-                    {p.buffs !== null && p.buffs !== undefined && (
-                      <span
-                        className="hud-permanent"
-                        title={`Permanent buffs: ${p.buffs}`}
-                        aria-label={`${p.name}: ${p.buffs} permanent buffs`}
-                      >
-                        {p.buffs}
-                      </span>
-                    )}
-                    <div className="hud-bridges">
-                      {(p.bridgeBuffs || []).map((b) => (
-                        <span
-                          key={b.id}
-                          className={`hud-bridge ${b.label}`}
-                          title={`${b.label} bridge buff${b.remaining !== null ? ` · ${Math.ceil(b.remaining)}s at source` : ""}`}
-                        >
-                          {b.label[0]}
-                        </span>
-                      ))}
-                    </div>
-                  </>
-                )}
+              {bridgesFresh && (
+                <div
+                  className={`hud-bridges${p.bridgeBuffs?.length > 1 ? " has-multiple" : ""}`}
+                >
+                  {(p.bridgeBuffs || []).map((b) => (
+                    <span
+                      key={b.id}
+                      className={`hud-bridge ${b.label}`}
+                      title={`${b.label} bridge buff${b.remaining !== null ? ` · ${Math.ceil(b.remaining)}s at source` : ""}`}
+                    >
+                      {b.label[0]}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           )),
       )}
@@ -302,7 +291,9 @@ export default function ProductionStudio({ active, config }) {
           ? "Scoreboard published. OBS now shows this reviewed snapshot."
           : path === "verify"
             ? "Finished metadata verified. Review and publish again to update the on-air scoreboard."
-            : "Saved.",
+            : path === "repair"
+              ? "Recording details repaired. Review and publish the updated scoreboard."
+              : "Saved.",
       );
     } catch (e) {
       setNotice(e.message);
@@ -693,7 +684,7 @@ export default function ProductionStudio({ active, config }) {
                     </label>
                   ))}
                   <label>
-                    Additional graphics delay (seconds)
+                    Target graphics delay (seconds)
                     <input
                       name="delay"
                       type="number"
@@ -708,10 +699,17 @@ export default function ProductionStudio({ active, config }) {
                   </button>
                 </form>
                 <p>
-                  This setting delays graphics in the collector OBS views. If
-                  the game video arrives before the data, delay the video in
-                  OBS. Short hit badges fade after 1.6 seconds; validated effect
-                  badges disappear when the effect is removed.
+                  Updated observers buffer the recording timeline to this
+                  target, smoothing data that arrives in bursts. Start with 5
+                  seconds. Late data appears as soon as it arrives, so this
+                  cannot guarantee an exact game-to-screen delay. Older
+                  observers use an additional delay after receipt. If the game
+                  video arrives first, delay the video in OBS too.
+                </p>
+                <p className="production-hint" role="status">
+                  {session.sourceTiming?.basis === "recording-timeline"
+                    ? `Recording timeline buffering available · target ${session.settings.delayMs / 1000}s. Last source update ${Math.max(0, session.sourceTiming.receivedAt - session.sourceTiming.sourceAt - session.settings.delayMs) > 100 ? `missed the target by ${(Math.max(0, session.sourceTiming.receivedAt - session.sourceTiming.sourceAt - session.settings.delayMs) / 1000).toFixed(1)}s` : "arrived within the target"}.`
+                    : "This capture uses receipt timing. The updated observer enables timeline buffering on new recordings."}
                 </p>
                 <details className="hud-order-controls">
                   <summary>Match portrait order to the game</summary>
@@ -865,6 +863,33 @@ export default function ProductionStudio({ active, config }) {
                     >
                       Verify with finished metadata
                     </button>
+                    {shared && (
+                      <label className="button secondary">
+                        Load repaired recording details
+                        <input
+                          type="file"
+                          accept=".json,application/json"
+                          aria-label="Load repaired recording details"
+                          hidden
+                          disabled={busy}
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            e.target.value = "";
+                            if (!file) return;
+                            try {
+                              if (file.size > 2000000)
+                                throw Error("Repair file is too large.");
+                              await action(
+                                "repair",
+                                JSON.parse(await file.text()),
+                              );
+                            } catch (error) {
+                              setNotice(error.message);
+                            }
+                          }}
+                        />
+                      </label>
+                    )}
                     <button
                       className="button primary"
                       disabled={

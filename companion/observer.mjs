@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { execFile, spawn } from "node:child_process";
 import { promisify } from "node:util";
 import { collectLocal, saveJournal } from "../collector/local-reader.mjs";
+import { SampleBuffer } from "./sample-buffer.mjs";
 
 const directory = path.resolve(
   process.env.DLAR_OBSERVER_DATA ||
@@ -71,7 +72,7 @@ async function detectGame() {
 }
 config.gameFolder ||= await detectGame();
 const state = {
-  version: "0.2.0",
+  version: "0.3.0",
   status: "Ready",
   paired: Boolean(config.token),
   studio: config.studio || "",
@@ -91,6 +92,11 @@ let abort = null,
   lastSent = 0;
 let lastItemsRevision = -1,
   lastJournal = 0;
+const samples = new SampleBuffer();
+let pendingPacket = null;
+let connecting = false,
+  generation = 0,
+  sourceReady = false;
 async function cloud(route, value, authenticated = true) {
   const response = await fetch(
     new URL(`/api/publisher/${route}`, config.studio),
@@ -112,19 +118,30 @@ async function cloud(route, value, authenticated = true) {
   return data;
 }
 async function connectRun(run) {
-  const begun = await cloud("begin", {
-    clientVersion: "0.2.0",
-    id: run.id,
-    recording: run.name,
-    fromStart: run.fromStart,
-    label: run.label,
-  });
+  const runGeneration = ++generation;
+  connecting = true;
+  let begun;
+  try {
+    begun = await cloud("begin", {
+      clientVersion: "0.3.0",
+      id: run.id,
+      recording: run.name,
+      fromStart: run.fromStart,
+      label: run.label,
+    });
+  } finally {
+    if (generation === runGeneration) connecting = false;
+  }
+  if (generation !== runGeneration) return;
   lease = begun.lease;
   sequence = 0;
   revision = 0;
   sent = 0;
   latest = null;
   lastItemsRevision = -1;
+  samples.clear();
+  pendingPacket = null;
+  sourceReady = false;
   abort = new AbortController();
   state.run = run;
   state.error = "";
@@ -135,7 +152,12 @@ async function connectRun(run) {
   collectLocal(
     { file: run.file, fromStart: run.fromStart },
     (value) => {
+      if (generation !== runGeneration) return;
       latest = value.frame ? value : { ...latest, ...value };
+      // An existing recording may contain minutes of history. Prime at its
+      // current file edge instead of scheduling that backlog as future live data.
+      if (!sourceReady && value.frame && value.atLiveEdge) sourceReady = true;
+      if (sourceReady) samples.push(value);
       revision++;
       state.data = latest?.frame
         ? {
@@ -163,6 +185,7 @@ async function connectRun(run) {
     },
     abort.signal,
   ).catch((e) => {
+    if (generation !== runGeneration) return;
     state.error = e.message;
     state.status = "Recording error";
     latest = { ...latest, stopped: true };
@@ -173,36 +196,91 @@ async function connectRun(run) {
 const timer = setInterval(async () => {
   if (
     publishing ||
+    connecting ||
     !lease ||
-    (!latest && Date.now() - lastSent < 2000) ||
-    (revision === sent && Date.now() - lastSent < 2000)
+    (!sourceReady && latest?.frame && !latest.stopped) ||
+    (!pendingPacket &&
+      !samples.length &&
+      !latest &&
+      Date.now() - lastSent < 2000) ||
+    (!pendingPacket &&
+      !samples.length &&
+      revision === sent &&
+      Date.now() - lastSent < 2000)
   )
     return;
   publishing = true;
+  const packetGeneration = generation;
   try {
-    const snapshot = structuredClone(latest),
-      version = revision;
-    const packet = {
-      id: state.run.id,
-      lease,
-      sequence: ++sequence,
-      ...(version !== sent ? snapshot : {}),
-    };
-    if (packet.items && packet.items.revision === lastItemsRevision)
-      delete packet.items;
-    if (snapshot && (Date.now() - lastJournal > 2000 || snapshot.stopped)) {
-      await saveJournal(path.join(directory, "runs", state.run.id), snapshot);
-      lastJournal = Date.now();
+    if (!pendingPacket) {
+      const snapshot = structuredClone(latest),
+        batch = samples.batch();
+      const {
+        frame,
+        effects,
+        hits,
+        decodedAt,
+        readAt,
+        fileModifiedAt,
+        sourceClockMs,
+        ...metadata
+      } = snapshot || {};
+      void frame;
+      void effects;
+      void hits;
+      void decodedAt;
+      void readAt;
+      void fileModifiedAt;
+      void sourceClockMs;
+      const packet = {
+        id: state.run.id,
+        lease,
+        sequence: ++sequence,
+        liveEdgeClockMs: snapshot?.sourceClockMs,
+        ...(revision !== sent ||
+        (batch.length && batch.length === samples.length)
+          ? metadata
+          : {}),
+        ...(batch.length
+          ? { samples: batch.map((entry) => entry.sample) }
+          : {}),
+      };
+      // Do not send final item/result metadata ahead of queued source frames.
+      if (samples.length > batch.length) {
+        delete packet.items;
+        delete packet.audit;
+        delete packet.stopped;
+      }
+      if (packet.items && packet.items.revision === lastItemsRevision)
+        delete packet.items;
+      pendingPacket = {
+        packet,
+        version: revision,
+        lastSample: batch.at(-1)?.id,
+        snapshot,
+        bufferGeneration: samples.generation,
+      };
     }
+    const { packet, version, lastSample, snapshot, bufferGeneration } =
+      pendingPacket;
     const ack = await cloud("ingest", packet);
-    if (ack.ack >= sequence) sent = version;
-    if (packet.items && ack.ack >= sequence)
-      lastItemsRevision = packet.items.revision;
+    if (generation !== packetGeneration) return;
+    if (ack.ack >= packet.sequence) {
+      if (lastSample) samples.acknowledge(lastSample, bufferGeneration);
+      sent = version;
+      if (packet.items) lastItemsRevision = packet.items.revision;
+      pendingPacket = null;
+    }
     lastSent = Date.now();
     state.connected = true;
     state.error = "";
-    if (snapshot?.stopped && sent === revision) lease = null;
+    if (packet.stopped && !samples.length && sent === revision) lease = null;
+    if (snapshot && (Date.now() - lastJournal > 2000 || packet.stopped)) {
+      await saveJournal(path.join(directory, "runs", state.run.id), snapshot);
+      lastJournal = Date.now();
+    }
   } catch (e) {
+    if (generation !== packetGeneration) return;
     state.connected = false;
     state.error = e.message;
     if ([401, 409].includes(e.status)) {
@@ -211,9 +289,9 @@ const timer = setInterval(async () => {
       state.status = "Reconnect required";
     }
   } finally {
-    publishing = false;
+    if (generation === packetGeneration) publishing = false;
   }
-}, 500);
+}, 250);
 const html = await fs.readFile(new URL("./observer.html", import.meta.url));
 let origin;
 async function body(req) {
@@ -272,7 +350,7 @@ const server = http.createServer(async (req, res) => {
       return;
     }
     if (req.url === "/start" || req.url === "/resume") {
-      if (abort || publishing)
+      if (abort || publishing || connecting)
         throw Error("Stop the current recording reader first.");
       if (!config.token)
         throw Error("Pair this computer with the studio first.");

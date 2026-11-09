@@ -13,8 +13,14 @@ export function abilityTier(raw) {
 }
 export function enrichFrame(demo, frame, signatures, itemCatalog) {
   const items = new Set(itemCatalog.map((i) => i.id)),
-    owned = new Map();
+    owned = new Map(),
+    resolve = (handle) =>
+      Number.isInteger(handle) ? demo.getEntityByHandle(handle) : null,
+    globalField = (controller, field) =>
+      controller?.getField(`m_PlayerDataGlobal.${field}`) ??
+      controller?.getField(field);
   for (const entity of demo.getEntities()) {
+    if (!entity.active) continue;
     const owner = entity.getField("m_hOwnerEntity"),
       id = entity.getField("m_nSubclassID");
     if (owner === undefined || id === undefined) continue;
@@ -26,19 +32,63 @@ export function enrichFrame(demo, frame, signatures, itemCatalog) {
     const controller = demo
       .getEntitiesByClassName("CCitadelPlayerController")
       .find((c) => c.getField("m_unLobbyPlayerSlot") === player.slot);
-    const pawn = demo.getEntityByHandle(controller?.getField("m_hHeroPawn"));
-    const abilities = pawn ? owned.get(pawn.handle) || [] : null;
+    const pawn = resolve(controller?.getField("m_hHeroPawn")),
+      handles =
+        pawn?.getField("m_CCitadelAbilityComponent.m_vecAbilities") ??
+        pawn?.getField("m_vecAbilities"),
+      vector = Array.isArray(handles)
+        ? Array.from(handles, (handle) => resolve(handle))
+        : null,
+      abilities = vector
+        ? vector.flatMap((entity) =>
+            entity
+              ? [
+                  {
+                    id: entity.getField("m_nSubclassID"),
+                    // Inactive entities retain identity but their tiers may be stale.
+                    raw: entity.active
+                      ? entity.getField("m_nUpgradeInfo")
+                      : null,
+                  },
+                ]
+              : [],
+          )
+        : pawn
+          ? owned.get(pawn.handle) || []
+          : [],
+      upgrades = globalField(controller, "m_vecUpgrades"),
+      upgradeStates = globalField(controller, "m_vecAbilityUpgradeState");
     player.objectiveDamage = controller?.getField("m_iObjectiveDamage") ?? null;
-    player.items = abilities
-      ? [...new Set(abilities.filter((a) => items.has(a.id)).map((a) => a.id))]
-      : null;
+    // Controller inventory is replicated even when other heroes' ability
+    // entities are outside the observer's PVS. The pawn vector is a fallback;
+    // missing entities must never become a claim that an inventory is empty.
+    player.items = Array.isArray(upgrades)
+      ? Array.from(upgrades).every((id) => Number.isSafeInteger(id) && id >= 0)
+        ? [...new Set(upgrades.filter((id) => id > 0))]
+        : null
+      : vector &&
+          vector.every((entity) =>
+            Number.isSafeInteger(entity?.getField("m_nSubclassID")),
+          )
+        ? [
+            ...new Set(
+              abilities.filter((a) => items.has(a.id)).map((a) => a.id),
+            ),
+          ]
+        : null;
     player.abilities = (signatures[player.heroId] || []).map((a, index) => {
-      const state = abilities?.find((v) => v.id === a?.id);
+      const global = Array.isArray(upgradeStates)
+        ? upgradeStates.find((v) => v?.m_ItemID === a?.id)
+        : null;
+      const state = global
+        ? { raw: global.m_nUpgradeInfo }
+        : abilities.find((v) => v.id === a?.id);
+      const tier = abilityTier(state?.raw);
       return {
         slot: index + 1,
         id: a?.id || null,
-        level: state ? abilityTier(state.raw) : null,
-        unlocked: state ? state.raw !== 0 : null,
+        level: tier,
+        unlocked: state?.raw === 0 ? false : tier !== null ? true : null,
         raw: state?.raw ?? null,
       };
     });

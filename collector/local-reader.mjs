@@ -23,11 +23,73 @@ import { ultimateHit, ultimateEffects } from "./ultimates.mjs";
 import { PurchaseLedger } from "./purchases.mjs";
 import { enrichFrame } from "./enrichment.mjs";
 import { appendConsoleEntry } from "./console-entries.mjs";
+import { settleEndFrame } from "./end-settlement.mjs";
 
 const load = async (name) =>
   JSON.parse(
     await readFile(new URL(`./data/${name}.json`, import.meta.url), "utf8"),
   );
+export function purchaseActors(demo) {
+  return new Map(
+    demo
+      .getEntitiesByClassName("CCitadelPlayerController")
+      .flatMap((controller) => {
+        const player = playerFor(demo, controller, true),
+          handle = controller.getField("m_hHeroPawn"),
+          pawn = Number.isInteger(handle)
+            ? demo.getEntityByHandle(handle)
+            : null;
+        // CPlayerSlot is the client slot (controller entity index minus one),
+        // distinct from the lobby slot when spectators occupy client slots.
+        return player
+          ? [
+              [
+                controller.index - 1,
+                {
+                  ...player,
+                  controller: undefined,
+                  refundable: pawn?.getField("m_vecFullSellPriceItems"),
+                },
+              ],
+            ]
+          : [];
+      }),
+  );
+}
+export function purchaseMessageEvent(packet, order = 0) {
+  const data = packet.data;
+  if (
+    packet.type ===
+    MessagePacketType.CITADEL_USER_MESSAGE_ITEM_PURCHASE_NOTIFICATION
+  )
+    return {
+      type: "notification",
+      user: data.userid,
+      itemId: data.abilityId,
+      sell: data.sell === true,
+      order,
+    };
+  if (
+    packet.type === MessagePacketType.CITADEL_USER_MESSAGE_ABILITY_CHANGED &&
+    [0, 2, "EPurchased", "ESold"].includes(data.change)
+  )
+    return {
+      type: "change",
+      user: data.purchaserPlayerSlot,
+      itemId: data.abilityId,
+      sell: data.change === 2 || data.change === "ESold",
+      order,
+    };
+  if (packet.type === MessagePacketType.CITADEL_USER_MESSAGE_CURRENCY_CHANGED)
+    return {
+      type: "currency",
+      user: data.userid,
+      currencyType: data.currencyType,
+      delta: data.delta,
+      order,
+    };
+  return null;
+}
 export async function collectLocal(options, publish, signal) {
   const [pickups, ultimates, bridges, items, signatures] = await Promise.all(
     [
@@ -49,6 +111,8 @@ export async function collectLocal(options, publish, signal) {
     winner = null,
     stopped = false,
     readAt = null,
+    fileModifiedAt = null,
+    atLiveEdge = false,
     bytes = 0,
     fileIdentity = null,
     descriptor = null,
@@ -56,30 +120,12 @@ export async function collectLocal(options, publish, signal) {
   const hits = [],
     audit = [];
   const hitTimes = new Map();
+  const endSettlement = {};
   let fromStart = options.fromStart === true,
     firstFrame = true;
-  const actors = () =>
-    new Map(
-      demo
-        .getEntitiesByClassName("CCitadelPlayerController")
-        .map((controller) => {
-          const player = playerFor(demo, controller, true),
-            pawn = demo.getEntityByHandle(controller.getField("m_hHeroPawn"));
-          // Notification userid and purchaser_player_slot are zero-based lobby slots.
-          return [
-            controller.getField("m_unLobbyPlayerSlot") - 1,
-            player
-              ? {
-                  ...player,
-                  controller: undefined,
-                  refundable: pawn?.getField("m_vecFullSellPriceItems"),
-                }
-              : null,
-          ];
-        })
-        .filter(([, p]) => p),
-    );
-  const sample = (tick, force = false) => {
+  const actors = () => purchaseActors(demo);
+  const sample = (tick, force = false, finalize = false) => {
+    if (endSettlement.settled && !finalize) return;
     ledger.flush(tick, actors(), ended);
     const interval = demo.server?.tickInterval;
     if (
@@ -88,9 +134,10 @@ export async function collectLocal(options, publish, signal) {
         (interval ? Math.max(1, Math.round(0.25 / interval)) : 8)
     )
       return;
-    const frame = readFrame(demo, pickups, tick, serverTick, ended, winner, {
+    let frame = readFrame(demo, pickups, tick, serverTick, ended, winner, {
       includeBots: true,
     });
+    frame.sourceTickInterval = Number.isFinite(interval) ? interval : null;
     if (!frame.players.length) return;
     enrichFrame(demo, frame, signatures, items);
     if (frame.endObserved && !ended) {
@@ -101,6 +148,12 @@ export async function collectLocal(options, publish, signal) {
       if (frame.duration === null || frame.duration > 0) fromStart = false;
       firstFrame = false;
     }
+    frame = settleEndFrame(
+      endSettlement,
+      frame,
+      Number.isFinite(interval) ? tick * interval * 1000 : null,
+      finalize,
+    );
     lastSample = tick;
     const table = demo.stringTableContainer.getByType(
       StringTableType.ACTIVE_MODIFIERS,
@@ -109,7 +162,14 @@ export async function collectLocal(options, publish, signal) {
       const controller = demo
         .getEntitiesByClassName("CCitadelPlayerController")
         .find((c) => c.getField("m_unLobbyPlayerSlot") === player.slot);
-      const pawn = demo.getEntityByHandle(controller?.getField("m_hHeroPawn"));
+      // EOF may have removed entities after the last complete roster was
+      // retained for end settlement. Preserve its already recorded buff data.
+      if (!controller) continue;
+      const handle = controller.getField("m_hHeroPawn");
+      const pawn =
+        handle === null || handle === undefined
+          ? null
+          : demo.getEntityByHandle(handle);
       player.bridgeBuffs =
         table && pawn
           ? [...table.getEntries()]
@@ -152,6 +212,9 @@ export async function collectLocal(options, publish, signal) {
       audit,
       decodedAt: Date.now(),
       readAt,
+      fileModifiedAt,
+      atLiveEdge,
+      sourceClockMs: Number.isFinite(interval) ? tick * interval * 1000 : null,
       bytes,
       compatibility,
     });
@@ -169,39 +232,11 @@ export async function collectLocal(options, publish, signal) {
         ended = true;
         if ([2, 3].includes(data.winningTeam)) winner = data.winningTeam - 2;
       }
-      if (
-        packet.type ===
-        MessagePacketType.CITADEL_USER_MESSAGE_ITEM_PURCHASE_NOTIFICATION
-      )
-        ledger.record({
-          type: "notification",
-          user: data.userid,
-          itemId: data.abilityId,
-          sell: data.sell === true,
-          order: order++,
-        });
-      if (
-        packet.type ===
-          MessagePacketType.CITADEL_USER_MESSAGE_ABILITY_CHANGED &&
-        ["EPurchased", "ESold"].includes(data.change)
-      )
-        ledger.record({
-          type: "change",
-          user: data.purchaserPlayerSlot,
-          itemId: data.abilityId,
-          sell: data.change === "ESold",
-          order: order++,
-        });
-      if (
-        packet.type === MessagePacketType.CITADEL_USER_MESSAGE_CURRENCY_CHANGED
-      )
-        ledger.record({
-          type: "currency",
-          user: data.userid,
-          currencyType: data.currencyType,
-          delta: data.delta,
-          order: order++,
-        });
+      const purchase = purchaseMessageEvent(packet, order);
+      if (purchase) {
+        ledger.record(purchase);
+        order++;
+      }
       if (packet.type === MessagePacketType.CITADEL_USER_MESSAGE_DAMAGE) {
         const hit = ultimateHit(demo, data, ultimates, { includeBots: true });
         if (
@@ -221,7 +256,7 @@ export async function collectLocal(options, publish, signal) {
     if (packet.type.id === 0) stopped = true;
     if (packet.type.id !== 7 || packet.tick < 0) return;
     lastTick = packet.tick;
-    sample(packet.tick, ended);
+    sample(packet.tick);
   });
   async function* follow() {
     try {
@@ -257,6 +292,8 @@ export async function collectLocal(options, publish, signal) {
         }
         bytes += result.bytesRead;
         readAt = Date.now();
+        fileModifiedAt = info.mtimeMs;
+        atLiveEdge = bytes >= info.size;
         yield chunk.subarray(0, result.bytesRead);
       }
     } finally {
@@ -267,7 +304,7 @@ export async function collectLocal(options, publish, signal) {
     await parser.parse(
       Readable.from(follow(), { objectMode: false, highWaterMark: 1 }),
     );
-    if (lastTick !== null) sample(lastTick, true);
+    if (lastTick !== null) sample(lastTick, true, true);
   } finally {
     publish({
       stopped: true,

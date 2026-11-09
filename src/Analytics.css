@@ -307,36 +307,33 @@
 .observer-connect details p {
   max-width: 850px;
 }
-.hud-permanent {
+.hud-bridges {
   position: absolute;
   right: -8px;
   bottom: -8px;
-  min-width: 23px;
-  height: 23px;
   display: grid;
-  place-items: center;
-  background: #e2d3a4;
-  border: 2px solid #655d37;
-  border-radius: 50%;
-  color: #24251b;
-  font:
-    bold 14px "DLAR Arabic",
-    sans-serif;
-  text-shadow: none;
-}
-.hud-bridges {
-  position: absolute;
-  left: -6px;
-  top: -11px;
-  display: flex;
+  grid-template-columns: 23px;
   gap: 3px;
 }
+.hud-bridges.has-multiple {
+  grid-template-columns: repeat(2, 23px);
+}
+.hud-bridges.has-multiple > :last-child:nth-child(odd) {
+  grid-column: 2;
+}
+.hud-player.hud-with-bridges .hud-badges {
+  top: calc(100% + 12px);
+}
 .hud-bridge {
+  display: grid;
+  place-items: center;
+  min-width: 23px;
+  height: 23px;
   font:
     bold 12px "DLAR Arabic",
     sans-serif;
   border-radius: 4px;
-  padding: 3px 5px;
+  padding: 0 5px;
   background: #8081d8;
   color: white;
   border: 1px solid #e7e6ff;

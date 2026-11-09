@@ -292,7 +292,7 @@ test("known empty item arrays are complete zero counts, while absent item histor
   );
 });
 
-test("automatic metadata reports still block unresolved live transaction reviews", () => {
+test("reports automatically omit uncertain live transactions without blocking confirmed purchases", () => {
   const saved = importedMatch(raw, "120513539", items);
   const live = {
     id: "live-game",
@@ -300,7 +300,10 @@ test("automatic metadata reports still block unresolved live transaction reviews
     result: saved.result,
     items: {
       fromStart: true,
-      purchases: [{ itemId: items[0].id, status: "review" }],
+      purchases: [
+        { itemId: items[0].id, status: "review" },
+        { itemId: items[0].id, status: "confirmed" },
+      ],
     },
   };
   const store = {
@@ -312,8 +315,10 @@ test("automatic metadata reports still block unresolved live transaction reviews
     archive: { list: () => [] },
   };
   const report = reportOutput(store, "top-items", [], items);
-  assert.equal(report.visible, false);
+  assert.equal(report.visible, true);
   assert.equal(report.reportBasis, "recorded-item-picks");
+  assert.match(report.coverage, /1 unverified purchase omitted/);
+  assert.equal(report.rows.find((row) => row.id === items[0].id).total, 1);
   assert.equal(live.items.purchases[0].status, "review");
 });
 

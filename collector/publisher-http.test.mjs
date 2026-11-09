@@ -6,6 +6,58 @@ import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { createBroadcastServer } from "./cloud-server.mjs";
 import { exportBackup, prepareRestore } from "./backups.mjs";
+import { emptySession, applyFrame } from "./model.mjs";
+
+test("a batch from an unselected game never replaces the selected OBS session", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "dlar-selected-timing-"));
+  const app = await createBroadcastServer({
+    directory: dir,
+    port: 0,
+    origin: "http://studio.test",
+  });
+  await new Promise((resolve) => app.server.listen(0, "127.0.0.1", resolve));
+  let reader;
+  t.after(async () => {
+    await reader?.cancel();
+    await app.shutdown();
+    await rm(dir, { recursive: true, force: true });
+  });
+  const paired = app.publisher.pair(app.publisher.issue(), "test");
+  const identity = app.publisher.authenticate({
+    headers: { authorization: `Bearer ${paired.token}` },
+  });
+  const begun = app.publisher.begin(identity, { id: `local-${randomUUID()}` });
+  const chosen = emptySession(`local-${randomUUID()}`, "local");
+  chosen.tournamentId = app.store.workspace.activeTournamentId;
+  const frame = {
+    tick: 1,
+    serverTick: 1,
+    duration: 1,
+    players: [{ id: "1", team: 0, heroId: 1 }],
+  };
+  applyFrame(chosen, frame);
+  app.store.sessions.set(chosen.id, chosen);
+  app.store.workspace.deadem.id = chosen.id;
+  const response = await fetch(
+    `http://127.0.0.1:${app.server.address().port}/api/broadcast/events?channel=deadem`,
+    { signal: AbortSignal.timeout(3000) },
+  );
+  reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  const initial = decoder.decode((await reader.read()).value);
+  assert.ok(initial.includes(chosen.id));
+  app.publisher.ingest(identity, {
+    ...begun,
+    sequence: 1,
+    samples: [
+      { sourceClockMs: 0, frame },
+      { sourceClockMs: 250, frame: { ...frame, tick: 2, serverTick: 2 } },
+    ],
+  });
+  const update = decoder.decode((await reader.read()).value);
+  assert.ok(update.includes(chosen.id));
+  assert.ok(!update.includes(begun.id));
+});
 
 test("native publisher authenticates separately, cannot edit controls, and feeds permanent OBS URLs", async (t) => {
   const dir = await mkdtemp(path.join(tmpdir(), "dlar-http-publisher-"));

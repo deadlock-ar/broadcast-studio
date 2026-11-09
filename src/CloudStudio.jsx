@@ -11,7 +11,11 @@ import {
   getAt,
 } from "./workspace-model.js";
 import { cleanPanel } from "./stats.js";
-import { enqueueCollectorState } from "./collector.js";
+import {
+  enqueueCollectorState,
+  collectorRenderNow,
+  collectorFreshAt,
+} from "./collector.js";
 import { WorkspaceContext, workspaceRequest } from "./workspace-context.js";
 import "./CloudStudio.css";
 import ReportCanvas from "./ReportCanvas.jsx";
@@ -188,44 +192,52 @@ function CloudBroadcast({ channel }) {
   useEffect(() => {
     let queue = [],
       identity = null,
-      delay = null;
+      delay = null,
+      clock = {};
     const source = new EventSource(`/api/broadcast/events?channel=${channel}`);
     source.onmessage = (e) => {
       try {
-        const next = JSON.parse(e.data),
-          nextDelay = next.session?.settings.delayMs || 0;
-        if (
-          next.session?.id !== identity ||
-          nextDelay !== delay ||
-          next.visible === false
-        ) {
-          queue = [];
-          identity = next.session?.id;
-          delay = nextDelay;
-          if (["deadem", "ultimates", "momentum"].includes(channel))
-            setValue(null);
+        const packet = JSON.parse(e.data);
+        for (const next of packet.samples || [packet]) {
+          const nextDelay = next.session?.settings.delayMs || 0;
+          if (
+            next.session?.id !== identity ||
+            nextDelay !== delay ||
+            next.visible === false
+          ) {
+            queue = [];
+            identity = next.session?.id;
+            delay = nextDelay;
+            clock = {};
+            if (["deadem", "ultimates", "momentum"].includes(channel))
+              setValue(null);
+          }
+          if (
+            next.visible !== false &&
+            ["deadem", "ultimates", "momentum"].includes(channel)
+          )
+            queue = enqueueCollectorState(
+              queue,
+              next,
+              Date.now(),
+              nextDelay,
+              channel === "momentum" || next.panel?.content === "souls-graph"
+                ? 1000
+                : 100,
+              clock,
+            );
+          else setValue(next);
         }
-        if (
-          nextDelay &&
-          next.visible !== false &&
-          ["deadem", "ultimates", "momentum"].includes(channel)
-        )
-          queue = enqueueCollectorState(
-            queue,
-            next,
-            Date.now(),
-            nextDelay,
-            channel === "momentum" || next.panel?.content === "souls-graph"
-              ? 1000
-              : 100,
-          );
-        else setValue(next);
         setError(false);
       } catch {
         setError(true);
       }
     };
     source.onerror = () => setError(true);
+    source.onopen = () => {
+      queue = [];
+      clock = {};
+    };
     const timer = setInterval(() => {
       let next;
       while (queue[0]?.at <= Date.now()) next = queue.shift().value;
@@ -289,8 +301,9 @@ function CloudBroadcast({ channel }) {
               (value?.session &&
                 !value.session.ended &&
                 (value.session.status !== "live" ||
-                  now - value.session.updatedAt >
-                    15000 + (value.session.settings.delayMs || 0)))
+                  collectorRenderNow(value.session, now) -
+                    collectorFreshAt(value.session) >
+                    15000))
             }
           />
         )}
@@ -342,8 +355,8 @@ function CloudBroadcast({ channel }) {
             (session &&
               !session.ended &&
               (session.status !== "live" ||
-                now - session.updatedAt >
-                  15000 + (session.settings.delayMs || 0)))
+                collectorRenderNow(session, now) - collectorFreshAt(session) >
+                  15000))
           }
         />
       ) : match ? (
@@ -367,8 +380,8 @@ function CloudBroadcast({ channel }) {
             (session &&
               !session.ended &&
               (session.status !== "live" ||
-                now - session.updatedAt >
-                  15000 + (session.settings.delayMs || 0))) ||
+                collectorRenderNow(session, now) - collectorFreshAt(session) >
+                  15000)) ||
             (channel === "live-events" &&
               value.apiStats.source?.mode === "live" &&
               (result.status !== "live" || now - result.updated > 15000))
