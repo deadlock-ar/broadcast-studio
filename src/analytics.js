@@ -1,4 +1,5 @@
 import { DRAFT_RULE } from "./draft.js";
+import { isDraftReportSource } from "./report-sources.js";
 
 export function cleanReportSettings(value = {}) {
   const ids = (values) =>
@@ -94,7 +95,7 @@ export function draftPriority(drafts, heroes = []) {
       },
     ]),
   );
-  for (const draft of drafts)
+  for (const draft of drafts.filter(isDraftReportSource))
     for (const step of draft.selections || draftSelections(draft.snapshot)) {
       if (!step.heroId || !["pick", "ban"].includes(step.selectionType))
         continue;
@@ -112,9 +113,7 @@ export function draftPriority(drafts, heroes = []) {
       const unknownOrder =
         step.orderKnown === false || step.firstRound === null;
       const key = unknownOrder
-        ? step.selectionType === "ban"
-          ? "unknownBan"
-          : "unknownPick"
+        ? step.selectionType
         : step.selectionType === "ban"
           ? step.firstRound
             ? "firstBan"
@@ -139,7 +138,10 @@ export function itemPriority(games, items = [], baseline = []) {
     const counts = new Map();
     for (const game of list)
       for (const p of game.purchases || [])
-        if (p.status === "confirmed")
+        if (
+          p.status === "confirmed" ||
+          (p.status === "recorded" && p.source === "metadata")
+        )
           counts.set(p.itemId, (counts.get(p.itemId) || 0) + 1);
     return [...counts]
       .map(([id, total]) => ({

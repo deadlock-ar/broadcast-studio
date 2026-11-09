@@ -5,16 +5,11 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { once } from "node:events";
 import { randomUUID } from "node:crypto";
-import {
-  importedMatch,
-  offlineDraft,
-  OfflineImporter,
-  soulsBySource,
-} from "./offline.mjs";
+import { importedMatch, OfflineImporter, soulsBySource } from "./offline.mjs";
 import { createBroadcastServer } from "./cloud-server.mjs";
 import { reportOutput } from "./reports.mjs";
 import { exportBackup, prepareRestore } from "./backups.mjs";
-import { initialWorkspace, diffFields } from "../src/workspace-model.js";
+import { diffFields } from "../src/workspace-model.js";
 import { playersAt, metricSupported } from "../src/stats.js";
 
 const raw = JSON.parse(
@@ -41,13 +36,15 @@ test("real metadata subset imports twelve anonymized players, measured history a
   assert.ok(s.items.purchases.length > 0);
   assert.ok(
     s.items.purchases.every(
-      (p) => p.status === "review" && items.some((i) => i.id === p.itemId),
+      (p) => p.status === "recorded" && items.some((i) => i.id === p.itemId),
     ),
   );
   assert.ok(
     s.match.players.every((p) => p.items === null && p.abilities === null),
   );
   assert.equal(s.offline.unassignedBans, null);
+  assert.equal(s.items.reviewCount, 0);
+  assert.equal(s.items.reportBasis, "recorded-item-picks");
   assert.equal(s.published, null);
   assert.equal(playersAt(s.match).length, 12);
   assert.equal(metricSupported("objectiveDamage", s.match), true);
@@ -59,24 +56,15 @@ test("real metadata subset imports twelve anonymized players, measured history a
     /twelve-player/,
   );
 });
-test("metadata draft keeps unknown order and ban ownership explicit, and partial souls income is not a complete total", () => {
+test("metadata context keeps unknown draft order explicit, and partial souls income is not a complete total", () => {
   const data = structuredClone(raw);
   data.banned_hero_ids = [1, 2];
   data.pregame_hero_ids = { 1: 99 };
-  const s = importedMatch(data, "120513539", items),
-    w = initialWorkspace();
-  w.activeTournamentId = "tournament";
-  const d = offlineDraft(s, w);
-  assert.equal(d.selections[0].heroId, 99);
-  assert.equal(d.selections.length, 14);
-  assert.ok(
-    d.selections.every((p) => p.firstRound === null && p.orderKnown === false),
-  );
-  assert.ok(
-    d.selections
-      .filter((p) => p.selectionType === "ban")
-      .every((p) => p.teamNumber === null),
-  );
+  const s = importedMatch(data, "120513539", items);
+  assert.equal(s.offline.pregameHeroes["1"], 99);
+  assert.deepEqual(s.offline.unassignedBans, [1, 2]);
+  assert.equal(s.offline.draftOrderKnown, false);
+  assert.equal(s.draftArchiveId, undefined);
   assert.deepEqual(
     soulsBySource({
       gold_player: 9000,
@@ -137,10 +125,12 @@ async function fixture(t, load = async () => structuredClone(raw)) {
       },
       body: JSON.stringify(body),
     });
-  return { app, base, post };
+  const get = (route) =>
+    fetch(base + "/api/" + route, { headers: { Cookie: cookie } });
+  return { app, base, post, get };
 }
 test("off-stream HTTP import protects access, persists archives and leaves live selection, scores and publication intact", async (t) => {
-  const { app, base, post } = await fixture(t);
+  const { app, base, post, get } = await fixture(t);
   const selected = app.store.workspace.deadem.id,
     published = app.store.workspace.scoreboard.matchId;
   const scores = app.store.workspace.config.teams.map((p) => p.score);
@@ -172,7 +162,8 @@ test("off-stream HTTP import protects access, persists archives and leaves live 
   assert.ok(
     app.store.db.prepare("SELECT id FROM matches WHERE id=?").get("120513539"),
   );
-  assert.ok(app.store.archive.list().some((d) => d.id === saved.draftId));
+  assert.equal(saved.draftId, null);
+  assert.equal(app.store.archive.list().length, 0);
   assert.equal(
     (await post("data/import-match", { id: "120513539" })).status,
     400,
@@ -181,6 +172,19 @@ test("off-stream HTTP import protects access, persists archives and leaves live 
     await fetch(base + "/api/broadcast?channel=scoreboard")
   ).json();
   assert.equal(publicResult.scoreboard, null);
+  const legacy = app.store.sessions.get("120513539");
+  for (const purchase of legacy.items.purchases) purchase.status = "review";
+  const analytics = await (await get("analytics")).json();
+  const imported = analytics.games.find((game) => game.id === legacy.id);
+  assert.equal(imported.reportBasis, "recorded-item-picks");
+  assert.equal(imported.reviewCount, 0);
+  assert.ok(imported.purchases.length > 0);
+  assert.ok(
+    imported.purchases.every((purchase) => purchase.status === "recorded"),
+  );
+  assert.ok(
+    legacy.items.purchases.every((purchase) => purchase.status === "review"),
+  );
 });
 test("imports fence a changed tournament, concurrent duplicate requests and captures saved under local IDs", async (t) => {
   const { app } = await fixture(t);
@@ -250,8 +254,9 @@ test("caster settings survive tournament/backup persistence and public output ex
     stage.title,
   );
 });
-test("unreviewed metadata used as a comparison cannot publish misleading purchase deltas", () => {
+test("existing metadata used as a comparison reports automatic picks and identifies their refund coverage", () => {
   const saved = importedMatch(raw, "120513539", items);
+  for (const purchase of saved.items.purchases) purchase.status = "review";
   const good = structuredClone(saved);
   good.id = "2";
   good.items.purchases = [];
@@ -265,5 +270,136 @@ test("unreviewed metadata used as a comparison cannot publish misleading purchas
     ]),
     archive: { list: () => [] },
   };
-  assert.equal(reportOutput(store, "top-items", [], items).visible, false);
+  const report = reportOutput(store, "top-items", [], items);
+  assert.equal(report.visible, true);
+  assert.equal(report.baselineGames, 1);
+  assert.equal(report.reportBasis, "recorded-item-picks");
+  assert.match(report.coverage, /full refunds are not identified/);
+  assert.ok(saved.items.purchases.every((p) => p.status === "review"));
+});
+
+test("known empty item arrays are complete zero counts, while absent item history stays partial", () => {
+  const complete = structuredClone(raw);
+  complete.match_info.players[0].items = [];
+  assert.equal(
+    importedMatch(complete, "120513539", items).items.fromStart,
+    true,
+  );
+  delete complete.match_info.players[0].items;
+  assert.equal(
+    importedMatch(complete, "120513539", items).items.fromStart,
+    false,
+  );
+});
+
+test("automatic metadata reports still block unresolved live transaction reviews", () => {
+  const saved = importedMatch(raw, "120513539", items);
+  const live = {
+    id: "live-game",
+    mode: "local",
+    result: saved.result,
+    items: {
+      fromStart: true,
+      purchases: [{ itemId: items[0].id, status: "review" }],
+    },
+  };
+  const store = {
+    workspace: { reports: { selectedGames: [saved.id, live.id] } },
+    sessions: new Map([
+      [saved.id, saved],
+      [live.id, live],
+    ]),
+    archive: { list: () => [] },
+  };
+  const report = reportOutput(store, "top-items", [], items);
+  assert.equal(report.visible, false);
+  assert.equal(report.reportBasis, "recorded-item-picks");
+  assert.equal(live.items.purchases[0].status, "review");
+});
+
+test("import only records catalog purchases after time zero and preserves sale and component evidence", () => {
+  const data = structuredClone(raw);
+  const itemId = items[0].id;
+  data.match_info.players[0].items = [
+    { item_id: itemId, game_time_s: 0 },
+    { item_id: itemId, game_time_s: 10, upgrade_info: 8388608 },
+    { item_id: itemId, game_time_s: 20, sold_time_s: 21, flags: 1 },
+    { item_id: 123, game_time_s: 30 },
+    { item_id: itemId, game_time_s: 40, sold_time_s: 80, upgrade_info: 131072 },
+  ];
+  const session = importedMatch(data, "120513539", items);
+  const playerId = session.match.players[0].id;
+  const purchases = session.items.purchases.filter(
+    (p) => p.playerId === playerId,
+  );
+  assert.deepEqual(
+    purchases.map((p) => p.gameTime),
+    [20, 40],
+  );
+  assert.deepEqual(
+    purchases.map((p) => p.soldTime),
+    [21, 80],
+  );
+  assert.equal(purchases[0].flags, 1);
+  assert.equal(purchases[1].upgradeInfo, 131072);
+  assert.ok(purchases.every((p) => p.status === "recorded"));
+});
+
+test("only genuine saved drafts can be linked or selected after older metadata rosters exist", async (t) => {
+  const { app, get, post } = await fixture(t);
+  app.store.workspace.draft.mode = "manual";
+  app.store.workspace.draft.snapshot.steps[0].heroId = 1;
+  const draft = app.store.archive.capture({ label: "Saved actual draft" });
+  const metadata = {
+    ...structuredClone(draft),
+    id: "metadata:legacy:120513539",
+    source: "metadata",
+    rule: "metadata-final-roster",
+    selections: Array.from({ length: 12 }, () => ({
+      heroId: 1,
+      selectionType: "pick",
+      firstRound: null,
+      orderKnown: false,
+    })),
+  };
+  app.store.db
+    .prepare("INSERT INTO drafts VALUES (?,?)")
+    .run(metadata.id, JSON.stringify(metadata));
+  const analytics = await (await get("analytics")).json();
+  const library = await (await get("data")).json();
+  assert.deepEqual(
+    analytics.drafts.map((d) => d.id),
+    [draft.id],
+  );
+  assert.deepEqual(
+    library.drafts.map((d) => d.id),
+    [draft.id],
+  );
+  app.store.workspace.reports.selectedDrafts = [metadata.id, draft.id];
+  app.store.workspace.reports.includeZero = false;
+  const report = reportOutput(
+    app.store,
+    "hero-priority",
+    [{ id: 1, name: "Hero one" }],
+    [],
+  );
+  assert.equal(report.games, 1);
+  assert.equal(report.rows[0].total, 1);
+  assert.equal(
+    (await post("data/import-match", { id: "120513539", draftId: metadata.id }))
+      .status,
+    400,
+  );
+  const linked = await post("data/import-match", {
+    id: "120513539",
+    draftId: draft.id,
+  });
+  assert.equal(linked.status, 200);
+  assert.equal((await linked.json()).draftId, draft.id);
+  assert.equal(app.store.sessions.get("120513539").draftArchiveId, draft.id);
+  assert.equal(
+    app.store.archive.list().length,
+    2,
+    "Legacy evidence remains in backups without entering draft reports",
+  );
 });

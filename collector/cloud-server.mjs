@@ -30,6 +30,8 @@ import { playerBannersOutput } from "../src/player-banners.js";
 import { OfflineImporter, importedMatch } from "./offline.mjs";
 import { casterStageOutput } from "../src/caster-stage.js";
 import { publicCollectorMatch } from "./output-snapshot.mjs";
+import { isDraftReportSource } from "../src/report-sources.js";
+import { automaticItemHistory } from "../src/item-reporting.js";
 import { collectorSessionView, selectStatBaseline } from "./stat-history.mjs";
 import {
   patchWorkspace,
@@ -628,7 +630,9 @@ export async function createBroadcastServer(options = {}) {
         }
         if (url.pathname === "/api/analytics" && method === "GET") {
           json(res, 200, {
-            drafts: store.archive.list().filter((d) => inTournament(d, store)),
+            drafts: store.archive
+              .list()
+              .filter((d) => inTournament(d, store) && isDraftReportSource(d)),
             games: [...store.sessions.values()]
               .filter((s) => inTournament(s, store))
               .filter((s) => s.items || s.result)
@@ -641,7 +645,7 @@ export async function createBroadcastServer(options = {}) {
                 updatedAt: s.updatedAt,
                 players: s.result?.match.players || [],
                 purchases: [],
-                ...s.items,
+                ...automaticItemHistory(s),
               })),
           });
           return;

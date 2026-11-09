@@ -1,6 +1,8 @@
 import { normalizeMetadata, playersAt, nonnegative } from "../src/stats.js";
 import { emptySession, completeRoster, matchId } from "./model.mjs";
 import { metricFrame } from "./telemetry.mjs";
+import { automaticItemHistory } from "../src/item-reporting.js";
+import { isDraftReportSource } from "../src/report-sources.js";
 
 const SOURCE_NAMES = {
   1: "Players",
@@ -134,8 +136,7 @@ export function importedMatch(raw, expectedId, itemCatalog, now = Date.now()) {
     (originals.get(p.id).items || [])
       .filter(
         (item) =>
-          knownItems.has(item.item_id) &&
-          nonnegative(item.game_time_s) !== null,
+          knownItems.has(item.item_id) && nonnegative(item.game_time_s) > 0,
       )
       .map((item, index) => ({
         id: `metadata:${id}:${p.id}:${index}`,
@@ -144,29 +145,29 @@ export function importedMatch(raw, expectedId, itemCatalog, now = Date.now()) {
         itemId: item.item_id,
         gameTime: item.game_time_s,
         soldTime: nonnegative(item.sold_time_s) || null,
-        status: "review",
+        status: "recorded",
         evidence:
-          "Metadata item entry; confirm purchase and refund outcome before reports",
+          "Metadata purchase-history entry; refund outcome is not provided",
         source: "metadata",
         flags: item.flags ?? null,
         upgradeId: item.upgrade_id ?? null,
+        upgradeInfo: item.upgrade_info ?? null,
       })),
   );
-  const hasItems = raw.match_info.players.every(
-    (p) => Array.isArray(p.items) && p.items.length > 0,
-  );
+  const hasItems = raw.match_info.players.every((p) => Array.isArray(p.items));
   s.items = {
     revision: 1,
     purchases,
     fromStart: hasItems,
-    reviewCount: purchases.length,
+    reviewCount: 0,
     coverage:
       "Metadata item history; final holdings and refund outcomes are not inferred",
   };
+  s.items = automaticItemHistory(s);
   s.offline = {
     importedAt: now,
     itemCoverage: hasItems
-      ? "metadata-review-required"
+      ? "metadata-recorded-picks"
       : "unavailable-or-partial",
     draftOrderKnown: false,
     banTeamsKnown: false,
@@ -190,53 +191,6 @@ export function importedMatch(raw, expectedId, itemCatalog, now = Date.now()) {
   };
   return s;
 }
-export function offlineDraft(s, workspace) {
-  const picks = s.match.players.map((p, i) => ({
-    id: `metadata-pick:${p.id}`,
-    teamNumber: p.team + 1,
-    selectionType: "pick",
-    heroId: s.offline.pregameHeroes[p.id] || p.heroId,
-    selectionNumber: i + 1,
-    order: null,
-    orderKnown: false,
-    firstRound: null,
-  }));
-  const selections = [
-    ...picks,
-    ...(s.offline.unassignedBans || []).map((heroId) => ({
-      heroId,
-      teamNumber: null,
-      selectionType: "ban",
-      order: null,
-      orderKnown: false,
-      firstRound: null,
-    })),
-  ];
-  return {
-    id: `metadata:${workspace.activeTournamentId}:${s.id}`,
-    source: "metadata",
-    matchId: s.id,
-    rule: "metadata-final-roster",
-    label: `Off-stream · Match ${s.id} · order unavailable`,
-    tournamentId: workspace.activeTournamentId,
-    tournament: workspace.config.event,
-    config: structuredClone(workspace.config),
-    completed: true,
-    orderKnown: false,
-    bansKnown: s.offline.unassignedBans !== null,
-    banTeamsKnown: false,
-    snapshot: {
-      status: "COMPLETED",
-      steps: picks,
-      teams: [],
-      currentStepIndex: picks.length,
-    },
-    selections,
-    createdAt: s.updatedAt,
-    updatedAt: s.updatedAt,
-  };
-}
-
 export class OfflineImporter {
   constructor(
     store,
@@ -305,21 +259,19 @@ export class OfflineImporter {
         this.store.archive
           .list()
           .find(
-            (d) => d.id === value.draftId && d.tournamentId === tournamentId,
+            (d) =>
+              d.id === value.draftId &&
+              d.tournamentId === tournamentId &&
+              isDraftReportSource(d),
           );
       if (value.draftId && !linked)
         throw Error("Choose a saved draft from the selected tournament.");
-      const draft = linked || offlineDraft(s, this.store.workspace);
-      s.draftArchiveId = draft.id;
+      if (linked) s.draftArchiveId = linked.id;
       this.store.db.exec("BEGIN IMMEDIATE");
       try {
         this.store.db
           .prepare("INSERT INTO matches VALUES (?,?)")
           .run(id, JSON.stringify(s));
-        if (!linked)
-          this.store.db
-            .prepare("INSERT OR REPLACE INTO drafts VALUES (?,?)")
-            .run(draft.id, JSON.stringify(draft));
         this.store.db.exec("COMMIT");
       } catch (e) {
         this.store.db.exec("ROLLBACK");
@@ -328,7 +280,7 @@ export class OfflineImporter {
       this.store.sessions.set(id, s);
       return {
         id,
-        draftId: draft.id,
+        draftId: linked?.id || null,
         purchases: s.items.purchases.length,
         bansKnown: linked
           ? linked.selections?.some((p) => p.selectionType === "ban") === true

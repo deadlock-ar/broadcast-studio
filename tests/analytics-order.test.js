@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { draftPriority } from "../src/analytics.js";
 
-test("metadata selections without draft order contribute only to unknown-round categories", () => {
+test("genuine draft selections without known order count as ordinary picks and bans", () => {
   const rows = draftPriority(
     [
       {
@@ -31,12 +31,14 @@ test("metadata selections without draft order contribute only to unknown-round c
   const one = rows.find((row) => row.id === 1),
     two = rows.find((row) => row.id === 2);
   assert.equal(one.total, 2);
-  assert.equal(one.unknownPick, 1);
-  assert.equal(one.unknownBan, 1);
-  assert.equal(one.firstPick + one.pick + one.firstBan + one.ban, 0);
+  assert.equal(one.unknownPick, 0);
+  assert.equal(one.unknownBan, 0);
+  assert.equal(one.pick, 1);
+  assert.equal(one.ban, 1);
+  assert.equal(one.firstPick + one.firstBan, 0);
   assert.equal(two.total, 1);
-  assert.equal(two.unknownBan, 1);
-  assert.equal(two.ban, 0);
+  assert.equal(two.unknownBan, 0);
+  assert.equal(two.ban, 1);
 });
 
 test("verified and legacy known rounds keep their categories in mixed tournament reports", () => {
@@ -68,15 +70,26 @@ test("verified and legacy known rounds keep their categories in mixed tournament
     },
   ]);
   assert.equal(row.total, 6);
-  for (const category of [
-    "firstPick",
-    "pick",
-    "firstBan",
-    "ban",
-    "unknownPick",
-    "unknownBan",
-  ])
-    assert.equal(row[category], 1);
+  assert.equal(row.firstPick, 1);
+  assert.equal(row.firstBan, 1);
+  assert.equal(row.pick, 2);
+  assert.equal(row.ban, 2);
+  assert.equal(row.unknownPick + row.unknownBan, 0);
+});
+
+test("metadata rosters never count as draft selections even if their order is forged", () => {
+  const selections = [
+    { heroId: 1, selectionType: "pick", orderKnown: true, firstRound: true },
+  ];
+  const records = [
+    { source: "metadata", selections },
+    { rule: "metadata-final-roster", source: "manual", selections },
+    { id: "metadata:tournament:123", source: "live", selections },
+    { source: "live", selections },
+  ];
+  const [row] = draftPriority(records, [{ id: 1, name: "One" }]);
+  assert.equal(row.total, 1);
+  assert.equal(row.firstPick, 1);
 });
 
 test("unknown categories initialize for unselected heroes and invalid selections do not inflate totals", () => {

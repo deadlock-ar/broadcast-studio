@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { initialWorkspace } from "../src/workspace-model.js";
+import { isDraftReportSource } from "../src/report-sources.js";
 import { cleanMatchOverlay } from "../src/match-overlay.js";
 import { cleanBracket } from "../src/bracket.js";
 import { cleanPlayerBanners } from "../src/player-banners.js";
@@ -325,15 +326,18 @@ export class Tournaments {
         items: s.items?.purchases.length || 0,
         updatedAt: s.updatedAt,
       })),
-      drafts: this.store.archive.list().map((d) => ({
-        id: d.id,
-        tournamentId: d.tournamentId,
-        label: d.label,
-        source: d.source,
-        orderKnown: d.orderKnown,
-        selections: d.selections?.filter((s) => s.heroId).length || 0,
-        updatedAt: d.updatedAt,
-      })),
+      drafts: this.store.archive
+        .list()
+        .filter(isDraftReportSource)
+        .map((d) => ({
+          id: d.id,
+          tournamentId: d.tournamentId,
+          label: d.label,
+          source: d.source,
+          orderKnown: d.orderKnown,
+          selections: d.selections?.filter((s) => s.heroId).length || 0,
+          updatedAt: d.updatedAt,
+        })),
       trash: this.listTrash().map(
         ({ id, kind, label, deletedAt, tournamentId }) => ({
           id,

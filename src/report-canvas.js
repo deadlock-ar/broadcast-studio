@@ -8,8 +8,6 @@ const palette = {
   ban: "#f16578",
   firstPick: "#65734f",
   pick: "#5f9df7",
-  unknownPick: "#60776c",
-  unknownBan: "#7c705e",
 };
 const displayFont = (size, weight = 600) =>
   `${weight} ${size}px "DLAR Arabic", "DLAR Display", "Cairo", Georgia, serif`;
@@ -29,26 +27,14 @@ function priorityMark(c, key, x, y, size = 5.5) {
   c.strokeStyle = palette[key];
   c.lineWidth = 1.6;
   c.beginPath();
-  if (key === "unknownPick") {
-    c.rect(x - size, y - size, size * 2, size * 2);
-    c.stroke();
-  } else if (key === "unknownBan") {
-    c.moveTo(x, y - size - 1);
-    c.lineTo(x + size + 1, y);
-    c.lineTo(x, y + size + 1);
-    c.lineTo(x - size - 1, y);
-    c.closePath();
-    c.stroke();
-  } else {
-    c.arc(x, y, size, 0, 2 * Math.PI);
-    c.fill();
-    if (key.startsWith("first")) {
-      c.fillStyle = palette.bg;
-      c.font = condensedFont(size * 1.8, 700);
-      c.textAlign = "center";
-      c.fillText("1", x, y + size * 0.65);
-      c.textAlign = "left";
-    }
+  c.arc(x, y, size, 0, 2 * Math.PI);
+  c.fill();
+  if (key.startsWith("first")) {
+    c.fillStyle = palette.bg;
+    c.font = condensedFont(size * 1.8, 700);
+    c.textAlign = "center";
+    c.fillText("1", x, y + size * 0.65);
+    c.textAlign = "left";
   }
 }
 async function picture(url) {
@@ -71,11 +57,6 @@ function base(canvas, height, title, subtitle) {
   c.fillRect(0, 0, 1920, height);
   c.fillStyle = "#1b2b23";
   c.fillRect(54, 54, 1812, 174);
-  c.fillStyle = "#eae1cf";
-  c.fillRect(70, 72, 108, 112);
-  c.fillStyle = "#65734f";
-  c.font = displayFont(42, 700);
-  c.fillText("AR", 92, 145);
   c.strokeStyle = palette.gold;
   c.lineWidth = 3;
   c.strokeRect(36, 36, 1848, height - 72);
@@ -117,11 +98,18 @@ async function footer(c, height, text) {
   c.textAlign = "center";
   c.fillText(text, 960, height - 64);
   c.textAlign = "left";
-  const logo = await picture("/logo.png");
+  const logo = await picture("/report-mark.png");
   if (logo) {
-    c.fillStyle = "#eae1cf";
-    c.fillRect(70, 72, 108, 112);
-    c.drawImage(logo, 78, 79, 92, 100);
+    const scale = Math.min(148 / logo.naturalWidth, 148 / logo.naturalHeight);
+    const width = logo.naturalWidth * scale,
+      height = logo.naturalHeight * scale;
+    c.drawImage(
+      logo,
+      70 + (148 - width) / 2,
+      66 + (148 - height) / 2,
+      width,
+      height,
+    );
   }
 }
 export async function drawHeroReport(canvas, { rows, title }) {
@@ -131,7 +119,7 @@ export async function drawHeroReport(canvas, { rows, title }) {
     cell = 143;
   const cellHeight = (total) => Math.max(112, Math.ceil(total / 4) * 14 + 24);
   const height =
-    470 +
+    390 +
     [...groups.values()].reduce(
       (h, g) =>
         h +
@@ -161,14 +149,7 @@ export async function drawHeroReport(canvas, { rows, title }) {
         image = imageMap.get(row.id);
       if (image) c.drawImage(image, x, top, 62, 87);
       const markers = [];
-      for (const k of [
-        "firstBan",
-        "ban",
-        "firstPick",
-        "pick",
-        "unknownPick",
-        "unknownBan",
-      ])
+      for (const k of ["firstBan", "ban", "firstPick", "pick"])
         for (let i = 0; i < row[k]; i++) markers.push(k);
       markers.forEach((k, i) => {
         const mx = x + 72 + (i % 4) * 14,
@@ -191,31 +172,30 @@ export async function drawHeroReport(canvas, { rows, title }) {
     c.fillText(label, x + 15, y + 26);
     x += key.startsWith("first") ? 400 : 230;
   }
-  for (const [key, label, left] of [
-    ["unknownPick", "PICK · ORDER UNKNOWN", 565],
-    ["unknownBan", "BAN · ORDER UNKNOWN", 1045],
-  ]) {
-    priorityMark(c, key, left, y + 66, 7);
-    c.fillStyle = palette.paper;
-    c.font = condensedFont(18);
-    c.fillText(label, left + 19, y + 72);
-  }
-  c.fillStyle = "#67735c";
-  c.font = condensedFont(16);
-  c.textAlign = "center";
-  c.fillText(
-    "Unknown-order selections count toward totals without implying a draft round.",
-    960,
-    y + 108,
-  );
-  c.textAlign = "left";
   await footer(c, height, "DEADLOCK AR · COMMUNITY TOURNAMENTS");
 }
 export async function drawItemReport(
   canvas,
-  { rows, title, games, baselineGames, limit = 20 },
+  {
+    rows,
+    title,
+    games,
+    baselineGames,
+    limit = 20,
+    metricLabel = "Confirmed purchases",
+    reportBasis,
+    coverage,
+  },
 ) {
   await prepareFonts();
+  const recordedPicks = reportBasis === "recorded-item-picks";
+  const metric = recordedPicks
+    ? "RECORDED ITEM PICKS"
+    : typeof metricLabel === "string" &&
+        metricLabel !== "Confirmed purchases" &&
+        metricLabel.trim()
+      ? metricLabel.trim().toUpperCase()
+      : "AVERAGE PURCHASES";
   const selected = rows.slice(0, limit),
     height = 390 + selected.length * 70;
   const images = await Promise.all(selected.map((r) => picture(r.image)));
@@ -223,12 +203,12 @@ export async function drawItemReport(
     canvas,
     height,
     title || "Top items",
-    `AVERAGE PURCHASES PER GAME · ${games} GAME${games === 1 ? "" : "S"}${baselineGames ? ` · COMPARED WITH ${baselineGames} GAMES` : ""}`,
+    `${metric} PER GAME · ${games} GAME${games === 1 ? "" : "S"}${baselineGames ? ` · COMPARED WITH ${baselineGames} GAMES` : ""}`,
   );
   c.fillStyle = "#65734f";
   c.font = condensedFont(18);
   c.fillText("ITEM", 180, 260);
-  c.fillText("TOTAL", 1210, 260);
+  c.fillText(recordedPicks ? "PICKS" : "TOTAL", 1210, 260);
   c.fillText("RANK Δ", 1390, 260);
   c.fillText("AVG Δ", 1545, 260);
   c.fillText("AVG / GAME", 1700, 260);
@@ -270,14 +250,25 @@ export async function drawItemReport(
     c.font = condensedFont(34, 700);
     c.fillText(r.average.toFixed(1), 1735, y + 44);
   });
-  await footer(c, height, "DEADLOCK AR · COMMUNITY TOURNAMENTS");
+  await footer(
+    c,
+    height,
+    recordedPicks
+      ? "SOURCE-REPORTED ITEMS · FULL REFUNDS NOT IDENTIFIED"
+      : typeof coverage === "string" && coverage.trim()
+        ? coverage.trim().slice(0, 115).toUpperCase()
+        : "DEADLOCK AR · COMMUNITY TOURNAMENTS",
+  );
 }
 export async function drawMvpReport(canvas, { player, title }) {
   await prepareFonts();
   const value = (n) =>
     Number.isFinite(n) ? Math.round(n).toLocaleString() : "—";
   const c = base(canvas, 1080, title || "Series MVP", "MOST VALUABLE PLAYER");
-  if (!player) return;
+  if (!player) {
+    await footer(c, 1080, "DEADLOCK AR · COMMUNITY TOURNAMENTS");
+    return;
+  }
   const image = await picture(
     heroes.find((h) => h.id === player.heroId)?.gloatImage || player.image,
   );

@@ -1,4 +1,9 @@
 import { draftPriority, itemPriority } from "../src/analytics.js";
+import { isDraftReportSource } from "../src/report-sources.js";
+import {
+  automaticItemHistory,
+  itemReportDetails,
+} from "../src/item-reporting.js";
 import { inTournament } from "./tournaments.mjs";
 export function reportOutput(store, channel, heroes, items) {
   const settings = store.workspace.reports || {},
@@ -12,6 +17,7 @@ export function reportOutput(store, channel, heroes, items) {
     .filter(
       (d) =>
         inTournament(d, store) &&
+        isDraftReportSource(d) &&
         !d.excluded &&
         (settings.selectedDrafts || []).includes(d.id),
     );
@@ -26,7 +32,7 @@ export function reportOutput(store, channel, heroes, items) {
       ended: Boolean(s.result),
       players: s.result?.match.players || [],
       purchases: [],
-      ...s.items,
+      ...automaticItemHistory(s),
     }));
   const games = all.filter(
     (g) =>
@@ -66,6 +72,7 @@ export function reportOutput(store, channel, heroes, items) {
       title,
       games: games.length,
       baselineGames: baseline.length,
+      ...itemReportDetails(games, baseline),
       rows: itemPriority(games, items, baseline),
       visible:
         games.length > 0 &&

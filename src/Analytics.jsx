@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import heroes from "./heroes.json";
 import items from "./items.json";
 import { draftPriority, itemPriority } from "./analytics.js";
+import { isDraftReportSource } from "./report-sources.js";
+import { itemReportDetails } from "./item-reporting.js";
 import {
   drawHeroReport,
   drawItemReport,
@@ -56,7 +58,10 @@ export default function Analytics({ active, config }) {
       alive = false;
     };
   }, [active]);
-  const drafts = useMemo(() => data.drafts.filter((d) => !d.excluded), [data]);
+  const drafts = useMemo(
+    () => data.drafts.filter((d) => !d.excluded && isDraftReportSource(d)),
+    [data],
+  );
   const games = useMemo(
     () =>
       data.games.filter(
@@ -124,7 +129,12 @@ export default function Analytics({ active, config }) {
         : itemPriority(chosenGames, items, baseGames),
     [report, chosenDrafts, chosenGames, includeZero, baseGames],
   );
+  const itemDetails = useMemo(
+    () => itemReportDetails(chosenGames, baseGames),
+    [chosenGames, baseGames],
+  );
   const chartKey = JSON.stringify({
+    itemDetails,
     manualMvp,
     mvpSource,
     report,
@@ -145,6 +155,7 @@ export default function Analytics({ active, config }) {
         ? drawHeroReport(target, { rows, title, games: chosenDrafts.length })
         : report === "items"
           ? drawItemReport(target, {
+              ...itemDetails,
               rows,
               title,
               games: chosenGames.length,
@@ -190,6 +201,7 @@ export default function Analytics({ active, config }) {
     chartKey,
     mvpSource,
     manualMvp,
+    itemDetails,
   ]);
   const toggle = (id, setter) =>
     setter((old) =>
@@ -261,7 +273,11 @@ export default function Analytics({ active, config }) {
       <div className={`analytics-layout ${manual ? "manual-mvp-layout" : ""}`}>
         <aside className="production-card analytics-selection" hidden={manual}>
           <h2>Select {report === "heroes" ? "drafts" : "games"}</h2>
-          <p>Only data from the current tournament is listed.</p>
+          <p>
+            {report === "heroes"
+              ? "Only saved live or manual drafts from this tournament are listed. Finished match rosters do not count as draft picks."
+              : "Only data from the current tournament is listed."}
+          </p>
           {report === "heroes" ? (
             <>
               <button
@@ -331,7 +347,7 @@ export default function Analytics({ active, config }) {
                     {d.tournament} ·{" "}
                     {report === "heroes"
                       ? `${d.selections.filter((s) => s.heroId).length} selections${d.completed ? " · complete" : ""}`
-                      : `${d.purchases?.filter((p) => p.status === "confirmed").length || 0} confirmed purchases${!d.ended ? " · incomplete" : ""}${!d.fromStart ? " · partial capture" : ""}`}
+                      : `${d.purchases?.filter((p) => ["confirmed", "recorded"].includes(p.status)).length || 0} ${d.reportBasis === "recorded-item-picks" ? "recorded item picks · automatic" : "confirmed purchases"}${!d.ended ? " · incomplete" : ""}${!d.fromStart ? " · partial capture" : ""}`}
                   </small>
                 </span>
               </label>
@@ -524,6 +540,13 @@ export default function Analytics({ active, config }) {
               {notice}
             </p>
           )}
+          {report === "items" &&
+            itemDetails.reportBasis === "recorded-item-picks" && (
+              <p className="production-notice">
+                Imported item picks are processed automatically.{" "}
+                {itemDetails.coverage}
+              </p>
+            )}
           {blocked && (
             <section className="production-card purchase-review">
               <h2>

@@ -52,22 +52,20 @@ export default function OfflineImport({ drafts = [], onImported }) {
           />
         </label>
         <label>
-          Draft information
+          Link a saved draft (optional)
           <select value={draftId} onChange={(e) => setDraftId(e.target.value)}>
-            <option value="">Use available match metadata</option>
-            {drafts
-              .filter((d) => d.source !== "metadata")
-              .map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.label || d.id}
-                </option>
-              ))}
+            <option value="">No draft linked</option>
+            {drafts.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.label || d.id}
+              </option>
+            ))}
           </select>
         </label>
         <p className="production-hint">
           Link a saved Statlocker or manual draft to retain its actual pick/ban
-          sequence. Match metadata gives hero choices and, when available,
-          banned heroes. It does not identify the ban teams or draft order.
+          sequence. Hero priority uses saved drafts only; importing a finished
+          match does not create draft picks or bans.
         </p>
         <label className="check-label">
           <input
@@ -82,7 +80,7 @@ export default function OfflineImport({ drafts = [], onImported }) {
           limit. Missing or expired data cannot be recovered from an ID alone.
         </p>
         <button className="button primary" disabled={busy}>
-          {busy ? "Importing finished match…" : "Import match & draft info"}
+          {busy ? "Importing finished match…" : "Import match"}
         </button>
       </form>
       {notice && (
@@ -94,8 +92,8 @@ export default function OfflineImport({ drafts = [], onImported }) {
         <div className="offline-result" role="status">
           <h3>Match {result.id} saved</h3>
           <p>
-            {result.players} players · {result.purchases} item entries awaiting
-            review.
+            {result.players} players · {result.purchases} recorded item entries
+            processed automatically.
           </p>
           <p>
             The current live feed and on-air result continue as before. Select
@@ -123,9 +121,8 @@ export default function OfflineImport({ drafts = [], onImported }) {
             different from current net worth.
           </li>
           <li>
-            Item entries with recorded purchase/sale times. Review them under
-            Tournament reports before including them in purchase counts;
-            metadata does not prove refunds or final held inventory.
+            Recorded item picks are included automatically in Top items.
+            Metadata does not prove refunds or final held inventory.
           </li>
           <li>
             Publishing uses the same reviewed scoreboard flow as recorded
