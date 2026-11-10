@@ -5,6 +5,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { createBroadcastServer } from "./cloud-server.mjs";
+import { applyRecordedSources } from "./recorded-sources.mjs";
 
 function fixture() {
   const frame = {
@@ -15,6 +16,7 @@ function fixture() {
     endObserved: true,
     players: Array.from({ length: 12 }, (_, i) => ({
       id: String(i + 1),
+      slot: i + 1,
       team: i < 6 ? 0 : 1,
       heroId: i + 1,
       kills: 1,
@@ -37,7 +39,14 @@ function fixture() {
     result: { winner: 0, match: structuredClone(frame) },
     match: structuredClone(frame),
     recording: { fromStart: true },
-    published: structuredClone(frame),
+    published: {
+      match: structuredClone(frame),
+      teams: [
+        { name: "Saved left", score: 1 },
+        { name: "Saved right", score: 0 },
+      ],
+      game: 2,
+    },
     seriesAward: { winner: 0 },
     bracketAward: { id: "keep" },
     settings: { names: { 1: "Name" } },
@@ -203,6 +212,45 @@ test("repair upload requires the signed-in admin and current tournament and pers
     app.store.sessions.get("123").result.match.players[0].items[0],
     itemId,
   );
+  const sourceSession = app.store.sessions.get("123");
+  applyRecordedSources(sourceSession, {
+    version: 1,
+    source: "recording-post-match",
+    matchId: sourceSession.result.match.matchId,
+    duration: 60,
+    players: sourceSession.result.match.players.map((p) => ({
+      id: p.id,
+      slot: p.slot,
+      team: p.team,
+      heroId: p.heroId,
+      sampleTime: 60,
+      soulsBySource: [
+        {
+          source: 2,
+          label: "Troopers",
+          gold: 100,
+          knownGold: 100,
+          complete: true,
+        },
+      ],
+    })),
+  });
+  const sourceRoute = "/api/collector/publish-sources?match=123";
+  assert.equal((await post(sourceRoute, {})).status, 401);
+  assert.equal(
+    (await post(sourceRoute, {}, { ...cookie, "X-DLAR-Tournament": "stale" }))
+      .status,
+    409,
+  );
+  const sourceWorkspaceBefore = structuredClone(app.store.workspace);
+  assert.equal((await post(sourceRoute, {}, cookie)).status, 200);
+  assert.deepEqual(app.store.workspace, sourceWorkspaceBefore);
+  assert.equal(
+    sourceSession.published.match.players[0].soulsBySource[0].gold,
+    100,
+  );
+  assert.deepEqual(sourceSession.bracketAward, { id: "keep" });
+  assert.deepEqual(sourceSession.seriesAward, { winner: 0 });
   const saved = JSON.parse(
     app.store.db.prepare("SELECT value FROM matches WHERE id=?").get("123")
       .value,

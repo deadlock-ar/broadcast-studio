@@ -34,6 +34,7 @@ import { isDraftReportSource } from "../src/report-sources.js";
 import { automaticItemHistory } from "../src/item-reporting.js";
 import { collectorSessionView, selectStatBaseline } from "./stat-history.mjs";
 import { repairRecording } from "./recording-repair.mjs";
+import { publishRecordedSources } from "./recorded-sources.mjs";
 import {
   patchWorkspace,
   applyOperations,
@@ -1014,6 +1015,18 @@ export async function createBroadcastServer(options = {}) {
           store.workspace.scoreboard.kind = "scoreboard";
           store.workspace.revision++;
           store.saveWorkspace();
+          changed("scoreboard");
+          json(res, 200, collectorSessionView(s));
+          return;
+        }
+        if (
+          url.pathname === "/api/collector/publish-sources" &&
+          method === "POST"
+        ) {
+          await tournamentBody(req);
+          publishRecordedSources(s);
+          await store.save(s);
+          changed("collector");
           changed("scoreboard");
           json(res, 200, collectorSessionView(s));
           return;

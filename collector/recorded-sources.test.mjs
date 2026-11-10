@@ -1,6 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { applyRecordedSources } from "./recorded-sources.mjs";
+import {
+  applyRecordedSources,
+  publishRecordedSources,
+} from "./recorded-sources.mjs";
 import { BroadcastDatabase } from "./database.mjs";
 import { Publisher } from "./publisher.mjs";
 import { mkdtemp, rm } from "node:fs/promises";
@@ -100,6 +103,44 @@ test("wrong game, roster, source timestamp and malformed income are rejected wit
     assert.throws(() => applyRecordedSources(session, value), /does not match/);
     assert.deepEqual(session, before);
   }
+});
+
+test("publishing recovered sources keeps the previously published presentation and all other player fields", () => {
+  const snapshot = frame();
+  const session = {
+    match: structuredClone(snapshot),
+    result: { match: structuredClone(snapshot), winner: 0 },
+    published: {
+      match: structuredClone(snapshot),
+      teams: [
+        { name: "Original left", score: 1 },
+        { name: "Original right", score: 0 },
+      ],
+      game: 2,
+      round: "Quarterfinals",
+      names: { 1: "Saved name" },
+      mvpId: "1",
+      publishedAt: 10,
+    },
+    seriesAward: { winner: 0 },
+  };
+  const original = structuredClone(session.published);
+  applyRecordedSources(session, sources(), 123);
+  publishRecordedSources(session, 456);
+  const { sourceBreakdown, sourcesPublishedAt, ...published } =
+    session.published;
+  assert.equal(sourceBreakdown.receivedAt, 123);
+  assert.equal(sourcesPublishedAt, 456);
+  published.match = {
+    ...published.match,
+    players: published.match.players.map((p) => {
+      const next = { ...p };
+      delete next.soulsBySource;
+      return next;
+    }),
+  };
+  assert.deepEqual(published, original);
+  assert.deepEqual(session.seriesAward, { winner: 0 });
 });
 test("publisher retains source details received before game over and accepts verified late details", async (t) => {
   const directory = await mkdtemp(

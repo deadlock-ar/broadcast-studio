@@ -555,13 +555,15 @@ export default function ProductionStudio({ active, config }) {
       const state = await collectorRequest(path, id, payload);
       if (state.id && !shared) setId(state.id);
       setNotice(
-        path === "publish"
-          ? "Scoreboard published. OBS now shows this reviewed snapshot."
-          : path === "verify"
-            ? "Finished metadata verified. Review and publish again to update the on-air scoreboard."
-            : path === "repair"
-              ? "Recording details repaired. Review and publish the updated scoreboard."
-              : "Saved.",
+        path === "publish-sources"
+          ? "Recovered souls by source published with the scoreboard’s saved teams and scores."
+          : path === "publish"
+            ? "Scoreboard published. OBS now shows this reviewed snapshot."
+            : path === "verify"
+              ? "Finished metadata verified. Review and publish again to update the on-air scoreboard."
+              : path === "repair"
+                ? "Recording details repaired. Review and publish the updated scoreboard."
+                : "Saved.",
       );
     } catch (e) {
       setNotice(e.message);
@@ -1139,6 +1141,18 @@ export default function ProductionStudio({ active, config }) {
                     >
                       Verify with finished metadata
                     </button>
+                    {session.published &&
+                      session.result.sourceBreakdown &&
+                      (session.published.sourceBreakdown?.receivedAt || 0) <
+                        session.result.sourceBreakdown.receivedAt && (
+                        <button
+                          className="button secondary"
+                          disabled={busy}
+                          onClick={() => action("publish-sources")}
+                        >
+                          Publish recovered sources
+                        </button>
+                      )}
                     {shared && (
                       <label className="button secondary">
                         Load repaired recording details

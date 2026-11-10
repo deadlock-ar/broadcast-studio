@@ -128,3 +128,27 @@ export function applyRecordedSources(session, value, now = Date.now()) {
   session.sourceBreakdown = { ...clean, receivedAt: now };
   return session;
 }
+
+export function publishRecordedSources(session, now = Date.now()) {
+  if (!session.published || !session.result?.sourceBreakdown) fail();
+  const sources = validateRecordedSources(
+    session.sourceBreakdown,
+    session.published.match,
+    true,
+  );
+  session.published = {
+    ...session.published,
+    match: {
+      ...session.published.match,
+      players: session.published.match.players.map((p) => ({
+        ...p,
+        soulsBySource: structuredClone(
+          sources.players.find((source) => source.id === p.id).soulsBySource,
+        ),
+      })),
+    },
+    sourceBreakdown: structuredClone(session.result.sourceBreakdown),
+    sourcesPublishedAt: now,
+  };
+  return session;
+}
