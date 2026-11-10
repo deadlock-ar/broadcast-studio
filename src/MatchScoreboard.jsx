@@ -26,9 +26,10 @@ function Sources({ player }) {
   const sources = player.soulsBySource;
   if (!sources?.length)
     return (
-      <div className="ds-sources ds-unavailable">
-        Source breakdown unavailable
-      </div>
+      <div
+        className="ds-sources"
+        aria-label={`${player.name} source breakdown not recorded`}
+      />
     );
   const amount = (s) =>
     Number.isFinite(s.gold)
@@ -62,7 +63,7 @@ function Sources({ player }) {
     </div>
   );
 }
-function PlayerColumn({ player, name, mvp, keyPlayer, best }) {
+function PlayerColumn({ player, name, mvp, keyPlayer, best, showSources }) {
   const hero = heroMap.get(player.heroId),
     held = player.items;
   const itemSlots = Array.isArray(held)
@@ -98,7 +99,7 @@ function PlayerColumn({ player, name, mvp, keyPlayer, best }) {
           {n(player[key])}
         </div>
       ))}
-      <Sources player={player} />
+      {showSources && <Sources player={player} />}
       <div
         className={`ds-items ${itemSlots.length > 16 ? "ds-items-many" : ""}`}
         aria-label={`${name} final held items`}
@@ -161,6 +162,12 @@ export default function MatchScoreboard({ result }) {
   const match = result.match,
     name = (p) =>
       result.names?.[p.id] || p.name || heroMap.get(p.heroId)?.name || "Player";
+  const showSources = match.players.some((player) =>
+    player.soulsBySource?.some(
+      (source) =>
+        Number.isFinite(source.gold) || Number.isFinite(source.knownGold),
+    ),
+  );
   const teams = [0, 1].map((team) =>
     match.players
       .filter((p) => p.team === team)
@@ -200,7 +207,9 @@ export default function MatchScoreboard({ result }) {
       );
   }
   return (
-    <div className="production-canvas deadlock-scoreboard">
+    <div
+      className={`production-canvas deadlock-scoreboard${showSources ? "" : " ds-without-sources"}`}
+    >
       <header className="ds-ribbon">
         {[0, 1].map((team) => (
           <section
@@ -251,6 +260,7 @@ export default function MatchScoreboard({ result }) {
                 mvp={p.id === result.mvpId}
                 keyPlayer={keyPlayerLabels.get(p.id)}
                 best={best}
+                showSources={showSources}
               />
             ))}
           </section>
@@ -264,7 +274,11 @@ export default function MatchScoreboard({ result }) {
           {rows.map(([, label]) => (
             <span key={label}>{label}</span>
           ))}
-          <span>SOULS BY SOURCE</span>
+          {showSources && (
+            <span title="Recorded earned income; this can differ from total net worth">
+              SOULS BY SOURCE
+            </span>
+          )}
           <span>FINAL ITEMS</span>
           <span>ABILITY TIERS</span>
         </aside>

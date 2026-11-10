@@ -175,6 +175,10 @@
   border-top: 2px solid #c4a46a;
   background: #2b322a;
 }
+.ds-without-sources .ds-player,
+.ds-without-sources .ds-labels {
+  grid-template-rows: minmax(130px, 1fr) 42px repeat(7, 31px) 132px 26px;
+}
 .ds-roster-1 .ds-player {
   border-color: #8faeb5;
 }

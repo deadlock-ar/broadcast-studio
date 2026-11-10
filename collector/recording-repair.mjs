@@ -1,5 +1,9 @@
 // A reparse may fill missing detail, but must never change a game's identity,
 // outcome, counters, presentation, or bracket/series awards.
+import {
+  validateRecordedSources,
+  applyRecordedSources,
+} from "./recorded-sources.mjs";
 export function repairRecording(session, value, catalog, now = Date.now()) {
   const original = session.result?.match;
   const frame = value?.frame;
@@ -122,6 +126,9 @@ export function repairRecording(session, value, catalog, now = Date.now()) {
     repairedAt: now,
     parserVersion: String(value.parserVersion || "").slice(0, 80),
   };
+  const sources = value.sourceBreakdown
+    ? validateRecordedSources(value.sourceBreakdown, original, true)
+    : null;
   session.result = {
     ...session.result,
     match: { ...original, players },
@@ -135,6 +142,7 @@ export function repairRecording(session, value, catalog, now = Date.now()) {
       ["pending", "review"].includes(p.status),
     ).length,
   };
+  if (sources) applyRecordedSources(session, sources, now);
   session.message =
     "Recording details repaired. Review and publish the updated scoreboard.";
   return session;

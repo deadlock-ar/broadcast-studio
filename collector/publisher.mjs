@@ -1,9 +1,15 @@
 import { randomBytes, randomUUID, createHash } from "node:crypto";
 import { applySeriesWin } from "./enrichment.mjs";
 import {
+  cleanRecordedSources,
+  applyRecordedSources,
+  validateRecordedSources,
+} from "./recorded-sources.mjs";
+import {
   emptySession,
   applyFrame,
   applyInterruption,
+  mergePlayers,
   sessionId,
 } from "./model.mjs";
 
@@ -266,6 +272,35 @@ export class Publisher {
         ? value.liveEdgeClockMs
         : newestClock;
     const outputSamples = [];
+    const recordedSources = value.sourceBreakdown
+      ? cleanRecordedSources(value.sourceBreakdown)
+      : null;
+    if (recordedSources) {
+      const reference =
+        s.result?.match ||
+        samples
+          .map((sample) => sample.frame)
+          .findLast((frame) => frame.players.length === 12) ||
+        s.match;
+      validateRecordedSources(recordedSources, reference, Boolean(s.result));
+    }
+    const finalSources = recordedSources || s.sourceBreakdown;
+    if (finalSources && !s.result) {
+      let prospective = s.match;
+      for (const { frame } of samples) {
+        if (Number.isFinite(prospective?.tick) && frame.tick < prospective.tick)
+          continue;
+        prospective = {
+          ...frame,
+          matchId: frame.matchId || prospective?.matchId,
+          players: mergePlayers(prospective?.players, frame.players),
+        };
+        if (frame.endObserved) {
+          validateRecordedSources(finalSources, prospective, true);
+          break;
+        }
+      }
+    }
     let workspaceChanged = false,
       reportsChanged = false;
     if (
@@ -440,6 +475,15 @@ export class Publisher {
         });
       }
     }
+    if (
+      recordedSources ||
+      (s.sourceBreakdown && s.result && !s.result.sourceBreakdown)
+    ) {
+      applyRecordedSources(s, recordedSources || s.sourceBreakdown, now);
+    }
+    if (recordedSources) delete s.sourceBreakdownError;
+    else if (value.sourceBreakdownError)
+      s.sourceBreakdownError = label(value.sourceBreakdownError);
     if (value.items) {
       if (
         !Array.isArray(value.items.purchases) ||

@@ -26,6 +26,7 @@ import PlayerBannersScreen from "./PlayerBannersScreen.jsx";
 import CasterScreen from "./CasterScreen.jsx";
 import CollectorPanel from "./CollectorPanel.jsx";
 import SoulsDifferencePanel from "./SoulsDifferencePanel.jsx";
+import PanelTransition from "./PanelTransition.jsx";
 
 function WorkspaceProvider({ initial, children, logout }) {
   const canonical = useRef(initial),
@@ -292,7 +293,10 @@ function CloudBroadcast({ channel }) {
   if (channel === "momentum")
     return (
       <BroadcastFrame>
-        {value?.visible !== false && (
+        <PanelTransition
+          visible={Boolean(value) && value.visible !== false}
+          identity={value?.session?.id}
+        >
           <SoulsDifferencePanel
             session={value?.session}
             panel={cleanPanel(value?.panel)}
@@ -306,7 +310,7 @@ function CloudBroadcast({ channel }) {
                     15000))
             }
           />
-        )}
+        </PanelTransition>
       </BroadcastFrame>
     );
   const result = value?.apiStats?.result,
@@ -332,6 +336,24 @@ function CloudBroadcast({ channel }) {
     channel === "live-events" ? value?.apiStats?.visible : value?.visible;
   if (["hero-priority", "top-items", "series-mvp"].includes(channel))
     return <ReportCanvas report={value?.report} />;
+  if (channel === "deadem")
+    return (
+      <BroadcastFrame>
+        <CollectorPanel
+          visible={Boolean(value) && visible !== false}
+          session={session}
+          panel={panel}
+          stale={
+            error ||
+            (session &&
+              !session.ended &&
+              (session.status !== "live" ||
+                collectorRenderNow(session, now) - collectorFreshAt(session) >
+                  15000))
+          }
+        />
+      </BroadcastFrame>
+    );
   return (
     <BroadcastFrame>
       {visible === false ? null : channel === "scoreboard" ? (
@@ -345,19 +367,6 @@ function CloudBroadcast({ channel }) {
           session={error ? null : session}
           catalog={ultimateCatalog}
           delayed
-        />
-      ) : channel === "deadem" ? (
-        <CollectorPanel
-          session={session}
-          panel={panel}
-          stale={
-            error ||
-            (session &&
-              !session.ended &&
-              (session.status !== "live" ||
-                collectorRenderNow(session, now) - collectorFreshAt(session) >
-                  15000))
-          }
         />
       ) : match ? (
         <StatGraphic

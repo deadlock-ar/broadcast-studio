@@ -307,45 +307,165 @@
 .observer-connect details p {
   max-width: 850px;
 }
-.hud-bridges {
+.ultimate-hud .hud-badges {
   position: absolute;
-  right: -8px;
-  bottom: -8px;
+  left: calc(-1 * var(--hud-badge-outset, 4px));
+  right: auto;
+  top: calc(100% - var(--hud-corner-overlap, 12px));
+  bottom: auto;
   display: grid;
-  grid-template-columns: 23px;
-  gap: 3px;
+  grid-template-columns: var(--hud-ultimate-size, 32px);
+  gap: 4px;
+  z-index: 3;
 }
-.hud-bridges.has-multiple {
-  grid-template-columns: repeat(2, 23px);
+.ultimate-hud .hud-ultimate {
+  width: var(--hud-ultimate-size, 32px);
+  height: var(--hud-ultimate-size, 32px);
+  border-radius: 7px;
 }
-.hud-bridges.has-multiple > :last-child:nth-child(odd) {
-  grid-column: 2;
+.ultimate-hud .hud-ultimate img {
+  width: 86%;
+  height: 86%;
 }
-.hud-player.hud-with-bridges .hud-badges {
-  top: calc(100% + 12px);
+.ultimate-hud .hud-bridges {
+  position: absolute;
+  right: calc(-1 * var(--hud-badge-outset, 4px));
+  left: auto;
+  top: calc(100% - var(--hud-corner-overlap, 12px));
+  bottom: auto;
+  display: grid;
+  grid-template-columns: var(--hud-bridge-size, 24px);
+  gap: 4px;
+  z-index: 3;
 }
-.hud-bridge {
+.ultimate-hud .hud-bridge {
+  --bridge-accent: #b69be9;
+  --bridge-fill: #35264a;
   display: grid;
   place-items: center;
-  min-width: 23px;
-  height: 23px;
-  font:
-    bold 12px "DLAR Arabic",
-    sans-serif;
-  border-radius: 4px;
-  padding: 0 5px;
-  background: #8081d8;
-  color: white;
-  border: 1px solid #e7e6ff;
+  width: var(--hud-bridge-size, 24px);
+  height: var(--hud-bridge-size, 24px);
+  min-width: 0;
+  padding: 2px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, var(--bridge-fill), #101814);
+  border: 1px solid var(--bridge-accent);
+  box-shadow:
+    0 2px 6px #000b,
+    0 0 6px var(--bridge-fill),
+    inset 0 1px 2px #ffffff30;
+  overflow: hidden;
 }
-.hud-bridge.Gun {
-  background: #ac743d;
+.ultimate-hud .hud-bridge img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 1px #0008);
 }
-.hud-bridge.Survival {
-  background: #51945b;
+.ultimate-hud .hud-bridge.Gun {
+  --bridge-accent: #e7ac47;
+  --bridge-fill: #553713;
 }
-.hud-bridge.Movement {
-  background: #398ca4;
+.ultimate-hud .hud-bridge.Movement {
+  --bridge-accent: #70b8f0;
+  --bridge-fill: #173b5b;
+}
+.ultimate-hud .hud-bridge.Casting {
+  --bridge-accent: #b69be9;
+  --bridge-fill: #35264a;
+}
+.ultimate-hud .hud-bridge.Survival {
+  --bridge-accent: #a9d57b;
+  --bridge-fill: #2c4620;
+}
+.ultimate-hud .hud-anchor-name {
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%;
+  width: min(110px, var(--hud-label-width, 100%));
+  margin: 0;
+  transform: translateX(-50%);
+}
+.hud-test-heading,
+.hud-test-mode {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.hud-test-heading {
+  justify-content: space-between;
+}
+.hud-test-heading h2 {
+  margin: 0 0 5px;
+}
+.hud-test-heading p {
+  margin: 0;
+}
+.hud-test-mode {
+  margin: 20px 0;
+  padding: 13px 15px;
+  background: #eef1e5;
+  border: 1px solid #d2dbc2;
+  border-radius: 5px;
+}
+.hud-test-mode strong {
+  color: #536b3c;
+}
+.hud-test-mode span {
+  color: #70795f;
+  font-size: 12px;
+}
+.hud-test-mode button {
+  margin-left: auto;
+}
+.hud-test-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  gap: 14px;
+}
+.hud-test-buffs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+}
+.hud-test-buffs label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  background: #f2f3e9;
+  border: 1px solid #d4dac8;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.hud-test-buffs input {
+  width: 14px;
+  height: 14px;
+  min-height: 0;
+  margin: 0;
+  accent-color: #718451;
+}
+.hud-test-buffs img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+.hud-test-placement {
+  margin-bottom: 20px;
+}
+.hud-test-placement summary {
+  cursor: pointer;
+  color: #687b50;
+  font-size: 12px;
+}
+.hud-test-placement > button {
+  margin-top: 12px;
+}
+.hud-placement-tester > .production-preview {
+  margin-top: 20px;
 }
 @media (max-width: 1150px) {
   .analytics-layout {

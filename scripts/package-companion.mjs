@@ -50,6 +50,8 @@ await dependencies(
 for (const name of [
   "local-reader.mjs",
   "end-settlement.mjs",
+  "source-breakdown.mjs",
+  "source-totals.mjs",
   "pov-compat.mjs",
   "extract.mjs",
   "ultimates.mjs",

@@ -63,7 +63,7 @@ export default function ObserverControls({ active }) {
             href="/downloads/Deadlock-AR-Observer.zip"
             download
           >
-            Download observer companion v0.3 ↓
+            Download observer companion v0.4 ↓
           </a>
         </div>
         <div>

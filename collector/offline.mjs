@@ -3,41 +3,8 @@ import { emptySession, completeRoster, matchId } from "./model.mjs";
 import { metricFrame } from "./telemetry.mjs";
 import { automaticItemHistory } from "../src/item-reporting.js";
 import { isDraftReportSource } from "../src/report-sources.js";
-
-const SOURCE_NAMES = {
-  1: "Players",
-  2: "Troopers",
-  3: "Neutrals",
-  4: "Objectives",
-  5: "Treasure",
-  6: "Assists",
-  7: "Denies",
-  8: "Team bonus",
-  9: "Assassinate",
-  10: "Trophy Collector",
-  11: "Cultist Sacrifice",
-  12: "Breakables",
-  13: "Goose Egg",
-};
-// Income is distinct from net worth. Never add the legacy fields to gold_sources.
-export function soulsBySource(sample) {
-  if (!Array.isArray(sample?.gold_sources) || !sample.gold_sources.length)
-    return null;
-  return sample.gold_sources
-    .map((s) => {
-      const gold = nonnegative(s.gold),
-        orbs = nonnegative(s.gold_orbs);
-      return {
-        source: s.source,
-        label: SOURCE_NAMES[s.source] || `Source ${s.source}`,
-        gold: gold === null || orbs === null ? null : gold + orbs,
-        knownGold:
-          gold === null && orbs === null ? null : (gold ?? 0) + (orbs ?? 0),
-        complete: gold !== null && orbs !== null,
-      };
-    })
-    .filter((s) => Number.isInteger(s.source));
-}
+import { soulsBySource } from "./source-totals.mjs";
+export { soulsBySource } from "./source-totals.mjs";
 export function importedMatch(raw, expectedId, itemCatalog, now = Date.now()) {
   const normalized = normalizeMetadata(raw, expectedId),
     id = normalized.id;

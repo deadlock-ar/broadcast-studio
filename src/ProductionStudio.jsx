@@ -29,6 +29,7 @@ import MatchScoreboard from "./MatchScoreboard.jsx";
 import RecordingEvidence from "./RecordingEvidence.jsx";
 import "./RecordingEvidence.css";
 import StatWindowControls from "./StatWindowControls.jsx";
+import CaptureDataStatus from "./CaptureDataStatus.jsx";
 
 const roster = {
   ...Object.fromEntries(
@@ -39,6 +40,13 @@ const roster = {
   ),
   ...Object.fromEntries(heroes.map((h) => [h.id, h])),
 };
+const bridgeIcons = {
+  Gun: "gun",
+  Movement: "movement",
+  Casting: "casting",
+  Survival: "survival",
+};
+const defaultHudPlacement = { x: 460, y: 22, size: 62, gap: 12, teamGap: 145 };
 function Portrait({ player }) {
   const hero = roster[player.heroId];
   return hero ? (
@@ -54,24 +62,22 @@ export function Hud({
   catalog = [],
   calibration = false,
   delayed = false,
+  preview = null,
 }) {
   const [now, setNow] = useState(Date.now);
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 80);
     return () => clearInterval(timer);
   }, []);
-  const settings = session?.settings?.hud || {
-    x: 460,
-    y: 22,
-    size: 62,
-    gap: 12,
-    teamGap: 145,
-  };
-  const players = liveRoster(session);
+  const settings =
+    preview?.settings || session?.settings?.hud || defaultHudPlacement;
+  const players = preview?.players || liveRoster(session);
   const sourceNow = collectorRenderNow(session, now, delayed);
-  const badges = visibleUltimateBadges(session, sourceNow);
+  const badges = preview?.badges || visibleUltimateBadges(session, sourceNow);
   const bridgesFresh =
-    session?.status === "live" && sourceNow - collectorFreshAt(session) < 10000;
+    Boolean(preview) ||
+    (session?.status === "live" &&
+      sourceNow - collectorFreshAt(session) < 10000);
   return (
     <div
       className="production-canvas ultimate-hud"
@@ -80,69 +86,331 @@ export function Hud({
       {[0, 1].flatMap((team) =>
         players
           .filter((p) => p.team === team)
-          .map((p, i) => (
-            <div
-              key={p.id}
-              className={`hud-player ${calibration ? "hud-calibration" : ""}${bridgesFresh && p.bridgeBuffs?.length ? " hud-with-bridges" : ""}`}
-              style={{
-                left:
-                  settings.x +
-                  (team * 6 + i) * (settings.size + settings.gap) +
-                  team * settings.teamGap,
-                top: settings.y,
-                width: settings.size,
-                height: settings.size,
-              }}
-            >
-              {calibration && (
-                <>
-                  <Portrait player={p} />
-                  <span className="hud-anchor-name">
-                    {session.settings.names[p.id] || p.name}
-                  </span>
-                </>
-              )}
-              <div className="hud-badges">
-                {badges
-                  .filter((b) => b.targetId === p.id)
-                  .slice(0, 4)
-                  .map((b) => {
-                    const ability = catalog.find((a) => a.id === b.abilityId);
-                    return (
-                      <span
-                        key={b.abilityId}
-                        className={`hud-ultimate ${b.kind}`}
-                        title={`${ability?.heroName || "Hero"} · ${ability?.name || "Ultimate"} · ${b.kind === "effect" ? "effect active" : "hit"}`}
-                        aria-label={`${ability?.name || "Ultimate"} ${b.kind} on ${p.name}`}
-                      >
-                        {ability?.image ? (
-                          <img src={ability.image} alt={ability.name} />
-                        ) : (
-                          "ULT"
-                        )}
-                      </span>
-                    );
-                  })}
-              </div>
-              {bridgesFresh && (
-                <div
-                  className={`hud-bridges${p.bridgeBuffs?.length > 1 ? " has-multiple" : ""}`}
-                >
-                  {(p.bridgeBuffs || []).map((b) => (
+          .map((p, i) => {
+            const bridges =
+              (preview ? preview.bridgeBuffs[p.id] : p.bridgeBuffs) || [];
+            return (
+              <div
+                key={p.id}
+                className={`hud-player ${calibration ? "hud-calibration" : ""}${bridgesFresh && bridges.length ? " hud-with-bridges" : ""}`}
+                style={{
+                  left:
+                    settings.x +
+                    (team * 6 + i) * (settings.size + settings.gap) +
+                    team * settings.teamGap,
+                  top: settings.y,
+                  width: settings.size,
+                  height: settings.size,
+                  "--hud-ultimate-size": `${Math.min(32, settings.size * 0.5)}px`,
+                  "--hud-bridge-size": `${Math.min(24, settings.size * 0.4)}px`,
+                  "--hud-badge-outset": `${Math.min(4, settings.gap / 2)}px`,
+                  "--hud-corner-overlap": `${Math.min(12, settings.size * 0.2)}px`,
+                  "--hud-label-width": `${Math.max(1, settings.size + settings.gap - 4)}px`,
+                }}
+              >
+                {calibration && (
+                  <>
+                    <Portrait player={p} />
                     <span
-                      key={b.id}
-                      className={`hud-bridge ${b.label}`}
-                      title={`${b.label} bridge buff${b.remaining !== null ? ` · ${Math.ceil(b.remaining)}s at source` : ""}`}
+                      className="hud-anchor-name"
+                      title={session?.settings?.names?.[p.id] || p.name}
                     >
-                      {b.label[0]}
+                      {session?.settings?.names?.[p.id] || p.name}
                     </span>
-                  ))}
+                  </>
+                )}
+                <div className="hud-badges">
+                  {badges
+                    .filter((b) => b.targetId === p.id)
+                    .slice(0, 4)
+                    .map((b) => {
+                      const ability = catalog.find((a) => a.id === b.abilityId);
+                      return (
+                        <span
+                          key={b.abilityId}
+                          className={`hud-ultimate ${b.kind}`}
+                          title={`${ability?.heroName || "Hero"} · ${ability?.name || "Ultimate"} · ${b.kind === "effect" ? "effect active" : "hit"}`}
+                          aria-label={`${ability?.name || "Ultimate"} ${b.kind} on ${p.name}`}
+                        >
+                          {ability?.image ? (
+                            <img src={ability.image} alt={ability.name} />
+                          ) : (
+                            "✦"
+                          )}
+                        </span>
+                      );
+                    })}
                 </div>
-              )}
-            </div>
-          )),
+                {bridgesFresh && (
+                  <div className="hud-bridges">
+                    {bridges
+                      .filter((b) => bridgeIcons[b.label])
+                      .slice(0, 4)
+                      .map((b) => (
+                        <span
+                          key={b.id}
+                          className={`hud-bridge ${b.label}`}
+                          title={`${b.label} bridge buff${b.remaining !== null ? ` · ${Math.ceil(b.remaining)}s at source` : ""}`}
+                          aria-label={`${b.label} bridge buff on ${p.name}`}
+                        >
+                          <img
+                            src={`/bridge-buffs/${bridgeIcons[b.label]}.png`}
+                            alt=""
+                          />
+                        </span>
+                      ))}
+                  </div>
+                )}
+              </div>
+            );
+          }),
       )}
     </div>
+  );
+}
+function HudPlacementTester({ session, catalog }) {
+  const [enabled, setEnabled] = useState(false);
+  const [target, setTarget] = useState("all");
+  const [kind, setKind] = useState("mixed");
+  const [count, setCount] = useState(1);
+  const [abilityId, setAbilityId] = useState("");
+  const [buffs, setBuffs] = useState(Object.keys(bridgeIcons));
+  const [placement, setPlacement] = useState(null);
+  const available = catalog?.length ? catalog : ultimateCatalog;
+  const current = liveRoster(session);
+  const players = [0, 1].flatMap((team) => {
+    const teamPlayers = current.filter((player) => player.team === team);
+    return Array.from(
+      { length: 6 },
+      (_, slot) =>
+        teamPlayers[slot] || {
+          id: `hud-preview-${team}-${slot}`,
+          team,
+          slot,
+          heroId: heroes[team * 6 + slot]?.id,
+          name: `${team === 0 ? "Left" : "Right"} player ${slot + 1}`,
+        },
+    );
+  });
+  const selectedAbility =
+    available.find((ability) => String(ability.id) === abilityId) ||
+    available[0];
+  const chosen = selectedAbility
+    ? [
+        selectedAbility,
+        ...available.filter((ability) => ability.id !== selectedAbility.id),
+      ].slice(0, count)
+    : [];
+  const targetIds =
+    target === "all"
+      ? players.map((player) => player.id)
+      : [
+          players.some((player) => player.id === target)
+            ? target
+            : players[0].id,
+        ];
+  const settings = placement || session?.settings?.hud || defaultHudPlacement;
+  const preview = enabled
+    ? {
+        settings,
+        players,
+        badges: targetIds.flatMap((targetId) =>
+          chosen.map((ability, index) => ({
+            targetId,
+            abilityId: ability.id,
+            kind: kind === "mixed" ? (index % 2 ? "effect" : "hit") : kind,
+          })),
+        ),
+        bridgeBuffs: Object.fromEntries(
+          targetIds.map((id) => [
+            id,
+            buffs.map((label) => ({ id: label, label, remaining: null })),
+          ]),
+        ),
+      }
+    : null;
+  return (
+    <section className="production-card hud-placement-tester">
+      <div className="hud-test-heading">
+        <div>
+          <h2>Ultimate HUD preview</h2>
+          <p>
+            Check ultimate interactions at the lower left and bridge buffs at
+            the lower right of every portrait.
+          </p>
+        </div>
+        <span className="production-pill">1920 × 1080</span>
+      </div>
+      <div className="hud-test-mode">
+        <strong>{enabled ? "Local placement test" : "Live preview"}</strong>
+        <span>
+          Preview only · test indicators are never sent to OBS or match data.
+        </span>
+        <button
+          type="button"
+          className={`button ${enabled ? "secondary" : "primary"}`}
+          onClick={() => setEnabled((value) => !value)}
+        >
+          {enabled ? "Clear test" : "Show test indicators"}
+        </button>
+      </div>
+      <div className="hud-test-controls">
+        <label>
+          Target player
+          <select
+            aria-label="HUD test target"
+            value={target}
+            onChange={(event) => setTarget(event.target.value)}
+          >
+            <option value="all">All twelve positions</option>
+            {players.map((player, index) => (
+              <option value={player.id} key={player.id}>
+                {index < 6 ? "Left" : "Right"} {(index % 6) + 1} ·{" "}
+                {session?.settings?.names?.[player.id] || player.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Ultimate
+          <select
+            aria-label="HUD test ultimate"
+            value={selectedAbility?.id || ""}
+            onChange={(event) => setAbilityId(event.target.value)}
+          >
+            {available.map((ability) => (
+              <option value={ability.id} key={ability.id}>
+                {ability.heroName} · {ability.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Interaction
+          <select
+            aria-label="HUD test interaction"
+            value={kind}
+            onChange={(event) => setKind(event.target.value)}
+          >
+            <option value="hit">Damage hit</option>
+            <option value="effect">Lasting effect</option>
+            <option value="mixed">Hit and effect</option>
+          </select>
+        </label>
+        <label>
+          Badges per player
+          <select
+            aria-label="HUD test badge count"
+            value={count}
+            onChange={(event) => setCount(Number(event.target.value))}
+          >
+            {[1, 2, 3, 4].map((number) => (
+              <option key={number} value={number}>
+                {number}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <div
+        className="hud-test-buffs"
+        role="group"
+        aria-label="HUD test bridge buffs"
+      >
+        {Object.keys(bridgeIcons).map((label) => (
+          <label key={label}>
+            <input
+              type="checkbox"
+              checked={buffs.includes(label)}
+              onChange={(event) =>
+                setBuffs((currentBuffs) =>
+                  event.target.checked
+                    ? [...currentBuffs, label]
+                    : currentBuffs.filter((buff) => buff !== label),
+                )
+              }
+            />
+            <img src={`/bridge-buffs/${bridgeIcons[label]}.png`} alt="" />
+            {label}
+          </label>
+        ))}
+        <button
+          type="button"
+          className="text-button"
+          onClick={() => {
+            setTarget("all");
+            setCount(4);
+            setKind("mixed");
+            setBuffs(Object.keys(bridgeIcons));
+            setEnabled(true);
+          }}
+        >
+          Test all corners
+        </button>
+      </div>
+      <details className="hud-test-placement">
+        <summary>Adjust local test placement</summary>
+        <p>
+          These adjustments affect this preview. Use Apply calibration below to
+          save the real HUD position when a game is selected.
+        </p>
+        <div className="hud-test-controls">
+          {[
+            ["x", "Left position", 0, 1850],
+            ["y", "Top position", 0, 1000],
+            ["size", "Portrait size", 24, 90],
+            ["gap", "Portrait gap", 0, 80],
+            ["teamGap", "Team gap", 0, 500],
+          ].map(([key, label, min, max]) => (
+            <label key={key}>
+              {label}
+              <input
+                type="number"
+                aria-label={`HUD test ${label.toLowerCase()}`}
+                min={min}
+                max={max}
+                value={settings[key]}
+                onChange={(event) => {
+                  const value = Math.max(
+                    min,
+                    Math.min(max, Number(event.target.value) || 0),
+                  );
+                  setPlacement({ ...settings, [key]: value });
+                  setEnabled(true);
+                }}
+              />
+            </label>
+          ))}
+        </div>
+        <button
+          type="button"
+          className="text-button"
+          onClick={() => setPlacement(null)}
+        >
+          Use current HUD placement
+        </button>
+      </details>
+      {!session && !enabled && (
+        <p className="production-hint">
+          No game is selected. Show test indicators to check all twelve
+          positions without a recording.
+        </p>
+      )}
+      <Preview
+        label={
+          enabled
+            ? "Local placement test · preview only"
+            : "Ultimate HUD calibration preview"
+        }
+      >
+        <Hud
+          session={session}
+          catalog={available}
+          calibration
+          preview={preview}
+        />
+      </Preview>
+    </section>
   );
 }
 export function Scoreboard({ result }) {
@@ -498,24 +766,34 @@ export default function ProductionStudio({ active, config }) {
           OBS outputs before restarting the service.
         </p>
       )}
+      {session && <RecordingEvidence session={session} />}
+      {session && <CaptureDataStatus session={session} />}
+      <div className="production-tabs">
+        {[
+          ["panels", "Live stat panels"],
+          ["hud", "Ultimate HUD"],
+          ["scoreboard", "Post-match scoreboard"],
+        ].map(([key, label]) => (
+          <button
+            key={key}
+            className={section === key ? "selected" : ""}
+            onClick={() => setSection(key)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      {section === "hud" && (
+        <HudPlacementTester session={session} catalog={catalog} />
+      )}
+      {!session && section !== "hud" && (
+        <p className="production-hint">
+          Choose a saved game, or open Ultimate HUD to try the local placement
+          test.
+        </p>
+      )}
       {session && (
         <>
-          <RecordingEvidence session={session} />
-          <div className="production-tabs">
-            {[
-              ["panels", "Live stat panels"],
-              ["hud", "Ultimate HUD"],
-              ["scoreboard", "Post-match scoreboard"],
-            ].map(([key, label]) => (
-              <button
-                key={key}
-                className={section === key ? "selected" : ""}
-                onClick={() => setSection(key)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
           {section === "panels" && (
             <>
               <div className="production-section-heading">
@@ -579,6 +857,7 @@ export default function ProductionStudio({ active, config }) {
                 }
               >
                 <CollectorPanel
+                  visible={shared?.data.deadem.visible !== false}
                   session={session}
                   panel={cleanPanel({
                     ...panel,
@@ -647,9 +926,6 @@ export default function ProductionStudio({ active, config }) {
                 </div>
                 <span className="production-pill">1920 × 1080</span>
               </div>
-              <Preview label="Ultimate HUD calibration preview">
-                <Hud session={session} catalog={catalog} calibration />
-              </Preview>
               <section className="production-card">
                 <form
                   className="production-calibration"

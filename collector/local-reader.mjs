@@ -23,6 +23,10 @@ import { ultimateHit, ultimateEffects } from "./ultimates.mjs";
 import { PurchaseLedger } from "./purchases.mjs";
 import { enrichFrame } from "./enrichment.mjs";
 import { appendConsoleEntry } from "./console-entries.mjs";
+import {
+  decodePostMatchSources,
+  matchPostMatchSources,
+} from "./source-breakdown.mjs";
 import { settleEndFrame } from "./end-settlement.mjs";
 
 const load = async (name) =>
@@ -117,6 +121,10 @@ export async function collectLocal(options, publish, signal) {
     fileIdentity = null,
     descriptor = null,
     order = 0;
+  let decodedSources = null,
+    sourceBreakdown = null,
+    sourceBreakdownError = null,
+    sourceRoster = null;
   const hits = [],
     audit = [];
   const hitTimes = new Map();
@@ -140,6 +148,9 @@ export async function collectLocal(options, publish, signal) {
     frame.sourceTickInterval = Number.isFinite(interval) ? interval : null;
     if (!frame.players.length) return;
     enrichFrame(demo, frame, signatures, items);
+    if (frame.players.length === 12) sourceRoster = frame;
+    const matchedSources = matchPostMatchSources(decodedSources, frame);
+    if (matchedSources) sourceBreakdown = matchedSources;
     if (frame.endObserved && !ended) {
       ended = true;
       ledger.flush(tick, actors(), true);
@@ -217,12 +228,31 @@ export async function collectLocal(options, publish, signal) {
       sourceClockMs: Number.isFinite(interval) ? tick * interval * 1000 : null,
       bytes,
       compatibility,
+      ...(sourceBreakdown ? { sourceBreakdown } : {}),
+      ...(sourceBreakdownError ? { sourceBreakdownError } : {}),
     });
   };
   parser.registerPostInterceptor(
     InterceptorStage.MESSAGE_PACKET,
     (outer, packet) => {
       const data = packet.data;
+      if (
+        packet.type ===
+        MessagePacketType.CITADEL_USER_MESSAGE_POST_MATCH_DETAILS
+      ) {
+        try {
+          decodedSources = decodePostMatchSources(data.matchDetails);
+          sourceBreakdownError = null;
+          const matched = matchPostMatchSources(decodedSources, sourceRoster);
+          if (matched) {
+            sourceBreakdown = matched;
+            // Details may arrive after the final scoreboard frame was frozen.
+            publish({ sourceBreakdown, decodedAt: Date.now() });
+          }
+        } catch (error) {
+          sourceBreakdownError = String(error.message).slice(0, 200);
+        }
+      }
       if (packet.type === MessagePacketType.SVC_PACKET_ENTITIES)
         serverTick = data.serverTick ?? serverTick;
       if (
@@ -311,6 +341,8 @@ export async function collectLocal(options, publish, signal) {
       decodedAt: Date.now(),
       items: ledger.snapshot(fromStart),
       audit,
+      ...(sourceBreakdown ? { sourceBreakdown } : {}),
+      ...(sourceBreakdownError ? { sourceBreakdownError } : {}),
     });
   }
   return { ended, stopped, bytes, compatibility };

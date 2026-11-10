@@ -123,7 +123,7 @@ async function connectRun(run) {
   let begun;
   try {
     begun = await cloud("begin", {
-      clientVersion: "0.3.0",
+    clientVersion: "0.4.0",
       id: run.id,
       recording: run.name,
       fromStart: run.fromStart,
@@ -250,6 +250,7 @@ const timer = setInterval(async () => {
         delete packet.items;
         delete packet.audit;
         delete packet.stopped;
+        delete packet.sourceBreakdown;
       }
       if (packet.items && packet.items.revision === lastItemsRevision)
         delete packet.items;
