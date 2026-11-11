@@ -13,6 +13,13 @@ const score = (value) =>
     ? Math.max(0, Math.min(99, Math.floor(value)))
     : 0;
 
+export function cleanDiscordUserId(value) {
+  const id = typeof value === "string" ? value.trim() : "";
+  return /^[1-9][0-9]{16,19}$/.test(id) && BigInt(id) <= 18446744073709551615n
+    ? id
+    : "";
+}
+
 // This URL is an operator's external OBS source, never a server fetch or iframe.
 export function discordVoiceUrl(value) {
   if (typeof value !== "string" || value.length > 3000) return "";
@@ -59,6 +66,7 @@ export function cleanCasterStage(value = {}) {
       name: text(value?.casters?.[index]?.name, 48),
       role: text(value?.casters?.[index]?.role, 48),
       avatar: safeImage(value?.casters?.[index]?.avatar),
+      discordUserId: cleanDiscordUserId(value?.casters?.[index]?.discordUserId),
     })),
     discordUrl: discordVoiceUrl(value?.discordUrl),
   };
@@ -141,6 +149,8 @@ export function casterStageOutput(workspace = {}) {
       logo: team.name ? teamLogo(team.logo) : "",
       score: team.name ? team.score : null,
     })),
-    casters: settings.casters.slice(0, settings.casterCount),
+    casters: settings.casters
+      .slice(0, settings.casterCount)
+      .map(({ name, role, avatar }) => ({ name, role, avatar })),
   };
 }

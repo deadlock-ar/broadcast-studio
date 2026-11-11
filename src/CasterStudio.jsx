@@ -7,10 +7,12 @@ import {
   casterStageOutput,
   casterSlots,
   discordVoiceUrl,
+  cleanDiscordUserId,
 } from "./caster-stage.js";
 import CasterScreen from "./CasterScreen.jsx";
 import TeamLogo from "./TeamLogo.jsx";
 import { readLogoFile } from "./logo-upload.js";
+import DiscordCasterSetup from "./DiscordCasterSetup.jsx";
 import "./CasterStudio.css";
 
 export default function CasterStudio({ active = true }) {
@@ -82,6 +84,18 @@ export default function CasterStudio({ active = true }) {
       setNotice(
         "Use the Voice widget URL supplied by streamkit.discord.com/overlay. Other websites and Discord invite links cannot be used here.",
       );
+      return;
+    }
+    const casterIds = value.casters
+      .slice(0, value.casterCount)
+      .map((person) => person.discordUserId?.trim() || "");
+    if (casterIds.some((id) => id && !cleanDiscordUserId(id))) {
+      setNotice("Use Copy User ID from Discord for each caster's account ID.");
+      return;
+    }
+    const assignedIds = casterIds.filter(Boolean);
+    if (new Set(assignedIds).size !== assignedIds.length) {
+      setNotice("Each caster slot must use a different Discord user ID.");
       return;
     }
     if (
@@ -227,7 +241,7 @@ export default function CasterStudio({ active = true }) {
             >
               <option value="avatars">Static caster portraits</option>
               <option value="discord">
-                Discord speaking avatars · separate OBS source
+                Discord speaking avatars · fixed slots
               </option>
               <option value="webcams">Webcam windows · captured in OBS</option>
             </select>
@@ -291,8 +305,39 @@ export default function CasterStudio({ active = true }) {
                   }
                 />
               </label>
+              {value.layout === "discord" && (
+                <>
+                  <label>
+                    Discord user ID
+                    <input
+                      aria-label={`Caster ${index + 1} Discord user ID`}
+                      value={person.discordUserId || ""}
+                      maxLength={20}
+                      inputMode="numeric"
+                      autoComplete="off"
+                      placeholder="Paste Copy User ID"
+                      onChange={(event) =>
+                        editCaster(index, "discordUserId", event.target.value)
+                      }
+                    />
+                  </label>
+                  <small className="caster-discord-id-hint">
+                    Pinned to this card. Use a Discord account ID, not a Steam
+                    ID or username.{" "}
+                    <a
+                      href="https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      How to copy it ↗
+                    </a>
+                  </small>
+                </>
+              )}
               <label>
-                Avatar image URL
+                {value.layout === "discord"
+                  ? "Fallback portrait URL (optional)"
+                  : "Avatar image URL"}
                 <input
                   type="url"
                   value={person.avatar}
@@ -416,52 +461,6 @@ export default function CasterStudio({ active = true }) {
             unassigned.
           </p>
         )}
-        {value.layout === "discord" && (
-          <div className="caster-studio-setup">
-            <h2>Discord voice activity</h2>
-            <p>
-              Authorize the official{" "}
-              <a
-                href="https://streamkit.discord.com/overlay"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Discord Streamkit Voice widget
-              </a>{" "}
-              on the production computer, select the caster voice channel and
-              paste its installation URL below. Add it as a separate Browser
-              Source above the caster desk in OBS. Discord supplies the avatars
-              and speaking indicators; this website does not read your call.
-            </p>
-            <label>
-              Streamkit Voice widget URL
-              <input
-                value={value.discordUrl}
-                maxLength={3000}
-                placeholder="https://streamkit.discord.com/overlay/voice…"
-                onChange={(event) => edit("discordUrl", event.target.value)}
-              />
-            </label>
-            <p>
-              The reserved area is x 230, y 270, width 1460, height 490. Set the
-              widget's own source size as instructed by Streamkit, then arrange
-              it in that area. Keep Discord open and rehearse with the actual
-              caster channel.
-            </p>
-            <p className="caster-studio-help">
-              This source is configured on each OBS computer. Saving its URL
-              here does not authorize Discord, embed the widget, or connect
-              other admins' computers.
-            </p>
-            <a
-              href="https://support.discord.com/hc/en-us/articles/223415707-Using-Discord-s-OBS-Streamkit-Overlay"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Official Discord setup guide ↗
-            </a>
-          </div>
-        )}
         {value.layout === "webcams" && (
           <div className="caster-studio-setup">
             <h2>Discord cameras in OBS</h2>
@@ -529,6 +528,15 @@ export default function CasterStudio({ active = true }) {
             Discard edits
           </button>
         </div>
+        {value.layout === "discord" && (
+          <DiscordCasterSetup
+            settings={value}
+            stage={output}
+            dirty={dirty}
+            disabled={disabled || Boolean(shared?.error)}
+            onUrlChange={(url) => edit("discordUrl", url)}
+          />
+        )}
       </fieldset>
       <section className="caster-studio-card">
         <h2>Permanent OBS source</h2>

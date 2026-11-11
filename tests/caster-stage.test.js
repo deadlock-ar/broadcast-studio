@@ -51,7 +51,12 @@ test("caster settings have bounded safe defaults without shared speaking states"
   assert.equal(value.title.length, 80);
   assert.equal(value.layout, "avatars");
   assert.equal(value.casters.length, 4);
-  assert.deepEqual(value.casters[0], { name: "Analyst", role: "", avatar: "" });
+  assert.deepEqual(value.casters[0], {
+    name: "Analyst",
+    role: "",
+    avatar: "",
+    discordUserId: "",
+  });
   assert.equal(cleanCasterStage(null).visible, true);
 });
 

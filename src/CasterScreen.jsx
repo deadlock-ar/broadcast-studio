@@ -24,7 +24,6 @@ export default function CasterScreen({
   const people = (stage.casters || []).slice(0, 4);
   const slots = casterSlots(people.length);
   const webcams = stage.layout === "webcams";
-  const discord = stage.layout === "discord";
   const holes = webcams
     ? slots
         .map(
@@ -78,60 +77,45 @@ export default function CasterScreen({
       {stage.subtitle && (
         <p className="caster-screen-subtitle">{stage.subtitle}</p>
       )}
-      {discord ? (
-        <div className={`caster-discord-space${preview ? " is-guide" : ""}`}>
-          {preview && (
-            <div>
-              <span>DISCORD VOICE WIDGET</span>
-              <p>
-                Add your authorized Streamkit Browser Source above this layer in
-                OBS.
-              </p>
-              <small>Studio guide only · not shown on stream</small>
-            </div>
-          )}
-        </div>
-      ) : (
-        people.map((person, index) => {
-          const slot = slots[index];
-          return (
-            <article
-              key={index}
-              className={`caster-screen-person${preview && speaking.includes(index) ? " is-speaking" : ""}`}
-              style={{ left: slot.x, top: slot.y, width: slot.width }}
+      {people.map((person, index) => {
+        const slot = slots[index];
+        return (
+          <article
+            key={index}
+            className={`caster-screen-person${preview && speaking.includes(index) ? " is-speaking" : ""}`}
+            style={{ left: slot.x, top: slot.y, width: slot.width }}
+          >
+            <div
+              className={`caster-screen-media${webcams ? " is-webcam" : ""}`}
+              style={{ height: slot.height }}
             >
-              <div
-                className={`caster-screen-media${webcams ? " is-webcam" : ""}`}
-                style={{ height: slot.height }}
-              >
-                {webcams ? (
-                  preview && (
-                    <div className="caster-camera-guide">
-                      <span>CAMERA {index + 1}</span>
-                      <small>
-                        {Math.round(slot.width)} × {slot.height}
-                      </small>
-                    </div>
-                  )
-                ) : (
-                  <div className="caster-screen-avatar">
-                    <StageImage src={person.avatar} />
-                    <span aria-hidden="true">
-                      {person.name?.slice(0, 1).toUpperCase() || "✦"}
-                    </span>
+              {webcams ? (
+                preview && (
+                  <div className="caster-camera-guide">
+                    <span>CAMERA {index + 1}</span>
+                    <small>
+                      {Math.round(slot.width)} × {slot.height}
+                    </small>
                   </div>
-                )}
-                <span className="caster-screen-corner corner-a" />
-                <span className="caster-screen-corner corner-b" />
-              </div>
-              <div className="caster-screen-nameplate">
-                <span>{person.role || "CASTER"}</span>
-                <h2 dir="auto">{person.name || `Caster ${index + 1}`}</h2>
-              </div>
-            </article>
-          );
-        })
-      )}
+                )
+              ) : (
+                <div className="caster-screen-avatar">
+                  <StageImage src={person.avatar} />
+                  <span aria-hidden="true">
+                    {person.name?.slice(0, 1).toUpperCase() || "✦"}
+                  </span>
+                </div>
+              )}
+              <span className="caster-screen-corner corner-a" />
+              <span className="caster-screen-corner corner-b" />
+            </div>
+            <div className="caster-screen-nameplate">
+              <span>{person.role || "CASTER"}</span>
+              <h2 dir="auto">{person.name || `Caster ${index + 1}`}</h2>
+            </div>
+          </article>
+        );
+      })}
       <section className="caster-screen-match" aria-label="Upcoming match">
         <div className="caster-screen-match-label">
           <span>UP NEXT</span>

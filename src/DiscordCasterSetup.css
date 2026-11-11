@@ -1,0 +1,76 @@
+.discord-caster-setup {
+  margin-top: 24px;
+}
+.discord-caster-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0;
+}
+.discord-caster-buttons button[aria-pressed="true"] {
+  background: #65734f;
+  color: #fff;
+  border-color: #65734f;
+}
+.discord-caster-setup summary {
+  cursor: pointer;
+  font-weight: 700;
+  padding: 10px 0;
+}
+.discord-caster-setup ol {
+  padding-left: 23px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.discord-caster-setup details + details {
+  margin-top: 12px;
+}
+.caster-studio-card .discord-caster-code textarea {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  padding: 12px;
+  border: 1px solid #c4ceb4;
+  background: #fffefa;
+  color: #25352b;
+  font:
+    12px/1.6 Consolas,
+    monospace;
+  resize: vertical;
+}
+.caster-studio-card .discord-caster-export-status {
+  padding: 12px;
+  color: #425736;
+  background: #e8eddf;
+  border: 1px solid #d0dac2;
+  border-radius: 4px;
+}
+.discord-caster-test-preview {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #17231f;
+  border: 1px solid #9baa80;
+}
+.discord-caster-test-preview > div {
+  position: absolute;
+  inset: 0 auto auto 0;
+}
+.discord-caster-test-preview iframe {
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  border: 0;
+  pointer-events: none;
+}
+.discord-caster-room {
+  font-size: 12px;
+}
+.caster-studio-people .caster-discord-id-hint {
+  display: block;
+  margin-top: 7px;
+  color: #657052;
+  font-size: 12px;
+  line-height: 1.6;
+}
