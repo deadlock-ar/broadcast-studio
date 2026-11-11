@@ -6,6 +6,10 @@ import { cleanMatchOverlay } from "./match-overlay.js";
 import { cleanBracket } from "./bracket.js";
 import { cleanPlayerBanners } from "./player-banners.js";
 import { cleanCasterStage } from "./caster-stage.js";
+import {
+  cleanLiveDelay,
+  cleanPersistentHud,
+} from "../collector/live-playout.mjs";
 
 export const OUTPUTS = {
   draft: "/obs/draft",
@@ -63,6 +67,8 @@ export function initialWorkspace() {
       panel: cleanPanel({ theme: "ink" }),
       visible: true,
       hudVisible: true,
+      delayMs: null,
+      hudSettings: null,
     },
     scoreboard: { matchId: "", visible: true },
     matchOverlay: cleanMatchOverlay(),
@@ -163,7 +169,14 @@ export function patchWorkspace(state, operations) {
         state.draft.mode !== "live") ||
       (section === "apiStats" && ["panel", "time", "visible"].includes(key)) ||
       (section === "deadem" &&
-        ["panel", "id", "visible", "hudVisible"].includes(key)) ||
+        [
+          "panel",
+          "id",
+          "visible",
+          "hudVisible",
+          "delayMs",
+          "hudSettings",
+        ].includes(key)) ||
       (section === "scoreboard" && key === "visible");
     if (!valid)
       throw Error("This field is controlled by the broadcast service.");
@@ -181,6 +194,8 @@ export function patchWorkspace(state, operations) {
   }
   next.deadem.id = next.deadem.id ? sessionId(next.deadem.id) : "";
   next.deadem.hudVisible = next.deadem.hudVisible === true;
+  next.deadem.delayMs = cleanLiveDelay(next.deadem.delayMs);
+  next.deadem.hudSettings = cleanPersistentHud(next.deadem.hudSettings);
   next.scoreboard.visible = next.scoreboard.visible === true;
   next.apiStats.time =
     next.apiStats.time === null

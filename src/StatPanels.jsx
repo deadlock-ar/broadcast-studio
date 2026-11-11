@@ -17,6 +17,9 @@ import {
 } from "./stats";
 import "./StatPanels.css";
 import { usePanelPlacement } from "./use-panel-placement.js";
+import OutputMirror from "./OutputMirror.jsx";
+import LiveDelayControls from "./LiveDelayControls.jsx";
+import { liveDelayMs } from "../collector/live-playout.mjs";
 
 const roster = Object.fromEntries(heroes.map((h) => [h.id, h]));
 function Field({ label, children }) {
@@ -309,6 +312,13 @@ export default function StatPanels({ config, active }) {
           Export template ↗
         </button>
       </div>
+      {shared && (
+        <LiveDelayControls
+          delayMs={liveDelayMs(shared.data, null)}
+          disabled={shared.saving || shared.readOnly}
+          onApply={(delayMs) => shared.update(["deadem", "delayMs"], delayMs)}
+        />
+      )}
       <section className="stats-match-loader">
         <div>
           <span className="eyebrow">MATCH DATA</span>
@@ -458,14 +468,18 @@ export default function StatPanels({ config, active }) {
               className="stats-preview-scaled"
               style={{ transform: `scale(${scale})` }}
             >
-              <StatGraphic
-                match={match}
-                panel={panel}
-                time={effectiveTime}
-                status={result.status}
-                stale={stale}
-                visible={shown}
-              />
+              {shared && active ? (
+                <OutputMirror src={url} title="OBS API stats preview" />
+              ) : (
+                <StatGraphic
+                  match={match}
+                  panel={panel}
+                  time={effectiveTime}
+                  status={result.status}
+                  stale={stale}
+                  visible={shown}
+                />
+              )}
             </div>
             {!match && (
               <div className="stats-empty-state">

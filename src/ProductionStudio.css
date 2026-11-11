@@ -330,6 +330,19 @@
 .hud-player {
   position: absolute;
 }
+.hud-obs-test-label {
+  position: absolute;
+  left: 30px;
+  bottom: 30px;
+  padding: 10px 16px;
+  color: #fff3c8;
+  background: #302b1ddd;
+  border: 1px solid #c7ad67;
+  font:
+    16px Arial,
+    sans-serif;
+  letter-spacing: 2px;
+}
 .hud-calibration {
   background: #262d27;
   border: 1px dashed #e3e6d5aa;

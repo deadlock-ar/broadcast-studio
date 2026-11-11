@@ -13,6 +13,10 @@ import {
   sessionId,
   cleanSettings,
 } from "./model.mjs";
+import {
+  cleanPersistentHud,
+  livePresentationSettings,
+} from "./live-playout.mjs";
 
 const hash = (value) =>
   createHash("sha256").update(String(value)).digest("hex");
@@ -185,14 +189,18 @@ export class Publisher {
     const s = old || emptySession(id, value.rehearsal ? "rehearsal" : "local");
     if (!old) {
       const selected = this.store.sessions.get(this.store.workspace.deadem.id);
-      if (
-        selected &&
-        selected.tournamentId === this.store.workspace.activeTournamentId
-      )
-        s.settings = cleanSettings(
-          { ultimateBadges: selected.settings?.ultimateBadges },
-          s.settings,
-        );
+      const previous =
+        selected?.tournamentId === this.store.workspace.activeTournamentId
+          ? selected
+          : null;
+      const presentation = livePresentationSettings(
+        this.store.workspace,
+        previous,
+      );
+      s.settings = cleanSettings(
+        { ...cleanPersistentHud(presentation), delayMs: presentation.delayMs },
+        s.settings,
+      );
     }
     // Reconnect always fences the previous process, including an older process on the same PC.
     const lease = randomBytes(24).toString("hex");

@@ -114,6 +114,7 @@ export function collectorOverlayUrl(
       {
         "collector-panel": "/obs/deadem",
         "ultimate-hud": "/obs/ultimates",
+        "ultimate-test": "/obs/ultimates?test=1",
         scoreboard: "/obs/scoreboard",
       }[view],
       window.location.origin,

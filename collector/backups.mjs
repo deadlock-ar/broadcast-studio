@@ -17,6 +17,7 @@ import { cleanMatchOverlay } from "../src/match-overlay.js";
 import { cleanBracket } from "../src/bracket.js";
 import { cleanPlayerBanners } from "../src/player-banners.js";
 import { cleanCasterStage } from "../src/caster-stage.js";
+import { cleanLiveDelay, cleanPersistentHud } from "./live-playout.mjs";
 import { cleanRosterSnapshot } from "./roster-library.mjs";
 
 export function exportBackup(store) {
@@ -103,6 +104,9 @@ export function prepareRestore(value, store) {
     w[k].panel = cleanPanel(source[k]?.panel);
     w[k].visible = source[k]?.visible !== false;
   }
+  w.deadem.delayMs = cleanLiveDelay(source.deadem?.delayMs);
+  w.deadem.hudSettings = cleanPersistentHud(source.deadem?.hudSettings);
+  w.deadem.hudVisible = source.deadem?.hudVisible !== false;
   const known = new Set([
     ...store.sessions.keys(),
     ...sessions.map((s) => s.id),

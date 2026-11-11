@@ -36,7 +36,7 @@ test("local game identities are distinct from numeric Valve match IDs", () => {
   assert.throws(() => sessionId("local-../settings"));
 });
 
-test("new games inherit only ultimate preferences within the same tournament; resumes and other tournaments stay isolated", async (t) => {
+test("new games keep presentation settings within the same tournament without carrying fight baselines; resumes and other tournaments stay isolated", async (t) => {
   const { pub, store } = await setup(t),
     paired = pair(pub),
     identity = paired.authenticated();
@@ -69,11 +69,11 @@ test("new games inherit only ultimate preferences within the same tournament; re
   const inherited = store.sessions.get(next.id);
   assert.deepEqual(inherited.settings.ultimateBadges, before.ultimateBadges);
   assert.deepEqual(original.settings, before);
-  assert.deepEqual(inherited.settings.names, {});
-  assert.deepEqual(inherited.settings.hudOrder, []);
-  assert.equal(inherited.settings.delayMs, 0);
+  assert.deepEqual(inherited.settings.names, before.names);
+  assert.deepEqual(inherited.settings.hudOrder, before.hudOrder);
+  assert.equal(inherited.settings.delayMs, 4000);
   assert.equal(inherited.settings.metricsBaseline, null);
-  assert.equal(inherited.settings.hud.x, 460);
+  assert.equal(inherited.settings.hud.x, 100);
   inherited.settings.ultimateBadges.byAbility[99].hit = true;
   assert.equal(original.settings.ultimateBadges.byAbility[99].hit, false);
   pub.begin(identity, { id: next.id });

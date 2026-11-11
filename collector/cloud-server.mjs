@@ -30,6 +30,11 @@ import { playerBannersOutput } from "../src/player-banners.js";
 import { OfflineImporter, importedMatch } from "./offline.mjs";
 import { casterStageOutput } from "../src/caster-stage.js";
 import { publicCollectorMatch } from "./output-snapshot.mjs";
+import {
+  livePresentationSettings,
+  rememberLiveSettings,
+  apiPlayoutClock,
+} from "./live-playout.mjs";
 import { isDraftReportSource } from "../src/report-sources.js";
 import { automaticItemHistory } from "../src/item-reporting.js";
 import { collectorSessionView, selectStatBaseline } from "./stat-history.mjs";
@@ -158,7 +163,12 @@ export async function createBroadcastServer(options = {}) {
     if (channel === "match-overlay")
       return { overlay: resolveMatchOverlay(w, s) };
     if (channel === "live-events")
-      return { config: w.config, apiStats: w.apiStats };
+      return {
+        config: w.config,
+        apiStats: w.apiStats,
+        visible: w.apiStats.visible,
+        session: apiPlayoutClock(w, s, Date.now()),
+      };
     if (channel === "scoreboard")
       return {
         visible: w.scoreboard.visible,
@@ -188,7 +198,7 @@ export async function createBroadcastServer(options = {}) {
           sourceTiming: s.sourceTiming
             ? { ...s.sourceTiming, sentAt: Date.now() }
             : null,
-          settings: s.settings,
+          settings: livePresentationSettings(w, s),
           effects: channel === "ultimates" ? s.effects : [],
           recentHits: channel === "ultimates" ? s.recentHits : [],
           ended: Boolean(s.result || s.ended),
@@ -196,6 +206,7 @@ export async function createBroadcastServer(options = {}) {
       : null;
     return {
       session: light,
+      hudSettings: livePresentationSettings(w, s),
       panel: {
         ...w.deadem.panel,
         names: s?.settings.names || {},
@@ -302,6 +313,7 @@ export async function createBroadcastServer(options = {}) {
       ),
     stopFeeds: () => feeds.stop(),
   });
+  rememberLiveSettings(store);
   function events(req, res, client, initial) {
     res.writeHead(200, {
       "Content-Type": "text/event-stream",

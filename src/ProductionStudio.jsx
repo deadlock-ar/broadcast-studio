@@ -31,6 +31,13 @@ import "./RecordingEvidence.css";
 import StatWindowControls from "./StatWindowControls.jsx";
 import CaptureDataStatus from "./CaptureDataStatus.jsx";
 import UltimateControls from "./UltimateControls.jsx";
+import OutputMirror from "./OutputMirror.jsx";
+import LiveDelayControls from "./LiveDelayControls.jsx";
+import {
+  liveDelayMs,
+  cleanPersistentHud,
+  livePresentationSettings,
+} from "../collector/live-playout.mjs";
 import {
   cleanUltimateBadges,
   filterUltimateBadges,
@@ -193,7 +200,61 @@ export function Hud({
     </div>
   );
 }
-function HudPlacementTester({ session, catalog }) {
+export function HudObsTest({ settings }) {
+  const players = ultimateCatalog.slice(0, 12).map((hero, index) => ({
+    id: `obs-test-${index}`,
+    team: index < 6 ? 0 : 1,
+    slot: index % 6,
+    heroId: hero.heroId,
+    name: `Position ${index + 1}`,
+  }));
+  const abilities = ultimateCatalog
+    .filter((ability) => ultimateCapabilities(ability).effect)
+    .slice(0, 4);
+  const preview = {
+    settings: settings?.hud || defaultHudPlacement,
+    players,
+    badges: players.flatMap((player) =>
+      abilities.map((ability, index) => ({
+        targetId: player.id,
+        abilityId: ability.id,
+        kind: index % 2 ? "effect" : "hit",
+      })),
+    ),
+    bridgeBuffs: Object.fromEntries(
+      players.map((player) => [
+        player.id,
+        Object.keys(bridgeIcons).map((label) => ({
+          id: label,
+          label,
+          remaining: null,
+        })),
+      ]),
+    ),
+  };
+  return (
+    <>
+      <Hud
+        session={{ settings: settings || cleanSettings({}) }}
+        catalog={ultimateCatalog}
+        calibration
+        preview={preview}
+      />
+      <div className="hud-obs-test-label">
+        OBS PLACEMENT TEST · SAMPLE INDICATORS
+      </div>
+    </>
+  );
+}
+
+function HudPlacementTester({
+  session,
+  catalog,
+  active,
+  onSavePlacement,
+  saving,
+}) {
+  const shared = useWorkspace();
   const [enabled, setEnabled] = useState(false);
   const [target, setTarget] = useState("all");
   const [kind, setKind] = useState("mixed");
@@ -278,7 +339,9 @@ function HudPlacementTester({ session, catalog }) {
         <span className="production-pill">1920 × 1080</span>
       </div>
       <div className="hud-test-mode">
-        <strong>{enabled ? "Local placement test" : "Live preview"}</strong>
+        <strong>
+          {enabled ? "Local placement test" : "Delayed OBS preview"}
+        </strong>
         <span>
           Preview only · test indicators are never sent to OBS or match data.
         </span>
@@ -392,8 +455,8 @@ function HudPlacementTester({ session, catalog }) {
       <details className="hud-test-placement">
         <summary>Adjust local test placement</summary>
         <p>
-          These adjustments affect this preview. Use Apply calibration below to
-          save the real HUD position when a game is selected.
+          These adjustments affect this preview. Use Save HUD placement below to
+          save the real HUD position for this tournament, even before a game.
         </p>
         <div className="hud-test-controls">
           {[
@@ -430,6 +493,17 @@ function HudPlacementTester({ session, catalog }) {
         >
           Use current HUD placement
         </button>
+        <button
+          type="button"
+          className="button primary"
+          disabled={!placement || saving}
+          onClick={() => {
+            onSavePlacement(settings);
+            setPlacement(null);
+          }}
+        >
+          Save this test placement
+        </button>
       </details>
       {!session && !enabled && (
         <p className="production-hint">
@@ -444,12 +518,21 @@ function HudPlacementTester({ session, catalog }) {
             : "Ultimate HUD calibration preview"
         }
       >
-        <Hud
-          session={session}
-          catalog={available}
-          calibration
-          preview={preview}
-        />
+        {shared && active && !enabled ? (
+          <OutputMirror
+            src={
+              new URL("/obs/ultimates?calibrate=1", window.location.origin).href
+            }
+            title="OBS HUD calibration preview"
+          />
+        ) : (
+          <Hud
+            session={session}
+            catalog={available}
+            calibration
+            preview={preview}
+          />
+        )}
       </Preview>
     </section>
   );
@@ -574,7 +657,18 @@ export default function ProductionStudio({ active, config }) {
     [busy, setBusy] = useState(false),
     [winner, setWinner] = useState("");
   const { health, error: healthError } = useCollectorHealth(active);
-  const { session, error } = useCollector(id, active);
+  const { session: sourceSession, error } = useCollector(id, active);
+  const session = sourceSession
+    ? {
+        ...sourceSession,
+        settings: shared
+          ? livePresentationSettings(shared.data, sourceSession)
+          : sourceSession.settings,
+      }
+    : null;
+  const hudSession = session || {
+    settings: livePresentationSettings(shared?.data, null),
+  };
   const rawMatch = session?.result?.match || session?.match;
   const match = rawMatch ? { ...rawMatch, heroInfo: roster } : null;
   const metric = panel.metric;
@@ -584,6 +678,22 @@ export default function ProductionStudio({ active, config }) {
     setBusy(true);
     setNotice("");
     try {
+      if (
+        shared &&
+        path === "settings" &&
+        Object.keys(value).every((key) =>
+          ["hud", "hudOrder", "ultimateBadges", "names"].includes(key),
+        )
+      ) {
+        shared.update(
+          ["deadem", "hudSettings"],
+          cleanPersistentHud({ ...hudSession.settings, ...value }),
+        );
+        setNotice(
+          "HUD settings saved for this tournament. New games keep this placement and these indicator preferences.",
+        );
+        return;
+      }
       const payload =
         shared && path === "settings" && session
           ? {
@@ -811,6 +921,24 @@ export default function ProductionStudio({ active, config }) {
       )}
       {session && <RecordingEvidence session={session} />}
       {session && <CaptureDataStatus session={session} />}
+      <LiveDelayControls
+        delayMs={
+          shared
+            ? liveDelayMs(shared.data, session)
+            : session?.settings.delayMs || 0
+        }
+        disabled={
+          busy || shared?.saving || shared?.readOnly || (!shared && !session)
+        }
+        onApply={(delayMs) => {
+          if (shared) {
+            shared.update(["deadem", "delayMs"], delayMs);
+            setNotice(
+              "Live delay saved for every live output in this tournament.",
+            );
+          } else action("settings", { delayMs });
+        }}
+      />
       <div className="production-tabs">
         {[
           ["panels", "Live stat panels"],
@@ -827,293 +955,293 @@ export default function ProductionStudio({ active, config }) {
         ))}
       </div>
       {section === "hud" && (
-        <HudPlacementTester session={session} catalog={catalog} />
+        <HudPlacementTester
+          session={hudSession}
+          catalog={catalog}
+          active={active}
+          saving={busy || shared?.saving}
+          onSavePlacement={(hud) => action("settings", { hud })}
+        />
       )}
       {!session && section !== "hud" && (
         <p className="production-hint">
-          Choose a saved game, or open Ultimate HUD to try the local placement
-          test.
+          Choose a saved game for live data. Placement and delay settings stay
+          available before a game starts.
         </p>
+      )}
+      {section === "hud" && (
+        <>
+          <p className="production-hint" role="status">
+            {shared?.data.deadem.hudVisible === false
+              ? "HUD is hidden on stream. Use Show HUD on stream for the regular OBS URL."
+              : "HUD is enabled on stream. Live indicators follow the shared delay."}
+          </p>
+          {shared && (
+            <button
+              className="button secondary"
+              onClick={() => shared.update(["deadem", "hudVisible"], (v) => !v)}
+            >
+              {shared.data.deadem.hudVisible
+                ? "Hide HUD on stream"
+                : "Show HUD on stream"}
+            </button>
+          )}
+          <div className="production-section-heading">
+            <div>
+              <h2>Make every ultimate readable.</h2>
+              <p>
+                Align these reference portraits with the game's HUD. The OBS
+                source shows only ultimate badges.
+              </p>
+            </div>
+            <span className="production-pill">1920 × 1080</span>
+          </div>
+          <UltimateControls
+            session={hudSession}
+            catalog={catalog}
+            busy={busy}
+            onChange={(ultimateBadges) =>
+              action("settings", { ultimateBadges })
+            }
+          />
+          <section className="production-card">
+            <form
+              className="production-calibration"
+              key={`${id}:${JSON.stringify(hudSession.settings.hud)}`}
+              onSubmit={(e) => {
+                e.preventDefault();
+                const values = Object.fromEntries(
+                  new FormData(e.currentTarget),
+                );
+                action("settings", {
+                  hud: values,
+                });
+              }}
+            >
+              {[
+                ["x", "Left position", 0, 1850],
+                ["y", "Top position", 0, 1000],
+                ["size", "Portrait size", 24, 90],
+                ["gap", "Portrait gap", 0, 80],
+                ["teamGap", "Team gap", 0, 500],
+              ].map(([key, label, min, max]) => (
+                <label key={key}>
+                  {label}
+                  <input
+                    name={key}
+                    type="number"
+                    min={min}
+                    max={max}
+                    defaultValue={hudSession.settings.hud[key]}
+                  />
+                </label>
+              ))}
+
+              <button
+                className="button primary"
+                disabled={busy || shared?.saving}
+              >
+                Save HUD placement
+              </button>
+            </form>
+            <p>
+              Placement, portrait order and indicator settings are saved with
+              this tournament and reused by new games. The shared delay control
+              above applies to all live graphics.
+            </p>
+            <details className="hud-order-controls">
+              <summary>Match portrait order to the game</summary>
+              <p>
+                Move each hero left or right within its team until the reference
+                portraits match the game HUD.
+              </p>
+              <div>
+                {[0, 1].map((team) => {
+                  const teamPlayers = liveRoster(hudSession).filter(
+                    (p) => p.team === team,
+                  );
+                  return (
+                    <section key={team}>
+                      <strong>{config.teams[team].name}</strong>
+                      {teamPlayers.map((p, i) => (
+                        <div key={p.id}>
+                          <Portrait player={p} />
+                          <span>{roster[p.heroId]?.name || p.name}</span>
+                          {[-1, 1].map((direction) => (
+                            <button
+                              type="button"
+                              className="button secondary"
+                              key={direction}
+                              disabled={
+                                busy ||
+                                i + direction < 0 ||
+                                i + direction >= teamPlayers.length
+                              }
+                              aria-label={`Move ${roster[p.heroId]?.name || p.name} ${direction < 0 ? "left" : "right"}`}
+                              onClick={() => {
+                                const all = liveRoster(hudSession);
+                                const from = all.findIndex(
+                                    (v) => v.id === p.id,
+                                  ),
+                                  to = from + direction;
+                                [all[from], all[to]] = [all[to], all[from]];
+                                action("settings", {
+                                  hudOrder: all.map((v) => v.id),
+                                });
+                              }}
+                            >
+                              {direction < 0 ? "←" : "→"}
+                            </button>
+                          ))}
+                        </div>
+                      ))}
+                    </section>
+                  );
+                })}
+              </div>
+            </details>
+          </section>
+          <ObsLink id={id} view="ultimate-hud" label="Ultimate hit HUD" />
+          <h3>Test placement in OBS</h3>
+          <p>
+            Add the test URL as a separate 1920 × 1080 Browser Source to check
+            all badge positions without a game. It follows saved placement
+            changes immediately. Use the regular HUD source for matches.
+          </p>
+          <ObsLink id={id} view="ultimate-test" label="HUD placement test" />
+          <details className="production-coverage">
+            <summary>Ultimate detection coverage</summary>
+            <p>
+              Damage hits use ability IDs as candidates. Graves summon hits are
+              suppressed because a second-ability zombie can report the ultimate
+              ID. Self buffs and utility ultimates do not produce enemy-hit
+              badges. Lasting effects are enabled for the four replay-verified
+              abilities below; other effects need per-ability validation.
+            </p>
+            <div>
+              {catalog.map((a) => (
+                <span key={a.id}>
+                  <strong>
+                    {a.heroName} · {a.name}
+                  </strong>
+                  <small>{a.detection}</small>
+                </span>
+              ))}
+            </div>
+          </details>
+        </>
+      )}
+      {section === "panels" && (
+        <>
+          <div className="production-section-heading">
+            <div>
+              <h2>Small panels. Clear numbers.</h2>
+              <p>Choose player statistics or the souls difference graph.</p>
+            </div>
+            <label>
+              Panel
+              <select
+                aria-label="Live panel"
+                value={graphPanel ? "souls-graph" : metric}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setPanel((old) =>
+                    cleanPanel({
+                      ...old,
+                      content:
+                        value === "souls-graph" ? "souls-graph" : "players",
+                      metric: value === "souls-graph" ? old.metric : value,
+                    }),
+                  );
+                }}
+              >
+                {Object.entries(METRICS).map(([key, v]) => (
+                  <option key={key} value={key}>
+                    {v.label}
+                  </option>
+                ))}
+                <option value="souls-graph">Souls difference graph</option>
+              </select>
+            </label>
+          </div>
+          {!graphPanel && session && (
+            <StatWindowControls
+              key={id}
+              session={session}
+              busy={busy}
+              now={metricsNow}
+              onStart={(request) => action("stat-window", request)}
+              onTotals={() => action("settings", { metricsBaseline: null })}
+            />
+          )}
+          {shared && (
+            <button
+              className="button secondary"
+              onClick={() => shared.update(["deadem", "visible"], (v) => !v)}
+            >
+              {shared.data.deadem.visible
+                ? "Hide stats on stream"
+                : "Show stats on stream"}
+            </button>
+          )}
+          <Preview
+            label={
+              graphPanel
+                ? "Souls difference panel preview"
+                : "Live stat panel preview"
+            }
+          >
+            {shared && active ? (
+              <OutputMirror
+                src={collectorOverlayUrl("collector-panel", id)}
+                title="OBS live stats preview"
+              />
+            ) : (
+              <CollectorPanel
+                visible={shared?.data.deadem.visible !== false}
+                session={session}
+                panel={cleanPanel({
+                  ...panel,
+                  metric,
+                  names: session?.settings.names || {},
+                  teamNames: config.teams.map((t) => t.name),
+                })}
+                status={
+                  session?.status === "finished"
+                    ? "finished"
+                    : session?.status === "live"
+                      ? "live"
+                      : ["connecting", "reconnecting"].includes(session?.status)
+                        ? "loading"
+                        : "error"
+                }
+                stale={
+                  !session?.result &&
+                  (session?.status !== "live" ||
+                    metricsNow - session?.updatedAt > 15000)
+                }
+              />
+            )}
+          </Preview>
+          {graphPanel && (
+            <p className="production-hint">
+              Shows the difference in team net worth across the recorded match.
+              The graph starts when collection starts and leaves gaps where
+              observations are missing.
+            </p>
+          )}
+          <PanelControls panel={cleanPanel(panel)} setPanel={setPanel} />
+          <ObsLink
+            id={id}
+            metric={metric}
+            content={panel.content}
+            view="collector-panel"
+            label={graphPanel ? "Souls difference panel" : "Live stats panel"}
+          />
+        </>
       )}
       {session && (
         <>
-          {section === "panels" && (
-            <>
-              <div className="production-section-heading">
-                <div>
-                  <h2>Small panels. Clear numbers.</h2>
-                  <p>Choose player statistics or the souls difference graph.</p>
-                </div>
-                <label>
-                  Panel
-                  <select
-                    aria-label="Live panel"
-                    value={graphPanel ? "souls-graph" : metric}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setPanel((old) =>
-                        cleanPanel({
-                          ...old,
-                          content:
-                            value === "souls-graph" ? "souls-graph" : "players",
-                          metric: value === "souls-graph" ? old.metric : value,
-                        }),
-                      );
-                    }}
-                  >
-                    {Object.entries(METRICS).map(([key, v]) => (
-                      <option key={key} value={key}>
-                        {v.label}
-                      </option>
-                    ))}
-                    <option value="souls-graph">Souls difference graph</option>
-                  </select>
-                </label>
-              </div>
-              {!graphPanel && (
-                <StatWindowControls
-                  key={id}
-                  session={session}
-                  busy={busy}
-                  now={metricsNow}
-                  onStart={(request) => action("stat-window", request)}
-                  onTotals={() => action("settings", { metricsBaseline: null })}
-                />
-              )}
-              {shared && (
-                <button
-                  className="button secondary"
-                  onClick={() =>
-                    shared.update(["deadem", "visible"], (v) => !v)
-                  }
-                >
-                  {shared.data.deadem.visible
-                    ? "Hide stats on stream"
-                    : "Show stats on stream"}
-                </button>
-              )}
-              <Preview
-                label={
-                  graphPanel
-                    ? "Souls difference panel preview"
-                    : "Live stat panel preview"
-                }
-              >
-                <CollectorPanel
-                  visible={shared?.data.deadem.visible !== false}
-                  session={session}
-                  panel={cleanPanel({
-                    ...panel,
-                    metric,
-                    names: session.settings.names,
-                    teamNames: config.teams.map((t) => t.name),
-                  })}
-                  status={
-                    session.status === "finished"
-                      ? "finished"
-                      : session.status === "live"
-                        ? "live"
-                        : ["connecting", "reconnecting"].includes(
-                              session.status,
-                            )
-                          ? "loading"
-                          : "error"
-                  }
-                  stale={
-                    !session.result &&
-                    (session.status !== "live" ||
-                      metricsNow - session.updatedAt > 15000)
-                  }
-                />
-              </Preview>
-              {graphPanel && (
-                <p className="production-hint">
-                  Shows the difference in team net worth across the recorded
-                  match. The graph starts when collection starts and leaves gaps
-                  where observations are missing.
-                </p>
-              )}
-              <PanelControls panel={cleanPanel(panel)} setPanel={setPanel} />
-              <ObsLink
-                id={id}
-                metric={metric}
-                content={panel.content}
-                view="collector-panel"
-                label={
-                  graphPanel ? "Souls difference panel" : "Live stats panel"
-                }
-              />
-            </>
-          )}
-          {section === "hud" && (
-            <>
-              {shared && (
-                <button
-                  className="button secondary"
-                  onClick={() =>
-                    shared.update(["deadem", "hudVisible"], (v) => !v)
-                  }
-                >
-                  {shared.data.deadem.hudVisible
-                    ? "Hide HUD on stream"
-                    : "Show HUD on stream"}
-                </button>
-              )}
-              <div className="production-section-heading">
-                <div>
-                  <h2>Make every ultimate readable.</h2>
-                  <p>
-                    Align these reference portraits with the game's HUD. The OBS
-                    source shows only ultimate badges.
-                  </p>
-                </div>
-                <span className="production-pill">1920 × 1080</span>
-              </div>
-              <UltimateControls
-                session={session}
-                catalog={catalog}
-                busy={busy}
-                onChange={(ultimateBadges) =>
-                  action("settings", { ultimateBadges })
-                }
-              />
-              <section className="production-card">
-                <form
-                  className="production-calibration"
-                  key={`${id}:${JSON.stringify(session.settings.hud)}:${session.settings.delayMs}`}
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const values = Object.fromEntries(
-                      new FormData(e.currentTarget),
-                    );
-                    action("settings", {
-                      hud: values,
-                      delayMs: Number(values.delay) * 1000,
-                    });
-                  }}
-                >
-                  {[
-                    ["x", "Left position", 0, 1850],
-                    ["y", "Top position", 0, 1000],
-                    ["size", "Portrait size", 24, 90],
-                    ["gap", "Portrait gap", 0, 80],
-                    ["teamGap", "Team gap", 0, 500],
-                  ].map(([key, label, min, max]) => (
-                    <label key={key}>
-                      {label}
-                      <input
-                        name={key}
-                        type="number"
-                        min={min}
-                        max={max}
-                        defaultValue={session.settings.hud[key]}
-                      />
-                    </label>
-                  ))}
-                  <label>
-                    Target graphics delay (seconds)
-                    <input
-                      name="delay"
-                      type="number"
-                      min="0"
-                      max="120"
-                      step="0.1"
-                      defaultValue={session.settings.delayMs / 1000}
-                    />
-                  </label>
-                  <button className="button primary" disabled={busy}>
-                    Apply calibration
-                  </button>
-                </form>
-                <p>
-                  Updated observers buffer the recording timeline to this
-                  target, smoothing data that arrives in bursts. Start with 5
-                  seconds. Late data appears as soon as it arrives, so this
-                  cannot guarantee an exact game-to-screen delay. Older
-                  observers use an additional delay after receipt. If the game
-                  video arrives first, delay the video in OBS too.
-                </p>
-                <p className="production-hint" role="status">
-                  {session.sourceTiming?.basis === "recording-timeline"
-                    ? `Recording timeline buffering available · target ${session.settings.delayMs / 1000}s. Last source update ${Math.max(0, session.sourceTiming.receivedAt - session.sourceTiming.sourceAt - session.settings.delayMs) > 100 ? `missed the target by ${(Math.max(0, session.sourceTiming.receivedAt - session.sourceTiming.sourceAt - session.settings.delayMs) / 1000).toFixed(1)}s` : "arrived within the target"}.`
-                    : "This capture uses receipt timing. The updated observer enables timeline buffering on new recordings."}
-                </p>
-                <details className="hud-order-controls">
-                  <summary>Match portrait order to the game</summary>
-                  <p>
-                    Move each hero left or right within its team until the
-                    reference portraits match the game HUD.
-                  </p>
-                  <div>
-                    {[0, 1].map((team) => {
-                      const teamPlayers = liveRoster(session).filter(
-                        (p) => p.team === team,
-                      );
-                      return (
-                        <section key={team}>
-                          <strong>{config.teams[team].name}</strong>
-                          {teamPlayers.map((p, i) => (
-                            <div key={p.id}>
-                              <Portrait player={p} />
-                              <span>{roster[p.heroId]?.name || p.name}</span>
-                              {[-1, 1].map((direction) => (
-                                <button
-                                  type="button"
-                                  className="button secondary"
-                                  key={direction}
-                                  disabled={
-                                    busy ||
-                                    i + direction < 0 ||
-                                    i + direction >= teamPlayers.length
-                                  }
-                                  aria-label={`Move ${roster[p.heroId]?.name || p.name} ${direction < 0 ? "left" : "right"}`}
-                                  onClick={() => {
-                                    const all = liveRoster(session);
-                                    const from = all.findIndex(
-                                        (v) => v.id === p.id,
-                                      ),
-                                      to = from + direction;
-                                    [all[from], all[to]] = [all[to], all[from]];
-                                    action("settings", {
-                                      hudOrder: all.map((v) => v.id),
-                                    });
-                                  }}
-                                >
-                                  {direction < 0 ? "←" : "→"}
-                                </button>
-                              ))}
-                            </div>
-                          ))}
-                        </section>
-                      );
-                    })}
-                  </div>
-                </details>
-              </section>
-              <ObsLink id={id} view="ultimate-hud" label="Ultimate hit HUD" />
-              <details className="production-coverage">
-                <summary>Ultimate detection coverage</summary>
-                <p>
-                  Damage hits use ability IDs as candidates. Graves summon hits
-                  are suppressed because a second-ability zombie can report the
-                  ultimate ID. Self buffs and utility ultimates do not produce
-                  enemy-hit badges. Lasting effects are enabled for the four
-                  replay-verified abilities below; other effects need
-                  per-ability validation.
-                </p>
-                <div>
-                  {catalog.map((a) => (
-                    <span key={a.id}>
-                      <strong>
-                        {a.heroName} · {a.name}
-                      </strong>
-                      <small>{a.detection}</small>
-                    </span>
-                  ))}
-                </div>
-              </details>
-            </>
-          )}
           {section === "scoreboard" && (
             <>
               {shared && (
@@ -1350,7 +1478,9 @@ export function ProductionOverlay() {
         className="production-scaled"
         style={{ transform: `scale(${scale})` }}
       >
-        {view === "ultimate-hud" ? (
+        {view === "ultimate-test" ? (
+          <HudObsTest settings={session?.settings} />
+        ) : view === "ultimate-hud" ? (
           <Hud
             session={error ? null : session}
             catalog={health?.catalog}

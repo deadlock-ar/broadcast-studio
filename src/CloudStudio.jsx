@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import App from "./App.jsx";
-import { Hud, Scoreboard, SeriesMvp } from "./ProductionStudio.jsx";
+import { Hud, HudObsTest, Scoreboard, SeriesMvp } from "./ProductionStudio.jsx";
 import { StatGraphic } from "./StatPanels.jsx";
 import ultimateCatalog from "../collector/data/ultimates.json";
 import {
@@ -27,6 +27,7 @@ import CasterScreen from "./CasterScreen.jsx";
 import CollectorPanel from "./CollectorPanel.jsx";
 import SoulsDifferencePanel from "./SoulsDifferencePanel.jsx";
 import PanelTransition from "./PanelTransition.jsx";
+import { BUFFERED_LIVE_CHANNELS } from "../collector/live-playout.mjs";
 import {
   collectorUltimatePreferences,
   applyCollectorUltimatePreferences,
@@ -187,6 +188,9 @@ function BroadcastFrame({ children }) {
   );
 }
 function CloudBroadcast({ channel }) {
+  const hudTest =
+    channel === "ultimates" &&
+    new URLSearchParams(window.location.search).get("test") === "1";
   const [value, setValue] = useState(null),
     [error, setError] = useState(false),
     [now, setNow] = useState(Date.now);
@@ -205,6 +209,11 @@ function CloudBroadcast({ channel }) {
     source.onmessage = (e) => {
       try {
         const packet = JSON.parse(e.data);
+        if (hudTest) {
+          setValue(packet.samples?.at(-1) || packet);
+          setError(false);
+          return;
+        }
         for (const next of packet.samples || [packet]) {
           const nextDelay = next.session?.settings.delayMs || 0;
           if (
@@ -216,8 +225,7 @@ function CloudBroadcast({ channel }) {
             identity = next.session?.id;
             delay = nextDelay;
             clock = {};
-            if (["deadem", "ultimates", "momentum"].includes(channel))
-              setValue(null);
+            if (BUFFERED_LIVE_CHANNELS.includes(channel)) setValue(null);
           }
           if (channel === "ultimates") {
             latestUltimatePreferences.current =
@@ -231,7 +239,7 @@ function CloudBroadcast({ channel }) {
           }
           if (
             next.visible !== false &&
-            ["deadem", "ultimates", "momentum"].includes(channel)
+            BUFFERED_LIVE_CHANNELS.includes(channel)
           )
             queue = enqueueCollectorState(
               queue,
@@ -272,7 +280,13 @@ function CloudBroadcast({ channel }) {
       source.close();
       clearInterval(timer);
     };
-  }, [channel]);
+  }, [channel, hudTest]);
+  if (hudTest)
+    return (
+      <BroadcastFrame>
+        {value && <HudObsTest settings={value.hudSettings} />}
+      </BroadcastFrame>
+    );
   if (channel === "draft") {
     if (!value) return null;
     const data = { ...initialWorkspace(), ...value };
@@ -388,9 +402,12 @@ function CloudBroadcast({ channel }) {
         )
       ) : channel === "ultimates" ? (
         <Hud
-          session={error ? null : session}
+          session={session}
           catalog={ultimateCatalog}
           delayed
+          calibration={
+            new URLSearchParams(window.location.search).get("calibrate") === "1"
+          }
         />
       ) : match ? (
         <StatGraphic
@@ -417,7 +434,8 @@ function CloudBroadcast({ channel }) {
                   15000)) ||
             (channel === "live-events" &&
               value.apiStats.source?.mode === "live" &&
-              (result.status !== "live" || now - result.updated > 15000))
+              (result.status !== "live" ||
+                collectorRenderNow(session, now) - result.updated > 15000))
           }
         />
       ) : null}
