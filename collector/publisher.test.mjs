@@ -7,7 +7,7 @@ import { randomUUID } from "node:crypto";
 import { BroadcastDatabase } from "./database.mjs";
 import { Archive } from "./archive.mjs";
 import { Publisher } from "./publisher.mjs";
-import { sessionId, matchId, publishResult } from "./model.mjs";
+import { sessionId, matchId, publishResult, cleanSettings } from "./model.mjs";
 async function setup(t) {
   const dir = await mkdtemp(path.join(tmpdir(), "dlar-publisher-"));
   const store = new BroadcastDatabase(dir);
@@ -34,6 +34,60 @@ test("local game identities are distinct from numeric Valve match IDs", () => {
   assert.equal(sessionId(id), id);
   assert.throws(() => matchId(id));
   assert.throws(() => sessionId("local-../settings"));
+});
+
+test("new games inherit only ultimate preferences within the same tournament; resumes and other tournaments stay isolated", async (t) => {
+  const { pub, store } = await setup(t),
+    paired = pair(pub),
+    identity = paired.authenticated();
+  store.workspace.activeTournamentId = "tournament-a";
+  const first = pub.begin(identity, { id: `local-${randomUUID()}` });
+  const original = store.sessions.get(first.id);
+  original.settings = cleanSettings({
+    ultimateBadges: {
+      enabled: false,
+      iconSize: 40,
+      maxPerPlayer: 2,
+      byAbility: { 99: { hit: false } },
+    },
+    names: { 1: "Old name" },
+    hudOrder: ["1"],
+    delayMs: 4000,
+    hud: { x: 100 },
+    metricsBaseline: {
+      time: 10,
+      players: Array.from({ length: 12 }, (_, index) => ({
+        id: String(index + 1),
+        team: index < 6 ? 0 : 1,
+        souls: index * 100,
+      })),
+    },
+  });
+  const before = structuredClone(original.settings);
+  assert.equal(before.metricsBaseline.time, 10);
+  const next = pub.begin(identity, { id: `local-${randomUUID()}` });
+  const inherited = store.sessions.get(next.id);
+  assert.deepEqual(inherited.settings.ultimateBadges, before.ultimateBadges);
+  assert.deepEqual(original.settings, before);
+  assert.deepEqual(inherited.settings.names, {});
+  assert.deepEqual(inherited.settings.hudOrder, []);
+  assert.equal(inherited.settings.delayMs, 0);
+  assert.equal(inherited.settings.metricsBaseline, null);
+  assert.equal(inherited.settings.hud.x, 460);
+  inherited.settings.ultimateBadges.byAbility[99].hit = true;
+  assert.equal(original.settings.ultimateBadges.byAbility[99].hit, false);
+  pub.begin(identity, { id: next.id });
+  assert.equal(inherited.settings.ultimateBadges.byAbility[99].hit, true);
+  store.workspace.activeTournamentId = "tournament-b";
+  store.workspace.deadem.id = original.id;
+  const other = pub.begin(identity, { id: `local-${randomUUID()}` });
+  assert.deepEqual(store.sessions.get(other.id).settings.ultimateBadges, {
+    enabled: true,
+    iconSize: 32,
+    maxPerPlayer: 4,
+    byAbility: {},
+  });
+  assert.deepEqual(original.settings, before);
 });
 
 test("batched source samples keep source spacing, anchor at the known edge, and finalize in order", async (t) => {

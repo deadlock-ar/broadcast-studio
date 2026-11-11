@@ -16,6 +16,7 @@ import {
   sortPlayers,
 } from "./stats";
 import "./StatPanels.css";
+import { usePanelPlacement } from "./use-panel-placement.js";
 
 const roster = Object.fromEntries(heroes.map((h) => [h.id, h]));
 function Field({ label, children }) {
@@ -60,6 +61,7 @@ export function StatGraphic({
   visible = true,
   rangeStart = null,
 }) {
+  const placement = usePanelPlacement(panel);
   const signed = rangeStart !== null && panel.metric === "souls";
   const rows = sortPlayers(playersAt(match, time), panel, signed);
   const heroRoster = { ...match?.heroInfo, ...roster };
@@ -121,20 +123,12 @@ export function StatGraphic({
   return (
     <div className={`stat-canvas ${visible ? "" : "stat-hidden"}`}>
       <section
-        className={`stat-box stat-theme-${panel.theme} stat-layout-${panel.layout} stat-position-${panel.position}`}
+        ref={placement}
+        className={`stat-box stat-viewport-fit stat-theme-${panel.theme} stat-layout-${panel.layout} stat-position-${panel.position}`}
         style={{
           "--panel-scale": panel.scale,
           "--panel-width": `${panel.width}px`,
           "--stat-font-size": `${panel.fontSize}px`,
-          ...(panel.position === "custom"
-            ? {
-                left: panel.x,
-                top: panel.y,
-                right: "auto",
-                bottom: "auto",
-                transformOrigin: "top left",
-              }
-            : {}),
         }}
         aria-label={`${metric.label} broadcast panel`}
       >

@@ -27,6 +27,10 @@ import CasterScreen from "./CasterScreen.jsx";
 import CollectorPanel from "./CollectorPanel.jsx";
 import SoulsDifferencePanel from "./SoulsDifferencePanel.jsx";
 import PanelTransition from "./PanelTransition.jsx";
+import {
+  collectorUltimatePreferences,
+  applyCollectorUltimatePreferences,
+} from "./collector-preferences.js";
 
 function WorkspaceProvider({ initial, children, logout }) {
   const canonical = useRef(initial),
@@ -186,11 +190,13 @@ function CloudBroadcast({ channel }) {
   const [value, setValue] = useState(null),
     [error, setError] = useState(false),
     [now, setNow] = useState(Date.now);
+  const latestUltimatePreferences = useRef(null);
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
   }, []);
   useEffect(() => {
+    latestUltimatePreferences.current = null;
     let queue = [],
       identity = null,
       delay = null,
@@ -212,6 +218,16 @@ function CloudBroadcast({ channel }) {
             clock = {};
             if (["deadem", "ultimates", "momentum"].includes(channel))
               setValue(null);
+          }
+          if (channel === "ultimates") {
+            latestUltimatePreferences.current =
+              collectorUltimatePreferences(next);
+            setValue((current) =>
+              applyCollectorUltimatePreferences(
+                current,
+                latestUltimatePreferences.current,
+              ),
+            );
           }
           if (
             next.visible !== false &&
@@ -242,7 +258,15 @@ function CloudBroadcast({ channel }) {
     const timer = setInterval(() => {
       let next;
       while (queue[0]?.at <= Date.now()) next = queue.shift().value;
-      if (next) setValue(next);
+      if (next)
+        setValue(
+          channel === "ultimates"
+            ? applyCollectorUltimatePreferences(
+                next,
+                latestUltimatePreferences.current,
+              )
+            : next,
+        );
     }, 40);
     return () => {
       source.close();

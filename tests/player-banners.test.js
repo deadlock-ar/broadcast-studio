@@ -6,6 +6,8 @@ import {
   cleanPlayerBanners,
   resolveBannerTeams,
   playerBannersOutput,
+  bannerSeasonWindow,
+  bannerProfiles,
 } from "../src/player-banners.js";
 
 const steam = (id) => String(76561197960265728n + BigInt(id));
@@ -307,5 +309,117 @@ test("rank labels follow the current official catalog for middle tiers", () => {
   assert.deepEqual(
     [3, 4, 5, 6, 7].map((tier) => state.profiles[steam(tier)].rank.name),
     ["Acolyte II", "Sentinel II", "Mystic II", "Ritualist II", "Emissary II"],
+  );
+});
+
+test("season windows use game intervals, reject ambiguity and never invent missing dates", () => {
+  const row = {
+    class_name: "season_1",
+    ranked_type: "normal",
+    intervals: [
+      { interval: 2, start_timestamp: 200, end_timestamp: 300 },
+      { interval: 1, start_timestamp: 100, end_timestamp: 200 },
+    ],
+  };
+  const window = bannerSeasonWindow([row], "season_1");
+  assert.deepEqual(window, {
+    scope: "season_1",
+    start: 100,
+    end: 300,
+    intervals: [
+      { id: 1, start: 100, end: 200 },
+      { id: 2, start: 200, end: 300 },
+    ],
+  });
+  for (const rows of [
+    [],
+    [row, row],
+    [{ ...row, ranked_type: "street_brawl" }],
+    [{ ...row, intervals: [{ interval: 1, start_timestamp: 100 }] }],
+    [
+      {
+        ...row,
+        intervals: [
+          { interval: 1, start_timestamp: 100, end_timestamp: 250 },
+          { interval: 2, start_timestamp: 200, end_timestamp: 300 },
+        ],
+      },
+    ],
+  ])
+    assert.equal(bannerSeasonWindow(rows, "season_1"), null);
+  assert.equal(bannerSeasonWindow([row], "all"), null);
+  assert.equal(bannerSeasonWindow([row], "season_2"), null);
+});
+
+test("scoped caches are bounded, cleaned and selected without exposing current-rank fallback", () => {
+  const w = workspace();
+  w.playerBanners = cleanPlayerBanners({
+    source: "manual",
+    teams: [teams[0]],
+    statsScope: "season_1",
+    rankBasis: "last",
+    profiles: {
+      [steam(1)]: {
+        heroes: [{ heroId: 1, matches: 999, wins: 999 }],
+        rank: { tier: 11, subrank: 6 },
+      },
+    },
+    seasonalProfiles: {
+      season_1: {
+        intervals: [{ id: 1, start: 100, end: 200 }],
+        profiles: {
+          [steam(1)]: {
+            heroes: [{ heroId: 2, matches: 4, wins: 1 }],
+            peakRank: { tier: 8, subrank: 3 },
+            lastRank: null,
+            rankNote: "Private coverage diagnostic",
+          },
+        },
+      },
+      season_2: {
+        intervals: [{ id: 2, start: 200, end: 300 }],
+        profiles: Object.fromEntries(
+          Array.from({ length: 70 }, (_, i) => [steam(i + 1), { heroes: [] }]),
+        ),
+      },
+      arbitrary: {
+        profiles: { [steam(1)]: { rank: { tier: 11, subrank: 6 } } },
+      },
+    },
+  });
+  assert.equal(w.playerBanners.statsScope, "season_1");
+  assert.equal(
+    Object.keys(w.playerBanners.seasonalProfiles.season_2.profiles).length,
+    64,
+  );
+  assert.equal(
+    Object.hasOwn(w.playerBanners.seasonalProfiles, "arbitrary"),
+    false,
+  );
+  const p = playerBannersOutput(w).teams[0].players[0];
+  assert.equal(p.heroes[0].heroId, 2);
+  assert.equal(p.heroes[0].winRate, 25);
+  assert.equal(p.rank, null);
+  assert.equal(
+    JSON.stringify(playerBannersOutput(w)).includes(
+      "Private coverage diagnostic",
+    ),
+    false,
+  );
+  w.playerBanners.statsScope = "season_2";
+  assert.equal(bannerProfiles(w.playerBanners)[steam(1)], undefined);
+  assert.deepEqual(playerBannersOutput(w).teams[0].players[0].heroes, []);
+  w.playerBanners.statsScope = "all";
+  assert.equal(
+    playerBannersOutput(w).teams[0].players[0].rank.name,
+    "Eternus VI",
+  );
+  assert.equal(cleanPlayerBanners({ statsScope: "wrong" }).statsScope, "all");
+  assert.equal(cleanPlayerBanners({ rankBasis: "current" }).rankBasis, "peak");
+  assert.deepEqual(
+    cleanPlayerBanners({
+      seasonalProfiles: { season_1: { intervals: {}, profiles: {} } },
+    }).seasonalProfiles,
+    {},
   );
 });

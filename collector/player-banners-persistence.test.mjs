@@ -367,3 +367,100 @@ test("banner refresh and optimistic edits require the current tournament and pro
   assert.equal(stale.status, 409);
   assert.equal(app.store.workspace.playerBanners.showRanks, false);
 });
+
+test("season choices and isolated profiles survive tournament switching, restart and backup; only selectors are editable", async (t) => {
+  const { app, start, close } = await fixture(t);
+  const firstId = app.store.workspace.activeTournamentId;
+  configure(app);
+  await app.playerBanners.refresh();
+  app.store.workspace.playerBanners = cleanPlayerBanners({
+    ...app.store.workspace.playerBanners,
+    statsScope: "season_1",
+    rankBasis: "last",
+    seasonalProfiles: {
+      season_1: {
+        intervals: [{ id: 1, start: 1785430800, end: 1793908800 }],
+        profiles: {
+          [steam(1001)]: {
+            heroes: [{ heroId: 2, matches: 9, wins: 3 }],
+            peakRank: { tier: 10, subrank: 6 },
+            lastRank: { tier: 9, subrank: 2 },
+            rankMatches: 8,
+            historyMatches: 9,
+            rankNote: "Recorded coverage",
+            status: "ready",
+            updatedAt: 1234,
+          },
+        },
+      },
+      season_2: {
+        intervals: [{ id: 2, start: 1793908800, end: 1804802400 }],
+        profiles: {
+          [steam(1001)]: {
+            heroes: [{ heroId: 3, matches: 2, wins: 1 }],
+            peakRank: { tier: 8, subrank: 1 },
+            lastRank: { tier: 8, subrank: 1 },
+            status: "ready",
+            updatedAt: 5678,
+          },
+        },
+      },
+    },
+  });
+  app.store.saveWorkspace();
+  const expected = structuredClone(app.store.workspace.playerBanners);
+  const other = app.store.tournaments.create({
+    name: "Independent banner season selection",
+  });
+  assert.equal(app.store.workspace.playerBanners.statsScope, "all");
+  assert.deepEqual(app.store.workspace.playerBanners.seasonalProfiles, {});
+  const backup = exportBackup(app.store);
+  assert.deepEqual(
+    prepareRestore(backup, app.store).tournaments.find(
+      (record) => record.id === firstId,
+    ).state.playerBanners,
+    expected,
+  );
+  await close(app);
+  const restarted = await start();
+  assert.equal(restarted.store.workspace.activeTournamentId, other.id);
+  restarted.store.tournaments.select(firstId);
+  assert.deepEqual(restarted.store.workspace.playerBanners, expected);
+  const base = await listen(restarted);
+  const headers = { "X-DLAR-Tournament": firstId };
+  const patch = (operations) =>
+    post(
+      base,
+      restarted,
+      "/api/workspace",
+      { id: randomUUID(), tournamentId: firstId, operations },
+      headers,
+    );
+  const selected = await patch([
+    {
+      path: ["playerBanners", "statsScope"],
+      before: "season_1",
+      value: "season_2",
+    },
+    { path: ["playerBanners", "rankBasis"], before: "last", value: "peak" },
+  ]);
+  assert.equal(selected.status, 200, await selected.text());
+  const output = await (
+    await fetch(base + "/api/broadcast?channel=player-banners")
+  ).json();
+  assert.equal(output.banners.scopeLabel, "Season 2 · ranked");
+  assert.equal(output.banners.teams[0].players[0].heroes[0].heroId, 3);
+  assert.equal(output.banners.teams[0].players[0].rank.name, "Oracle I");
+  const forbidden = await patch([
+    {
+      path: ["playerBanners", "seasonalProfiles"],
+      before: expected.seasonalProfiles,
+      value: {},
+    },
+  ]);
+  assert.equal(forbidden.status, 400);
+  assert.deepEqual(
+    restarted.store.workspace.playerBanners.seasonalProfiles,
+    expected.seasonalProfiles,
+  );
+});

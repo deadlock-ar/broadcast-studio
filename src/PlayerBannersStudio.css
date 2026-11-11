@@ -7,6 +7,12 @@
 .player-banners-studio {
   color: var(--ink);
 }
+.player-banners-studio .pbs-rank-note {
+  margin: 5px 0 0;
+  color: #737a66;
+  font-size: 10px;
+  line-height: 1.6;
+}
 .player-banners-studio > .page-heading p {
   max-width: 680px;
 }

@@ -4,6 +4,7 @@ import {
   cleanMetricsBaseline,
 } from "./telemetry.mjs";
 import { recordStatHistory } from "./stat-history.mjs";
+import { cleanUltimateBadges } from "./ultimate-settings.mjs";
 
 export const number = (value) =>
   Number.isFinite(value) && value >= 0 ? value : null;
@@ -66,6 +67,7 @@ export function emptySession(id, mode = "live") {
     published: null,
     settings: {
       delayMs: 0,
+      ultimateBadges: cleanUltimateBadges(),
       hud: { x: 460, y: 22, gap: 12, size: 62, teamGap: 145 },
       names: {},
     },
@@ -201,6 +203,9 @@ export function cleanSettings(
   );
   return {
     delayMs: bounded(value.delayMs ?? previous.delayMs, 0, 120000, 0),
+    ultimateBadges: cleanUltimateBadges(
+      value.ultimateBadges ?? previous.ultimateBadges,
+    ),
     metricsBaseline: cleanMetricsBaseline(
       Object.hasOwn(value, "metricsBaseline")
         ? value.metricsBaseline

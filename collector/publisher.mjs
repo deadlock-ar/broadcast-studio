@@ -11,6 +11,7 @@ import {
   applyInterruption,
   mergePlayers,
   sessionId,
+  cleanSettings,
 } from "./model.mjs";
 
 const hash = (value) =>
@@ -182,6 +183,17 @@ export class Publisher {
         this.store.save(other);
       }
     const s = old || emptySession(id, value.rehearsal ? "rehearsal" : "local");
+    if (!old) {
+      const selected = this.store.sessions.get(this.store.workspace.deadem.id);
+      if (
+        selected &&
+        selected.tournamentId === this.store.workspace.activeTournamentId
+      )
+        s.settings = cleanSettings(
+          { ultimateBadges: selected.settings?.ultimateBadges },
+          s.settings,
+        );
+    }
     // Reconnect always fences the previous process, including an older process on the same PC.
     const lease = randomBytes(24).toString("hex");
     this.timelines.delete(id);

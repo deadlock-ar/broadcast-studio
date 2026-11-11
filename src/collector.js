@@ -1,4 +1,9 @@
 import { tournamentHeaders } from "./tournament-context.js";
+import {
+  filterUltimateBadges,
+  ultimateBadgeAllowed,
+  ultimateHitPresentation,
+} from "../collector/ultimate-settings.mjs";
 export { liveRoster } from "./roster-order.js";
 export const COLLECTOR_ORIGIN = "http://127.0.0.1:8766";
 export function enqueueCollectorState(
@@ -131,14 +136,24 @@ export function visibleUltimateBadges(session, now) {
     return [];
   const active = [
     ...(session.effects || []),
-    ...(session.recentHits || []).filter(
-      (h) => now >= h.at && now - h.at < h.durationMs,
-    ),
+    ...(session.recentHits || [])
+      .map((hit) => ultimateHitPresentation(hit, now))
+      .filter(Boolean),
   ];
   const unique = new Map();
   for (const item of active) {
+    if (!ultimateBadgeAllowed(session.settings?.ultimateBadges, item)) continue;
     const key = `${item.targetId}:${item.abilityId}`;
-    if (!unique.has(key) || item.kind === "effect") unique.set(key, item);
+    const previous = unique.get(key);
+    if (
+      !previous ||
+      item.kind === "effect" ||
+      (previous.kind === "hit" && item.kind === "hit" && item.at > previous.at)
+    )
+      unique.set(key, item);
   }
-  return [...unique.values()];
+  return filterUltimateBadges(
+    [...unique.values()],
+    session.settings?.ultimateBadges,
+  );
 }

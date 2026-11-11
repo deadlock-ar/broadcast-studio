@@ -321,11 +321,27 @@
 .ultimate-hud .hud-ultimate {
   width: var(--hud-ultimate-size, 32px);
   height: var(--hud-ultimate-size, 32px);
-  border-radius: 7px;
+  border-radius: 3px;
+  background: #152019;
+  border: 1px solid #929c82;
+  box-shadow: none;
+  filter: none;
+  animation: none;
+  transition: opacity 80ms linear;
+}
+.ultimate-hud .hud-ultimate.hit {
+  border-color: #b4a374;
+  animation: none;
+  box-shadow: none;
+}
+.ultimate-hud .hud-ultimate.effect {
+  border-color: #8fa5a0;
+  box-shadow: none;
 }
 .ultimate-hud .hud-ultimate img {
   width: 86%;
   height: 86%;
+  filter: none;
 }
 .ultimate-hud .hud-bridges {
   position: absolute;

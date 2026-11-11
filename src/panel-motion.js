@@ -1,4 +1,4 @@
-const CANVAS = { width: 1920, height: 1080 };
+import { PANEL_VIEWPORT as CANVAS } from "./panel-position.js";
 
 // Measure in broadcast coordinates, including the panel's own scale, while
 // excluding the wrapper's current slide and the browser-source preview scale.

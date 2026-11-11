@@ -4,6 +4,10 @@ import {
   collectorRequest,
   enqueueCollectorState,
 } from "./collector";
+import {
+  collectorUltimatePreferences,
+  applyCollectorUltimatePreferences,
+} from "./collector-preferences.js";
 
 export function useCollectorHealth(enabled = true) {
   const [health, setHealth] = useState(null),
@@ -51,12 +55,17 @@ export function useCollector(id, enabled = true, delayed = false) {
     if (!enabled || !id) return;
     let queue = [],
       currentDelay = null,
-      clock = {};
+      clock = {},
+      latestUltimatePreferences = null;
     const source = new EventSource(collectorEndpoint("events", id));
     source.onmessage = (event) => {
       try {
         const value = JSON.parse(event.data);
         if (value.version !== 1 || value.id !== id) return;
+        latestUltimatePreferences = collectorUltimatePreferences(value, id);
+        setSession((current) =>
+          applyCollectorUltimatePreferences(current, latestUltimatePreferences),
+        );
         const delay = delayed ? (value.settings?.delayMs ?? 0) : 0;
         if (currentDelay !== delay) {
           queue = [];
@@ -86,7 +95,10 @@ export function useCollector(id, enabled = true, delayed = false) {
     const timer = setInterval(() => {
       let next;
       while (queue[0]?.at <= Date.now()) next = queue.shift().value;
-      if (next) setSession(next);
+      if (next)
+        setSession(
+          applyCollectorUltimatePreferences(next, latestUltimatePreferences),
+        );
     }, 40);
     return () => {
       source.close();

@@ -438,6 +438,14 @@
   left: 50%;
   transform: translate(-50%, -50%) scale(var(--panel-scale));
 }
+.stat-box.stat-viewport-fit {
+  left: var(--panel-fit-left, 0px);
+  top: var(--panel-fit-top, 0px);
+  right: auto;
+  bottom: auto;
+  transform: scale(var(--panel-fit-scale, var(--panel-scale)));
+  transform-origin: top left;
+}
 .stat-theme-ink {
   --surface: #292e25;
   --text: #f5efdf;

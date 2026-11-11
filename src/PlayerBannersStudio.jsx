@@ -5,6 +5,9 @@ import {
   resolveBannerTeams,
   playerBannersOutput,
   normalizeBannerSteamId,
+  BANNER_SCOPES,
+  bannerProfiles,
+  bannerScopeLabel,
 } from "./player-banners.js";
 import { useWorkspace, workspaceRequest } from "./workspace-context.js";
 import PlayerBannersScreen from "./PlayerBannersScreen.jsx";
@@ -164,6 +167,9 @@ export default function PlayerBannersStudio({ active = true }) {
   const shared = useWorkspace();
   const workspace = shared?.data || {};
   const settings = cleanPlayerBanners(workspace.playerBanners);
+  const profiles = bannerProfiles(settings);
+  const seasonal = settings.statsScope !== "all";
+  const seasonWindow = settings.seasonalProfiles[settings.statsScope];
   const publicView = playerBannersOutput(workspace);
   const teams = resolveBannerTeams(workspace);
   const matches = bracketOutput(workspace.bracket).rounds.flatMap((round) =>
@@ -546,6 +552,51 @@ export default function PlayerBannersStudio({ active = true }) {
           </div>
           <span className="pbs-step">02 / THE PLAYERS</span>
         </div>
+        <div className="pbs-source-settings">
+          <label>
+            Statistics period
+            <select
+              aria-label="Player banners statistics period"
+              value={settings.statsScope}
+              disabled={disabled}
+              onChange={(event) => update("statsScope", event.target.value)}
+            >
+              {BANNER_SCOPES.map((scope) => (
+                <option key={scope.id} value={scope.id}>
+                  {scope.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          {seasonal && (
+            <label>
+              Historical rank badge
+              <select
+                aria-label="Player banners historical rank basis"
+                value={settings.rankBasis}
+                disabled={disabled}
+                onChange={(event) => update("rankBasis", event.target.value)}
+              >
+                <option value="peak">Recorded peak</option>
+                <option value="last">Last recorded rank</option>
+              </select>
+            </label>
+          )}
+        </div>
+        <p className="pbs-inline-note">
+          {seasonal
+            ? `${bannerScopeLabel(settings.statsScope)} only. Hero matches and win rates exclude unranked, private and other modes. Historical badges come only from matches in this season; missing ranks stay unavailable.`
+            : "All time keeps the existing tracked hero statistics and latest reported rank."}
+          {seasonal && seasonWindow && (
+            <>
+              {" "}
+              Verified game season:{" "}
+              {new Date(seasonWindow.start * 1000).toLocaleString()} to{" "}
+              {new Date(seasonWindow.end * 1000).toLocaleString()} (end
+              excluded).
+            </>
+          )}
+        </p>
         <div className="pbs-actions">
           <button
             className="button primary"
@@ -583,7 +634,7 @@ export default function PlayerBannersStudio({ active = true }) {
               <h3>{team.name || `Team ${side + 1}`}</h3>
               <ol>
                 {team.players.map((person, slot) => {
-                  const profile = settings.profiles[person.steamId];
+                  const profile = profiles[person.steamId];
                   const name =
                     person.name || profile?.personaName || `Player ${slot + 1}`;
                   const status = !person.steamId
@@ -615,6 +666,9 @@ export default function PlayerBannersStudio({ active = true }) {
                         {profile?.error && (
                           <p className="pbs-profile-error">{profile.error}</p>
                         )}
+                        {seasonal && profile?.rankNote && (
+                          <p className="pbs-rank-note">{profile.rankNote}</p>
+                        )}
                       </div>
                     </li>
                   );
@@ -625,9 +679,11 @@ export default function PlayerBannersStudio({ active = true }) {
         </div>
         <p className="pbs-data-note">
           Top heroes use matches tracked by Deadlock API, which may not include
-          a player’s full history. Rank badges show the latest reported rank
-          when available. Missing ranks and unavailable statistics remain
-          clearly marked.
+          a player’s full history.{" "}
+          {seasonal
+            ? "Recorded peak is the highest available badge in this season. Last recorded rank uses the latest tracked match and is unavailable if that match has no badge. Neither certifies Valve’s season-end medal; today’s rank is never substituted."
+            : "Rank badges show the latest reported rank when available."}{" "}
+          Missing ranks and unavailable statistics remain clearly marked.
         </p>
       </section>
     </section>

@@ -30,6 +30,12 @@ import RecordingEvidence from "./RecordingEvidence.jsx";
 import "./RecordingEvidence.css";
 import StatWindowControls from "./StatWindowControls.jsx";
 import CaptureDataStatus from "./CaptureDataStatus.jsx";
+import UltimateControls from "./UltimateControls.jsx";
+import {
+  cleanUltimateBadges,
+  filterUltimateBadges,
+  ultimateCapabilities,
+} from "../collector/ultimate-settings.mjs";
 
 const roster = {
   ...Object.fromEntries(
@@ -73,7 +79,19 @@ export function Hud({
     preview?.settings || session?.settings?.hud || defaultHudPlacement;
   const players = preview?.players || liveRoster(session);
   const sourceNow = collectorRenderNow(session, now, delayed);
-  const badges = preview?.badges || visibleUltimateBadges(session, sourceNow);
+  const indicatorSettings = cleanUltimateBadges(
+    session?.settings?.ultimateBadges,
+  );
+  const abilities = catalog.length ? catalog : ultimateCatalog;
+  const badges = preview
+    ? filterUltimateBadges(preview.badges, indicatorSettings, abilities)
+    : visibleUltimateBadges(session, sourceNow);
+  const bridgeSize = Math.min(24, settings.size * 0.4);
+  const badgeOutset = Math.min(4, settings.gap / 2);
+  const iconSize = Math.min(
+    indicatorSettings.iconSize,
+    Math.max(1, settings.size + 2 * badgeOutset - bridgeSize - 2),
+  );
   const bridgesFresh =
     Boolean(preview) ||
     (session?.status === "live" &&
@@ -101,9 +119,9 @@ export function Hud({
                   top: settings.y,
                   width: settings.size,
                   height: settings.size,
-                  "--hud-ultimate-size": `${Math.min(32, settings.size * 0.5)}px`,
-                  "--hud-bridge-size": `${Math.min(24, settings.size * 0.4)}px`,
-                  "--hud-badge-outset": `${Math.min(4, settings.gap / 2)}px`,
+                  "--hud-ultimate-size": `${iconSize}px`,
+                  "--hud-bridge-size": `${bridgeSize}px`,
+                  "--hud-badge-outset": `${badgeOutset}px`,
                   "--hud-corner-overlap": `${Math.min(12, settings.size * 0.2)}px`,
                   "--hud-label-width": `${Math.max(1, settings.size + settings.gap - 4)}px`,
                 }}
@@ -122,13 +140,20 @@ export function Hud({
                 <div className="hud-badges">
                   {badges
                     .filter((b) => b.targetId === p.id)
-                    .slice(0, 4)
+                    .slice(0, indicatorSettings.maxPerPlayer)
                     .map((b) => {
-                      const ability = catalog.find((a) => a.id === b.abilityId);
+                      const ability = abilities.find(
+                        (a) => a.id === b.abilityId,
+                      );
                       return (
                         <span
                           key={b.abilityId}
                           className={`hud-ultimate ${b.kind}`}
+                          style={
+                            b.kind === "hit"
+                              ? { opacity: b.opacity ?? 1 }
+                              : undefined
+                          }
                           title={`${ability?.heroName || "Hero"} · ${ability?.name || "Ultimate"} · ${b.kind === "effect" ? "effect active" : "hit"}`}
                           aria-label={`${ability?.name || "Ultimate"} ${b.kind} on ${p.name}`}
                         >
@@ -215,11 +240,22 @@ function HudPlacementTester({ session, catalog }) {
         settings,
         players,
         badges: targetIds.flatMap((targetId) =>
-          chosen.map((ability, index) => ({
-            targetId,
-            abilityId: ability.id,
-            kind: kind === "mixed" ? (index % 2 ? "effect" : "hit") : kind,
-          })),
+          chosen.map((ability, index) => {
+            const capability = ultimateCapabilities(ability);
+            const preferred = index % 2 ? "effect" : "hit";
+            return {
+              targetId,
+              abilityId: ability.id,
+              kind:
+                kind === "mixed"
+                  ? capability[preferred]
+                    ? preferred
+                    : preferred === "hit"
+                      ? "effect"
+                      : "hit"
+                  : kind,
+            };
+          }),
         ),
         bridgeBuffs: Object.fromEntries(
           targetIds.map((id) => [
@@ -254,6 +290,11 @@ function HudPlacementTester({ session, catalog }) {
           {enabled ? "Clear test" : "Show test indicators"}
         </button>
       </div>
+      <p className="production-hint">
+        The test follows your indicator toggles, icon size and badge limit.
+        Unsupported interactions stay hidden. Choose Wraith to preview a lasting
+        effect.
+      </p>
       <div className="hud-test-controls">
         <label>
           Target player
@@ -928,6 +969,14 @@ export default function ProductionStudio({ active, config }) {
                 </div>
                 <span className="production-pill">1920 × 1080</span>
               </div>
+              <UltimateControls
+                session={session}
+                catalog={catalog}
+                busy={busy}
+                onChange={(ultimateBadges) =>
+                  action("settings", { ultimateBadges })
+                }
+              />
               <section className="production-card">
                 <form
                   className="production-calibration"

@@ -141,7 +141,8 @@ test("HUD badges expire, deduplicate an ongoing effect, and disappear when the f
   };
   assert.equal(visibleUltimateBadges(s, 1200).length, 1);
   assert.equal(visibleUltimateBadges(s, 1200)[0].kind, "effect");
-  assert.equal(visibleUltimateBadges({ ...s, effects: [] }, 3000).length, 0);
+  assert.equal(visibleUltimateBadges({ ...s, effects: [] }, 3000).length, 1);
+  assert.equal(visibleUltimateBadges({ ...s, effects: [] }, 4000).length, 0);
   assert.equal(visibleUltimateBadges(s, 12000).length, 0);
   assert.equal(
     visibleUltimateBadges({ ...s, status: "interrupted" }, 1200).length,

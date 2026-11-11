@@ -55,6 +55,7 @@ for (const name of [
   "pov-compat.mjs",
   "extract.mjs",
   "ultimates.mjs",
+  "ultimate-settings.mjs",
   "model.mjs",
   "telemetry.mjs",
   "stat-history.mjs",

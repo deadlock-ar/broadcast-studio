@@ -1,9 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { PlayerBannersService } from "./player-banners-service.mjs";
+import {
+  PlayerBannersService,
+  seasonalBannerRanks,
+} from "./player-banners-service.mjs";
 import {
   cleanPlayerBanners,
   playerBannersOutput,
+  bannerProfiles,
+  bannerSeasonWindow,
 } from "../src/player-banners.js";
 
 const base = 76561197960265728n;
@@ -404,4 +409,396 @@ test("profile cache stays bounded and persistence failure rolls back workspace s
     /Persistence unavailable/,
   );
   assert.deepEqual(f.store.workspace, previous);
+});
+
+const seasonDefinitions = () => [
+  {
+    class_name: "season_1",
+    ranked_type: "normal",
+    intervals: [
+      { interval: 1, start_timestamp: 1785430800, end_timestamp: 1793908800 },
+    ],
+  },
+  {
+    class_name: "season_2",
+    ranked_type: "normal",
+    intervals: [
+      { interval: 2, start_timestamp: 1793908800, end_timestamp: 1804802400 },
+    ],
+  },
+];
+function seasonFixture(options = {}) {
+  const definitions = seasonDefinitions();
+  const f = fixture({ count: 2 });
+  f.store.workspace.playerBanners.statsScope = "season_1";
+  f.service.fetch = async (url) => {
+    f.calls.push({ url });
+    const address = new URL(url);
+    if (options.fetcher) {
+      const result = await options.fetcher(address, definitions);
+      if (result) return result;
+    }
+    if (address.pathname.endsWith("ranked-seasons"))
+      return response(definitions);
+    if (address.pathname.endsWith("match-history")) {
+      const account_id = Number(address.pathname.split("/")[3]);
+      return response([
+        {
+          account_id,
+          match_id: 10,
+          game_mode: 1,
+          match_mode: 4,
+          start_time: 1785430900,
+          ranked_display_badge: 106,
+        },
+        {
+          account_id,
+          match_id: 11,
+          game_mode: 1,
+          match_mode: 4,
+          start_time: 1785431000,
+          ranked_display_badge: 94,
+        },
+        {
+          account_id,
+          match_id: 12,
+          game_mode: 1,
+          match_mode: 1,
+          start_time: 1785431100,
+          ranked_display_badge: 116,
+        },
+        {
+          account_id,
+          match_id: 13,
+          game_mode: 4,
+          match_mode: 4,
+          start_time: 1785431200,
+          ranked_display_badge: 116,
+        },
+        {
+          account_id,
+          match_id: 14,
+          game_mode: 1,
+          match_mode: 4,
+          start_time: 1793908800,
+          ranked_display_badge: 112,
+        },
+      ]);
+    }
+    const ids = address.searchParams.get("account_ids").split(",").map(Number);
+    if (address.pathname.endsWith("hero-stats"))
+      return response(
+        ids.map((account_id) => ({
+          account_id,
+          hero_id: 2,
+          matches_played: 8,
+          wins: 5,
+        })),
+      );
+    if (address.pathname.endsWith("steam"))
+      return response(
+        ids.map((account_id) => ({
+          account_id,
+          personaname: `Season Steam ${account_id}`,
+        })),
+      );
+    throw Error("Season lookups must not request current rank");
+  };
+  return { ...f, definitions };
+}
+
+test("season hero queries are ranked/normal only with exact exclusive boundary and historical badges", async () => {
+  const f = seasonFixture();
+  await f.service.refresh();
+  assert.equal(f.calls.length, 5);
+  const query = new URL(
+    f.calls.find(({ url }) => url.includes("hero-stats")).url,
+  ).searchParams;
+  assert.equal(query.get("match_mode"), "ranked");
+  assert.equal(query.get("game_mode"), "normal");
+  assert.equal(query.get("min_unix_timestamp"), "1785430800");
+  assert.equal(query.get("max_unix_timestamp"), "1793908799");
+  assert.equal(
+    f.calls.some(({ url }) => new URL(url).pathname.endsWith("/rank")),
+    false,
+  );
+  const profile = bannerProfiles(f.store.workspace.playerBanners)[steam(100)];
+  assert.equal(profile.heroes[0].matches, 8);
+  assert.equal(profile.peakRank.name, "Ascendant VI");
+  assert.equal(profile.lastRank.name, "Phantom IV");
+  assert.equal(profile.rankMatches, 2);
+  assert.equal(profile.historyMatches, 2);
+  let output = playerBannersOutput(f.store.workspace);
+  assert.equal(output.scopeLabel, "Season 1 · ranked");
+  assert.equal(output.rankLabel, "Recorded peak");
+  assert.equal(output.teams[0].players[0].rank.name, "Ascendant VI");
+  assert.equal(output.teams[0].players[0].heroes[0].winRate, 62.5);
+  f.store.workspace.playerBanners.rankBasis = "last";
+  output = playerBannersOutput(f.store.workspace);
+  assert.equal(output.teams[0].players[0].rank.name, "Phantom IV");
+  assert.equal(output.rankLabel, "Last recorded rank");
+  assert.equal(JSON.stringify(output).includes("rankNote"), false);
+  assert.equal(JSON.stringify(output).includes(steam(100)), false);
+});
+
+test("all-time, season one and season two caches and cooldowns are independent", async () => {
+  const f = fixture({ count: 2 });
+  await f.service.refresh();
+  const allTime = structuredClone(f.store.workspace.playerBanners.profiles);
+  const seasonal = seasonFixture();
+  f.service.fetch = seasonal.service.fetch;
+  f.store.workspace.playerBanners.statsScope = "season_1";
+  assert.deepEqual(
+    playerBannersOutput(f.store.workspace).teams[0].players[0].heroes,
+    [],
+  );
+  await f.service.refresh();
+  const first = structuredClone(
+    f.store.workspace.playerBanners.seasonalProfiles.season_1,
+  );
+  f.store.workspace.playerBanners.statsScope = "season_2";
+  await f.service.refresh();
+  assert.equal(
+    playerBannersOutput(f.store.workspace).teams[0].players[0].rank.name,
+    "Eternus II",
+  );
+  assert.deepEqual(f.store.workspace.playerBanners.profiles, allTime);
+  assert.deepEqual(
+    f.store.workspace.playerBanners.seasonalProfiles.season_1,
+    first,
+  );
+  f.store.workspace.playerBanners.statsScope = "season_1";
+  const calls = seasonal.calls.length;
+  await f.service.refresh();
+  assert.equal(seasonal.calls.length, calls);
+  await assert.rejects(
+    f.service.refresh({ force: true }),
+    (error) => error.status === 429,
+  );
+  assert.equal(
+    playerBannersOutput(f.store.workspace).teams[0].players[0].rank.name,
+    "Ascendant VI",
+  );
+  f.store.workspace.playerBanners.statsScope = "all";
+  assert.equal(
+    playerBannersOutput(f.store.workspace).teams[0].players[0].rank.name,
+    "Eternus V",
+  );
+});
+
+test("season rank absence and latest unknown badge never fall back to a current or older rank", async () => {
+  const f = seasonFixture({
+    fetcher: async (url) => {
+      if (!url.pathname.endsWith("match-history")) return;
+      const account_id = Number(url.pathname.split("/")[3]);
+      return response(
+        account_id === 100
+          ? [
+              {
+                account_id,
+                match_id: 1,
+                game_mode: 1,
+                match_mode: 4,
+                start_time: 1785430900,
+                ranked_display_badge: 111,
+              },
+              {
+                account_id,
+                match_id: 2,
+                game_mode: 1,
+                match_mode: 4,
+                start_time: 1785431000,
+                ranked_display_badge: null,
+              },
+            ]
+          : [
+              {
+                account_id,
+                match_id: 3,
+                game_mode: 1,
+                match_mode: 4,
+                start_time: 1785431000,
+                ranked_display_badge: 0,
+              },
+            ],
+      );
+    },
+  });
+  f.store.workspace.playerBanners.profiles[steam(100)] = {
+    rank: { tier: 11, subrank: 6 },
+  };
+  await f.service.refresh();
+  const profiles = bannerProfiles(f.store.workspace.playerBanners);
+  assert.equal(profiles[steam(100)].peakRank.name, "Eternus I");
+  assert.equal(profiles[steam(100)].lastRank, null);
+  assert.match(profiles[steam(100)].rankNote, /1 of 2/);
+  assert.equal(profiles[steam(101)].peakRank, null);
+  assert.equal(profiles[steam(101)].lastRank, null);
+  assert.match(profiles[steam(101)].rankNote, /current rank is not used/);
+  f.store.workspace.playerBanners.rankBasis = "last";
+  assert.equal(
+    playerBannersOutput(f.store.workspace).teams[0].players[0].rank,
+    null,
+  );
+});
+
+test("season definitions must be verified and changed windows cannot reuse cached stats", async () => {
+  const f = seasonFixture();
+  await f.service.refresh();
+  f.advance(3600000);
+  f.definitions[0].intervals[0].start_timestamp = 1785432000;
+  const original = f.service.fetch;
+  f.service.fetch = async (url) =>
+    url.includes("hero-stats") ? response({}, { status: 500 }) : original(url);
+  await f.service.refresh();
+  const profile = bannerProfiles(f.store.workspace.playerBanners)[steam(100)];
+  assert.deepEqual(profile.heroes, []);
+  assert.equal(profile.peakRank, null);
+  assert.equal(profile.status, "error");
+  const missing = seasonFixture({
+    fetcher: async (url) =>
+      url.pathname.endsWith("ranked-seasons") ? response([]) : undefined,
+  });
+  await assert.rejects(missing.service.refresh(), /Verified dates/);
+  assert.equal(missing.store.saves, 0);
+  assert.equal(missing.calls.length, 1);
+});
+
+test("scope changes while fetching reject stale commits even for the same roster", async () => {
+  for (const nextScope of ["all", "season_2"]) {
+    const f = seasonFixture();
+    const original = f.service.fetch;
+    let release;
+    const gate = new Promise((resolve) => {
+      release = resolve;
+    });
+    f.service.fetch = async (url) => {
+      await gate;
+      return original(url);
+    };
+    const pending = f.service.refresh();
+    f.store.workspace.playerBanners.statsScope = nextScope;
+    release();
+    await assert.rejects(pending, (error) => error.status === 409);
+    assert.equal(f.store.saves, 0);
+    assert.deepEqual(f.store.workspace.playerBanners.seasonalProfiles, {});
+  }
+});
+
+test("historical badge selection deduplicates matches and rejects conflicting or foreign-account rows", () => {
+  const window = bannerSeasonWindow(seasonDefinitions(), "season_1");
+  const row = {
+    account_id: 100,
+    match_id: 1,
+    match_mode: 4,
+    game_mode: 1,
+    start_time: window.start,
+    ranked_display_badge: 85,
+  };
+  assert.equal(
+    seasonalBannerRanks([row, { ...row }], 100, window).historyMatches,
+    1,
+  );
+  assert.throws(() =>
+    seasonalBannerRanks(
+      [row, { ...row, ranked_display_badge: 106 }],
+      100,
+      window,
+    ),
+  );
+  assert.throws(() =>
+    seasonalBannerRanks([{ ...row, account_id: 101 }], 100, window),
+  );
+  assert.equal(
+    seasonalBannerRanks([{ ...row, start_time: window.end }], 100, window)
+      .historyMatches,
+    0,
+  );
+});
+
+test("season cache persistence failures roll back the complete workspace", async () => {
+  const f = seasonFixture();
+  const previous = structuredClone(f.store.workspace);
+  f.store.saveWorkspace = () => {
+    throw Error("Persistence unavailable");
+  };
+  await assert.rejects(f.service.refresh(), /Persistence unavailable/);
+  assert.deepEqual(f.store.workspace, previous);
+});
+
+test("multiple game intervals merge hero counts before selecting top heroes and requests stay bounded", async () => {
+  let active = 0,
+    maximum = 0;
+  const f = seasonFixture({
+    fetcher: async (url) => {
+      if (url.pathname.endsWith("ranked-seasons"))
+        return response([
+          {
+            class_name: "season_1",
+            ranked_type: "normal",
+            intervals: [
+              { interval: 1, start_timestamp: 100, end_timestamp: 200 },
+              { interval: 2, start_timestamp: 300, end_timestamp: 400 },
+            ],
+          },
+        ]);
+      if (url.pathname.endsWith("hero-stats")) {
+        active++;
+        maximum = Math.max(maximum, active);
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        active--;
+        const first = url.searchParams.get("min_unix_timestamp") === "100";
+        return response(
+          [100, 101].flatMap((account_id) => [
+            {
+              account_id,
+              hero_id: 1,
+              matches_played: first ? 8 : 9,
+              wins: first ? 4 : 5,
+            },
+            { account_id, hero_id: first ? 2 : 3, matches_played: 12, wins: 6 },
+          ]),
+        );
+      }
+    },
+  });
+  await f.service.refresh();
+  assert.ok(maximum <= 2);
+  const profile = bannerProfiles(f.store.workspace.playerBanners)[steam(100)];
+  assert.deepEqual(profile.heroes[0], { heroId: 1, matches: 17, wins: 9 });
+  const queries = f.calls
+    .filter(({ url }) => url.includes("hero-stats"))
+    .map(({ url }) => new URL(url).searchParams);
+  assert.deepEqual(
+    queries.map((q) => [
+      q.get("min_unix_timestamp"),
+      q.get("max_unix_timestamp"),
+    ]),
+    [
+      ["100", "199"],
+      ["300", "399"],
+    ],
+  );
+});
+
+test("season refresh honors upstream cooldown before issuing the remaining history requests", async () => {
+  const f = seasonFixture({
+    fetcher: async (url) =>
+      url.pathname.endsWith("hero-stats")
+        ? response([], { status: 429, headers: { "Retry-After": "120" } })
+        : undefined,
+  });
+  await f.service.refresh();
+  assert.equal(
+    f.calls.some(({ url }) => url.includes("match-history")),
+    false,
+  );
+  assert.equal(
+    bannerProfiles(f.store.workspace.playerBanners)[steam(100)].status,
+    "error",
+  );
+  await assert.rejects(
+    f.service.refresh(),
+    (error) => error.status === 429 && error.retryAfter === 120,
+  );
 });

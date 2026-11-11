@@ -1,5 +1,6 @@
 import SoulsGraph from "./SoulsGraph.jsx";
 import { cleanPanel, clock } from "./stats.js";
+import { usePanelPlacement } from "./use-panel-placement.js";
 import "./StatPanels.css";
 import "./SoulsDifferencePanel.css";
 
@@ -9,6 +10,7 @@ export default function SoulsDifferencePanel({
   stale = false,
 }) {
   const settings = cleanPanel(panel);
+  const placement = usePanelPlacement(settings);
   const match = session?.result?.match || session?.match;
   const ended = Boolean(
     session?.result?.match ||
@@ -28,21 +30,13 @@ export default function SoulsDifferencePanel({
   return (
     <div className="stat-canvas souls-difference-canvas">
       <section
-        className={`stat-box souls-difference-box stat-theme-${settings.theme} stat-position-${settings.position}`}
+        ref={placement}
+        className={`stat-box stat-viewport-fit souls-difference-box stat-theme-${settings.theme} stat-position-${settings.position}`}
         data-compact={settings.width < 480}
         style={{
           "--panel-scale": settings.scale,
           "--panel-width": `${settings.width}px`,
           "--stat-font-size": `${settings.fontSize}px`,
-          ...(settings.position === "custom"
-            ? {
-                left: settings.x,
-                top: settings.y,
-                right: "auto",
-                bottom: "auto",
-                transformOrigin: "top left",
-              }
-            : {}),
         }}
         aria-label={`${title} broadcast panel`}
       >

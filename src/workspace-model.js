@@ -151,6 +151,8 @@ export function patchWorkspace(state, operations) {
           "visible",
           "transparent",
           "showRanks",
+          "statsScope",
+          "rankBasis",
           "source",
           "matchId",
           "teams",

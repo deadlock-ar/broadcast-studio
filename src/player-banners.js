@@ -107,7 +107,7 @@ function rank(value) {
   };
 }
 
-function profile(value) {
+function profile(value, seasonal = false) {
   const seen = new Set();
   const heroes = (Array.isArray(value?.heroes) ? value.heroes : [])
     .slice(0, 200)
@@ -134,32 +134,132 @@ function profile(value) {
         ? "ready"
         : "empty",
     error: text(value?.error, 240),
+    ...(seasonal
+      ? {
+          peakRank: rank(value?.peakRank),
+          lastRank: rank(value?.lastRank),
+          rankMatches: integer(value?.rankMatches),
+          historyMatches: integer(value?.historyMatches),
+          rankNote: text(value?.rankNote, 240),
+        }
+      : {}),
   };
 }
 
-export function cleanPlayerBanners(value = {}) {
-  const profiles = Object.fromEntries(
+function cleanProfiles(value, seasonal = false) {
+  return Object.fromEntries(
     Object.entries(
-      value?.profiles &&
-        typeof value.profiles === "object" &&
-        !Array.isArray(value.profiles)
-        ? value.profiles
-        : {},
+      value && typeof value === "object" && !Array.isArray(value) ? value : {},
     )
       .filter(([key]) => normalizeBannerSteamId(key) === key)
       .slice(-64)
-      .map(([key, item]) => [key, profile(item)]),
+      .map(([key, item]) => [key, profile(item, seasonal)]),
   );
+}
+
+export const BANNER_SCOPES = [
+  { id: "all", label: "All time" },
+  { id: "season_1", label: "Season 1 · ranked" },
+  { id: "season_2", label: "Season 2 · ranked" },
+];
+
+// Use the game's season definitions, never inferred dates or the current rank.
+// Consecutive seasons share a boundary; the newer interval owns that second.
+export function bannerSeasonWindow(rows, scope) {
+  if (!["season_1", "season_2"].includes(scope) || !Array.isArray(rows))
+    return null;
+  const candidates = rows.filter(
+    (item) => item?.class_name === scope && item?.ranked_type === "normal",
+  );
+  if (candidates.length !== 1) return null;
+  const raw = candidates[0].intervals;
+  if (!Array.isArray(raw) || !raw.length || raw.length > 8) return null;
+  const intervals = raw.map((item) => ({
+    id: item?.interval,
+    start: item?.start_timestamp,
+    end: item?.end_timestamp,
+  }));
+  if (
+    new Set(intervals.map((item) => item.id)).size !== intervals.length ||
+    intervals.some(
+      (item) =>
+        !Number.isSafeInteger(item.id) ||
+        item.id < 1 ||
+        !Number.isSafeInteger(item.start) ||
+        item.start <= 0 ||
+        !Number.isSafeInteger(item.end) ||
+        item.end <= item.start,
+    )
+  )
+    return null;
+  intervals.sort((a, b) => a.start - b.start);
+  if (
+    intervals.some(
+      (item, index) => index && item.start < intervals[index - 1].end,
+    )
+  )
+    return null;
+  return {
+    scope,
+    intervals,
+    start: intervals[0].start,
+    end: intervals.at(-1).end,
+  };
+}
+
+function cleanSeasonCache(value, scope) {
+  const window = bannerSeasonWindow(
+    [
+      {
+        class_name: scope,
+        ranked_type: "normal",
+        intervals: Array.isArray(value?.intervals)
+          ? value.intervals.map((item) => ({
+              interval: item?.id,
+              start_timestamp: item?.start,
+              end_timestamp: item?.end,
+            }))
+          : [],
+      },
+    ],
+    scope,
+  );
+  return window
+    ? { ...window, profiles: cleanProfiles(value?.profiles, true) }
+    : null;
+}
+
+export function bannerProfiles(settings = {}) {
+  return settings.statsScope === "all" || !settings.statsScope
+    ? settings.profiles || {}
+    : settings.seasonalProfiles?.[settings.statsScope]?.profiles || {};
+}
+
+export function bannerScopeLabel(scope) {
+  return BANNER_SCOPES.find((item) => item.id === scope)?.label || "All time";
+}
+
+export function cleanPlayerBanners(value = {}) {
+  const seasonalProfiles = {};
+  for (const scope of ["season_1", "season_2"]) {
+    const cache = cleanSeasonCache(value?.seasonalProfiles?.[scope], scope);
+    if (cache) seasonalProfiles[scope] = cache;
+  }
   return {
     visible: value?.visible !== false,
     transparent: value?.transparent === true,
     showRanks: value?.showRanks !== false,
+    statsScope: BANNER_SCOPES.some((item) => item.id === value?.statsScope)
+      ? value.statsScope
+      : "all",
+    rankBasis: value?.rankBasis === "last" ? "last" : "peak",
     source: ["broadcast", "bracket", "manual"].includes(value?.source)
       ? value.source
       : "broadcast",
     matchId: identifier(value?.matchId),
     teams: [0, 1].map((index) => team(value?.teams?.[index])),
-    profiles,
+    profiles: cleanProfiles(value?.profiles),
+    seasonalProfiles,
   };
 }
 
@@ -229,25 +329,40 @@ export function resolveBannerTeams(workspace = {}) {
 
 export function playerBannersOutput(workspace = {}) {
   const settings = cleanPlayerBanners(workspace.playerBanners);
+  const profiles = bannerProfiles(settings);
+  const seasonal = settings.statsScope !== "all";
   return {
     title: text(workspace.config?.event, 120),
     visible: settings.visible,
     transparent: settings.transparent,
     showRanks: settings.showRanks,
+    statsScope: settings.statsScope,
+    scopeLabel: bannerScopeLabel(settings.statsScope),
+    rankLabel: seasonal
+      ? settings.rankBasis === "last"
+        ? "Last recorded rank"
+        : "Recorded peak"
+      : "Latest reported rank",
     teams: resolveBannerTeams(workspace).map((item) => ({
       name: item.name,
       tag: item.tag,
       logo: item.logo,
       resolved: item.resolved,
       players: item.players.map((person) => {
-        const stats = person.steamId ? settings.profiles[person.steamId] : null;
+        const stats = person.steamId ? profiles[person.steamId] : null;
         return {
           name: person.name || stats?.personaName || "",
           heroes: (stats?.heroes || []).map((hero) => ({
             ...hero,
             winRate: Math.round((hero.wins / hero.matches) * 1000) / 10,
           })),
-          rank: settings.showRanks ? stats?.rank || null : null,
+          rank: settings.showRanks
+            ? seasonal
+              ? stats?.[
+                  settings.rankBasis === "last" ? "lastRank" : "peakRank"
+                ] || null
+              : stats?.rank || null
+            : null,
           status: stats?.status || "missing",
           updatedAt: stats?.updatedAt || 0,
         };

@@ -48,7 +48,7 @@ function HeroStat({ stat, index }) {
   );
 }
 
-function PlayerCard({ player, slot, showRanks }) {
+function PlayerCard({ player, slot, showRanks, rankLabel }) {
   const occupied = Boolean(player?.name);
   const stats = (player?.heroes || []).slice(0, 3);
   const rank = player?.rank;
@@ -109,7 +109,14 @@ function PlayerCard({ player, slot, showRanks }) {
           rank ? (
             <div className="player-banners-rank">
               <BannerImage src={rank.image} />
-              <span>{rank.name || "Rank"}</span>
+              <span>
+                {rank.name || "Rank"}
+                {rankLabel && (
+                  <small className="player-banners-rank-label">
+                    {rankLabel}
+                  </small>
+                )}
+              </span>
             </div>
           ) : (
             <span className="player-banners-rank-unavailable">
@@ -126,7 +133,7 @@ function PlayerCard({ player, slot, showRanks }) {
   );
 }
 
-function TeamRow({ team = {}, side, showRanks }) {
+function TeamRow({ team = {}, side, showRanks, rankLabel }) {
   return (
     <section
       className={`player-banners-team player-banners-team-${side + 1}`}
@@ -149,6 +156,7 @@ function TeamRow({ team = {}, side, showRanks }) {
             player={team.players?.[slot]}
             slot={slot}
             showRanks={showRanks}
+            rankLabel={rankLabel}
           />
         ))}
       </div>
@@ -176,6 +184,7 @@ export default function PlayerBannersScreen({ banners }) {
         team={banners.teams?.[0]}
         side={0}
         showRanks={banners.showRanks !== false}
+        rankLabel={banners.statsScope !== "all" ? banners.rankLabel : ""}
       />
       <div className="player-banners-versus" aria-label="Versus">
         <span />
@@ -186,9 +195,18 @@ export default function PlayerBannersScreen({ banners }) {
         team={banners.teams?.[1]}
         side={1}
         showRanks={banners.showRanks !== false}
+        rankLabel={banners.statsScope !== "all" ? banners.rankLabel : ""}
       />
       <footer className="player-banners-screen-footer">
-        <span>TOP HEROES · TRACKED MATCH HISTORY</span>
+        <span>
+          {banners.scopeLabel || "All time"}
+          {banners.statsScope &&
+          banners.statsScope !== "all" &&
+          banners.showRanks !== false
+            ? ` · ${banners.rankLabel}`
+            : ""}{" "}
+          · TOP HEROES · TRACKED MATCH HISTORY
+        </span>
         <span>DEADLOCK AR</span>
       </footer>
     </section>

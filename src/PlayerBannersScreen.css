@@ -15,6 +15,14 @@
     linear-gradient(135deg, #1b2b23, #111c18);
   font-family: "DLAR Arabic", "Inter", Arial, sans-serif;
 }
+.player-banners-rank-label {
+  display: block;
+  margin-top: 3px;
+  color: #bdc9aa;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.4px;
+}
 .player-banners-screen *,
 .player-banners-screen *::before,
 .player-banners-screen *::after {
