@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import heroes from "./heroes.json";
 import { usePickEffects } from "./use-pick-effects";
+import DraftClock from "./DraftClock.jsx";
 import { PICK_EFFECT_FADE_MS } from "./pick-effects";
 import { createPickFlame } from "./pick-sparks";
 import {
@@ -381,20 +382,6 @@ function DraftBoard({
       logo: t.logo || (config.useSourceNames ? source?.teamLogo : ""),
     };
   });
-  const timer = snapshot?.currentTimer;
-  const seconds = timer?.[`team${timer?.activeTeam}StepTimer`];
-  const reserve = timer?.[`team${timer?.activeTeam}ReserveTimer`];
-  const time = Number.isFinite(seconds)
-    ? `${Math.floor(Math.max(0, seconds) / 60)}:${String(Math.floor(Math.max(0, seconds)) % 60).padStart(2, "0")}`
-    : "—";
-  const phase =
-    snapshot?.status === "COMPLETED"
-      ? "Draft complete"
-      : snapshot?.status === "PAUSED"
-        ? "Draft paused"
-        : active
-          ? `${teams[active.teamNumber - 1].name} ${active.selectionType === "ban" ? "banning" : "picking"}`
-          : "Waiting for the draft";
   const disconnected = mode === "live" && status.state !== "live";
   return (
     <div
@@ -493,31 +480,13 @@ function DraftBoard({
               <small>{config.round}</small>
             </span>
           )}
-          <span className="draft-phase">{phase}</span>
-          {config.showTimer && mode === "live" && (
-            <span className="draft-timer">
-              {disconnected ? "—" : time}
-              <small
-                className={
-                  Number.isFinite(reserve) && !disconnected
-                    ? "draft-reserve"
-                    : ""
-                }
-              >
-                {Number.isFinite(reserve) && !disconnected ? (
-                  <>
-                    <span>RESERVE</span>
-                    <strong>
-                      {Math.max(0, Math.ceil(reserve))}
-                      <span>s</span>
-                    </strong>
-                  </>
-                ) : (
-                  "DRAFT TIMER"
-                )}
-              </small>
-            </span>
-          )}
+          <DraftClock
+            key={`${snapshot?.draftCode || mode}:${config.event}:${config.game}`}
+            snapshot={snapshot}
+            connected={!disconnected}
+            enabled={config.showTimer && mode === "live"}
+            teams={teams}
+          />
         </div>
       </div>
       {config.layout === "board" && (
