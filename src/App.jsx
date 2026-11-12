@@ -179,7 +179,15 @@ function PickFlame({ active }) {
   );
 }
 
-function HeroSlot({ slot, index, type, active, flashing, onSelect }) {
+function HeroSlot({
+  slot,
+  index,
+  type,
+  active,
+  flashing,
+  banAnimation = "strike",
+  onSelect,
+}) {
   const hero = roster[slot.heroId];
   const image =
     type === "ban" ? hero?.criticalImage || hero?.image : hero?.image;
@@ -223,7 +231,12 @@ function HeroSlot({ slot, index, type, active, flashing, onSelect }) {
         </span>
       )}
       {hero && <span className="hero-label">{hero.name}</span>}
-      {type === "ban" && slot.heroId && <span className="ban-slash" />}
+      {type === "ban" && slot.heroId && (
+        <>
+          <span className="ban-shutters" aria-hidden="true" />
+          <span className="ban-slash" aria-hidden="true" />
+        </>
+      )}
       {active && (
         <span className="active-slot-label">
           {type === "ban" ? "BANNING" : "PICKING"}
@@ -231,7 +244,7 @@ function HeroSlot({ slot, index, type, active, flashing, onSelect }) {
       )}
     </>
   );
-  const cls = `hero-slot ${type} ${slot.heroId ? "filled" : ""} ${active ? "active" : ""} ${flashing ? "new-pick" : ""}`;
+  const cls = `hero-slot ${type} ${type === "ban" ? `ban-${banAnimation}` : ""} ${slot.heroId ? "filled" : ""} ${active ? "active" : ""} ${flashing ? (type === "ban" ? "new-ban" : "new-pick") : ""}`;
   return onSelect ? (
     <button
       className={cls}
@@ -248,6 +261,99 @@ function HeroSlot({ slot, index, type, active, flashing, onSelect }) {
     >
       {content}
     </div>
+  );
+}
+
+const banStyles = [
+  {
+    id: "strike",
+    name: "Diagonal strike",
+    description: "A quick red slash, a small impact, then a muted portrait.",
+  },
+  {
+    id: "shutter",
+    name: "Closing shutters",
+    description:
+      "Two dark panels close over the hero, then settle into the ban.",
+  },
+  {
+    id: "fade",
+    name: "Fade to ink",
+    description: "The portrait slowly loses its color beneath a soft ink wash.",
+  },
+];
+
+function BanAnimationExamples({ selected, onSelect }) {
+  const [replay, setReplay] = useState(0);
+  return (
+    <section
+      className="ban-animation-examples"
+      aria-label="Ban animation examples"
+    >
+      <div className="ban-examples-heading">
+        <div>
+          <h3>Ban animation examples</h3>
+          <p>
+            Replay these samples without changing the draft. Your chosen style
+            is saved with this tournament.
+          </p>
+        </div>
+        <button
+          className="button secondary"
+          type="button"
+          onClick={() => setReplay((v) => v + 1)}
+        >
+          Replay ban examples
+        </button>
+      </div>
+      <div className="ban-example-grid">
+        {banStyles.map((style) => (
+          <article
+            key={style.id}
+            className={selected === style.id ? "selected" : ""}
+          >
+            <div className="ban-example-stage">
+              <HeroSlot
+                key={replay}
+                slot={{ id: `example-${style.id}`, heroId: 7 }}
+                index={0}
+                type="ban"
+                flashing
+                banAnimation={style.id}
+              />
+            </div>
+            <h4>{style.name}</h4>
+            <p>{style.description}</p>
+            <button
+              className="button secondary"
+              type="button"
+              onClick={() => onSelect(style.id)}
+              aria-pressed={selected === style.id}
+            >
+              {selected === style.id
+                ? "Selected"
+                : `Use ${style.name.toLowerCase()}`}
+            </button>
+          </article>
+        ))}
+      </div>
+      <button
+        type="button"
+        className="text-button"
+        onClick={() => onSelect("none")}
+        aria-pressed={selected === "none"}
+      >
+        Turn ban animation off
+      </button>
+      <label className="ban-voice-example">
+        Preview Wraith’s deselection voice line
+        <audio
+          controls
+          preload="none"
+          src={roster[7].banVoiceLines?.[0]?.url}
+        />
+      </label>
+    </section>
   );
 }
 
@@ -360,6 +466,11 @@ function DraftBoard({
                     type="ban"
                     key={slot.id}
                     active={active?.id === slot.id}
+                    flashing={
+                      config.banAnimation !== "none" &&
+                      flashes[slot.id] === slot.heroId
+                    }
+                    banAnimation={config.banAnimation}
                     onSelect={onSelect}
                   />
                 ))}
@@ -386,10 +497,24 @@ function DraftBoard({
           {config.showTimer && mode === "live" && (
             <span className="draft-timer">
               {disconnected ? "—" : time}
-              <small>
-                {Number.isFinite(reserve) && !disconnected
-                  ? `RESERVE ${reserve}s`
-                  : "DRAFT TIMER"}
+              <small
+                className={
+                  Number.isFinite(reserve) && !disconnected
+                    ? "draft-reserve"
+                    : ""
+                }
+              >
+                {Number.isFinite(reserve) && !disconnected ? (
+                  <>
+                    <span>RESERVE</span>
+                    <strong>
+                      {Math.max(0, Math.ceil(reserve))}
+                      <span>s</span>
+                    </strong>
+                  </>
+                ) : (
+                  "DRAFT TIMER"
+                )}
               </small>
             </span>
           )}
@@ -880,7 +1005,7 @@ export default function App() {
             flashes={flashes}
           />
         </div>
-        {config.voiceLines && soundBlocked && (
+        {(config.voiceLines || config.banVoiceLines) && soundBlocked && (
           <button
             className="enable-broadcast-sound button primary"
             onClick={enableSound}
@@ -1175,7 +1300,7 @@ export default function App() {
                 <div className="preview-actions">
                   <button
                     className="text-button"
-                    disabled={!config.voiceLines}
+                    disabled={!config.voiceLines && !config.banVoiceLines}
                     onClick={togglePreviewSound}
                   >
                     {previewSound ? "Mute preview" : "Preview sound"}
@@ -1555,8 +1680,8 @@ export default function App() {
                 </div>
                 <small>PARCHMENT & OLIVE · DEADLOCK AR IDENTITY</small>
               </section>
-              <section className="settings-panel">
-                <h2>Pick effects & sound</h2>
+              <section className="settings-panel draft-effects-settings">
+                <h2>Draft effects & sound</h2>
                 <Toggle
                   checked={config.pickEffects}
                   onChange={(v) => update("pickEffects", v)}
@@ -1568,6 +1693,16 @@ export default function App() {
                   onChange={(v) => update("voiceLines", v)}
                   label="Hero selection voice lines"
                   hint="Play one game voice line for each new pick in the broadcast."
+                />
+                <Toggle
+                  checked={config.banVoiceLines}
+                  onChange={(v) => update("banVoiceLines", v)}
+                  label="Hero ban voice lines"
+                  hint="Play the game’s hero-deselection voice line for each new ban. Sinclair stays silent because no deselection recording is verified."
+                />
+                <BanAnimationExamples
+                  selected={config.banAnimation}
+                  onSelect={(style) => update("banAnimation", style)}
                 />
                 <Field label={`Voice volume · ${config.voiceVolume}%`}>
                   <input
@@ -1582,7 +1717,7 @@ export default function App() {
                   />
                 </Field>
                 <p>
-                  Use Preview sound and Test pick in demo mode to check audio.
+                  Use Preview sound and a new manual pick or ban to check audio.
                   The studio starts muted so it can stay open beside OBS. In
                   OBS, enable “Control audio via OBS” on the Browser Source.
                 </p>

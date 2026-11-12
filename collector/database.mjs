@@ -3,6 +3,7 @@ import { mkdir, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { applyInterruption, matchId, sessionId } from "./model.mjs";
 import { initialWorkspace } from "../src/workspace-model.js";
+import { cleanConfig } from "../src/draft.js";
 import { cleanMatchOverlay } from "../src/match-overlay.js";
 import { cleanBracket } from "../src/bracket.js";
 import { cleanPlayerBanners } from "../src/player-banners.js";
@@ -40,6 +41,7 @@ export class BroadcastDatabase {
       }
     }
     this.workspace = this.read("workspace") || initialWorkspace();
+    this.workspace.config = cleanConfig(this.workspace.config);
     this.workspace.reports ||= initialWorkspace().reports;
     this.workspace.matchOverlay = cleanMatchOverlay(
       this.workspace.matchOverlay,

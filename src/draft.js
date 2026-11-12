@@ -15,6 +15,8 @@ export const DEFAULT_CONFIG = {
   showTimer: true,
   pickEffects: true,
   voiceLines: true,
+  banVoiceLines: true,
+  banAnimation: "strike",
   voiceVolume: 70,
   firstPick: 1,
 };
@@ -76,6 +78,15 @@ export function cleanConfig(value = {}) {
     showTimer: value.showTimer !== false,
     pickEffects: value.pickEffects !== false,
     voiceLines: value.voiceLines !== false,
+    banVoiceLines:
+      value.banVoiceLines === undefined
+        ? value.voiceLines !== false
+        : value.banVoiceLines !== false,
+    banAnimation: ["strike", "shutter", "fade", "none"].includes(
+      value.banAnimation,
+    )
+      ? value.banAnimation
+      : "strike",
     voiceVolume: num(value.voiceVolume, 70, 100),
     firstPick: value.firstPick === 2 ? 2 : 1,
     teams: [0, 1].map((i) => ({

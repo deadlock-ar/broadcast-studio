@@ -45,6 +45,8 @@ const heroes = all
       critical: h.images.hero_card_critical_webp,
     },
     voiceLines: previous.find((hero) => hero.id === h.id)?.voiceLines || [],
+    banVoiceLines:
+      previous.find((hero) => hero.id === h.id)?.banVoiceLines || [],
     voiceFolder: h.class_name.replace(/^hero_/, ""),
   }));
 const cards = await Promise.all(

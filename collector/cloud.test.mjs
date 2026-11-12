@@ -72,6 +72,8 @@ test("SQLite retains the active selection, branding and published result across 
   await store.load();
   const next = structuredClone(store.workspace);
   next.config.event = "Saved cup";
+  next.config.banAnimation = "shutter";
+  next.config.banVoiceLines = false;
   next.deadem.id = "123";
   next.scoreboard.matchId = "123";
   next.revision++;
@@ -83,12 +85,22 @@ test("SQLite retains the active selection, branding and published result across 
   const recovered = new BroadcastDatabase(dir);
   await recovered.load();
   assert.equal(recovered.workspace.config.event, "Saved cup");
+  assert.equal(recovered.workspace.config.banAnimation, "shutter");
+  assert.equal(recovered.workspace.config.banVoiceLines, false);
   assert.equal(recovered.workspace.deadem.id, "123");
   assert.deepEqual(recovered.sessions.get("123").published, {
     label: "on air",
   });
   assert.equal(recovered.sessions.get("123").status, "interrupted");
+  delete recovered.workspace.config.banAnimation;
+  delete recovered.workspace.config.banVoiceLines;
+  recovered.saveWorkspace();
   recovered.close();
+  const legacy = new BroadcastDatabase(dir);
+  await legacy.load();
+  assert.equal(legacy.workspace.config.banAnimation, "strike");
+  assert.equal(legacy.workspace.config.banVoiceLines, true);
+  legacy.close();
 });
 test("cloud HTTP protects admin writes, shares edits and keeps all five output URLs fixed", async (t) => {
   const dir = await mkdtemp(path.join(tmpdir(), "dlar-http-"));

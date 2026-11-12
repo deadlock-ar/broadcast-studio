@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { initialWorkspace } from "../src/workspace-model.js";
+import { cleanConfig } from "../src/draft.js";
 import { isDraftReportSource } from "../src/report-sources.js";
 import { cleanMatchOverlay } from "../src/match-overlay.js";
 import { cleanBracket } from "../src/bracket.js";
@@ -55,6 +56,7 @@ export class Tournaments {
     this.migrate();
   }
   put(record) {
+    record.state.config = cleanConfig(record.state.config);
     record.state.matchOverlay = cleanMatchOverlay(record.state.matchOverlay);
     record.state.bracket = cleanBracket(record.state.bracket);
     record.state.playerBanners = cleanPlayerBanners(record.state.playerBanners);
