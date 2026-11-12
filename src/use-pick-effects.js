@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  createPickTracker,
+  createSelectionTracker,
+  selectionVoiceLines,
+  BAN_EFFECT_DURATION_MS,
   createVoicePlayer,
   createPickFlashController,
 } from "./pick-effects.js";
@@ -18,7 +20,7 @@ export function usePickEffects(
   const [flashes, setFlashes] = useState({});
   const [previewSound, setPreviewSound] = useState(false);
   const [soundBlocked, setSoundBlocked] = useState(false);
-  const tracker = useRef(createPickTracker());
+  const tracker = useRef(createSelectionTracker());
   const previousIdentity = useRef(identity);
   const flashController = useRef(null);
   const player = useRef(null);
@@ -40,10 +42,18 @@ export function usePickEffects(
 
   useEffect(() => {
     player.current.configure({
-      enabled: config.voiceLines && (overlay || previewSound),
+      enabled:
+        (config.voiceLines || config.banVoiceLines) &&
+        (overlay || previewSound),
       volume: config.voiceVolume / 100,
     });
-  }, [config.voiceLines, config.voiceVolume, overlay, previewSound]);
+  }, [
+    config.voiceLines,
+    config.banVoiceLines,
+    config.voiceVolume,
+    overlay,
+    previewSound,
+  ]);
 
   useEffect(() => {
     if (previousIdentity.current !== identity) {
@@ -52,19 +62,37 @@ export function usePickEffects(
       flashController.current.reset();
       player.current.clear();
     }
-    if (!config.pickEffects) flashController.current.reset();
     const picks = tracker.current.observe(snapshot, {
       initial: initialSnapshots.current.has(snapshot),
     });
     for (const pick of picks) {
       const hero = roster[pick.heroId];
-      if (config.pickEffects)
-        flashController.current.show(pick.id, pick.heroId);
-      const lines = hero?.voiceLines || [];
+      if (
+        pick.selectionType === "ban"
+          ? config.banAnimation !== "none"
+          : config.pickEffects
+      )
+        flashController.current.show(
+          pick.id,
+          pick.heroId,
+          pick.selectionType === "ban" ? BAN_EFFECT_DURATION_MS : undefined,
+        );
+      const lines = selectionVoiceLines(hero, pick.selectionType, {
+        voiceLines: config.voiceLines,
+        banVoiceLines: config.banVoiceLines,
+      });
       if (lines.length)
         player.current.enqueue(lines[Math.floor(Math.random() * lines.length)]);
     }
-  }, [snapshot, identity, initialSnapshots, config.pickEffects]);
+  }, [
+    snapshot,
+    identity,
+    initialSnapshots,
+    config.pickEffects,
+    config.banAnimation,
+    config.banVoiceLines,
+    config.voiceLines,
+  ]);
 
   // Warm the variants before the first pick so the crossfade has no loading gap.
   useEffect(() => {

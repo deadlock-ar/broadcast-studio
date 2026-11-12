@@ -25,6 +25,26 @@ const fixture = JSON.parse(
   fs.readFileSync(new URL("./match-120513539.fixture.json", import.meta.url)),
 );
 const sample = () => normalizeMetadata(fixture, "120513539");
+
+test("panel content survives cleaning and signed net-worth changes sort before unknowns", () => {
+  const panel = cleanPanel({
+    content: "souls-graph",
+    metric: "souls",
+    sort: "value",
+  });
+  assert.equal(cleanPanel(panel).content, "souls-graph");
+  assert.equal(cleanPanel({ content: "unknown" }).content, "players");
+  const rows = [
+    { id: "1", slot: 1, souls: null },
+    { id: "2", slot: 2, souls: -100 },
+    { id: "3", slot: 3, souls: 0 },
+    { id: "4", slot: 4, souls: 200 },
+  ];
+  assert.deepEqual(
+    sortPlayers(rows, panel, true).map((p) => p.id),
+    ["4", "3", "2", "1"],
+  );
+});
 test("relay progress, relay failure and parser failures have distinct explanations", () => {
   const refusal = JSON.stringify({
     error:
@@ -188,7 +208,7 @@ test("template cleaning bounds strings, strips unknown fields and handles corrup
     ownerToken: "secret",
   });
   assert.equal(panel.metric, "damage");
-  assert.equal(panel.scale, 1);
+  assert.equal(panel.scale, 2);
   assert.equal(panel.theme, "parchment");
   assert.equal(panel.names[5].length, 48);
   assert.equal(panel.ownerToken, undefined);

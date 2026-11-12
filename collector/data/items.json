@@ -1,0 +1,1732 @@
+[
+  {
+    "id": 1548066885,
+    "name": "Extended Magazine",
+    "cost": 800,
+    "image": "/items/1548066885.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/basic_magazine.webp",
+    "components": [],
+    "tier": 1,
+    "category": "weapon"
+  },
+  {
+    "id": 1009965641,
+    "name": "Monster Rounds",
+    "cost": 800,
+    "image": "/items/1009965641.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/monster_rounds.webp",
+    "components": [],
+    "tier": 1,
+    "category": "weapon"
+  },
+  {
+    "id": 709540378,
+    "name": "Cultist Sacrifice",
+    "cost": 3200,
+    "image": "/items/709540378.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/cultist_sacrifice.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 811521119,
+    "name": "Tesla Bullets",
+    "cost": 3200,
+    "image": "/items/811521119.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/tesla_bullets.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 710436191,
+    "name": "Capacitor",
+    "cost": 6400,
+    "image": "/items/710436191.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/capacitor.webp",
+    "components": [],
+    "tier": 4,
+    "category": "weapon"
+  },
+  {
+    "id": 2678489038,
+    "name": "Hollow Point",
+    "cost": 3200,
+    "image": "/items/2678489038.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/hollow_point.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 2064029594,
+    "name": "Opening Rounds",
+    "cost": 1600,
+    "image": "/items/2064029594.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/opening_rounds.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 3077079169,
+    "name": "High-Velocity Rounds",
+    "cost": 800,
+    "image": "/items/3077079169.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/high_velocity_rounds.webp",
+    "components": [],
+    "tier": 1,
+    "category": "weapon"
+  },
+  {
+    "id": 1437614329,
+    "name": "Melee Lifesteal",
+    "cost": 800,
+    "image": "/items/1437614329.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/melee_lifesteal.webp",
+    "components": [],
+    "tier": 1,
+    "category": "vitality"
+  },
+  {
+    "id": 4204808176,
+    "name": "Rebuttal",
+    "cost": 800,
+    "image": "/items/4204808176.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/rebuttal.webp",
+    "components": [],
+    "tier": 1,
+    "category": "vitality"
+  },
+  {
+    "id": 1414025773,
+    "name": "Counterspell",
+    "cost": 3200,
+    "image": "/items/1414025773.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/counterspell.webp",
+    "components": [],
+    "tier": 3,
+    "category": "vitality"
+  },
+  {
+    "id": 3791587546,
+    "name": "Weighted Shots",
+    "cost": 3200,
+    "image": "/items/3791587546.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/weighted_shots.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 1342610602,
+    "name": "Close Quarters",
+    "cost": 800,
+    "image": "/items/1342610602.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/close_quarters.webp",
+    "components": [],
+    "tier": 1,
+    "category": "weapon"
+  },
+  {
+    "id": 3331811235,
+    "name": "Long Range",
+    "cost": 1600,
+    "image": "/items/3331811235.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/long_range.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 393974127,
+    "name": "Slowing Bullets",
+    "cost": 1600,
+    "image": "/items/393974127.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/slowing_bullets.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 2037039379,
+    "name": "Inhibitor",
+    "cost": 6400,
+    "image": "/items/2037039379.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/inhibitor.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 1144549437,
+    "name": "Spirit Shredder",
+    "cost": 1600,
+    "image": "/items/1144549437.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/spirit_shredder_bullets.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 2108215830,
+    "name": "Heroic Aura",
+    "cost": 3200,
+    "image": "/items/2108215830.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/heroic_aura.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 619484391,
+    "name": "Silence Wave",
+    "cost": 3200,
+    "image": "/items/619484391.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/silence_glyph.webp",
+    "components": [],
+    "tier": 3,
+    "category": "spirit"
+  },
+  {
+    "id": 1113837674,
+    "name": "Silencer",
+    "cost": 6400,
+    "image": "/items/1113837674.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/silencer.webp",
+    "components": [],
+    "tier": 4,
+    "category": "weapon"
+  },
+  {
+    "id": 1414319208,
+    "name": "Berserker",
+    "cost": 3200,
+    "image": "/items/1414319208.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/berserker.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 339443430,
+    "name": "Frenzy",
+    "cost": 6400,
+    "image": "/items/339443430.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/frenzy.webp",
+    "components": [],
+    "tier": 4,
+    "category": "weapon"
+  },
+  {
+    "id": 1282141666,
+    "name": "Siphon Bullets",
+    "cost": 6400,
+    "image": "/items/1282141666.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/siphon_bullets.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 2010028405,
+    "name": "Headshot Booster",
+    "cost": 800,
+    "image": "/items/2010028405.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/headshot_booster.webp",
+    "components": [],
+    "tier": 1,
+    "category": "weapon"
+  },
+  {
+    "id": 1770441818,
+    "name": "Weakening Headshot",
+    "cost": 1600,
+    "image": "/items/1770441818.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/weakening_headshot.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 2152872419,
+    "name": "Sharpshooter",
+    "cost": 3200,
+    "image": "/items/2152872419.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/sharp_shooter.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 4053935515,
+    "name": "Headhunter",
+    "cost": 3200,
+    "image": "/items/4053935515.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/headhunter.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 4075861416,
+    "name": "Spirit Rend",
+    "cost": 3200,
+    "image": "/items/4075861416.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/spellslinger_headshots.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 3884003354,
+    "name": "Crippling Headshot",
+    "cost": 6400,
+    "image": "/items/3884003354.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/crippling_headshot.webp",
+    "components": [],
+    "tier": 4,
+    "category": "weapon"
+  },
+  {
+    "id": 395867183,
+    "name": "Mystic Shot",
+    "cost": 1600,
+    "image": "/items/395867183.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/mystic_shot.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 1396247347,
+    "name": "Lucky Shot",
+    "cost": 6400,
+    "image": "/items/1396247347.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/lucky_shot.webp",
+    "components": [],
+    "tier": 4,
+    "category": "weapon"
+  },
+  {
+    "id": 2095565695,
+    "name": "Point Blank",
+    "cost": 3200,
+    "image": "/items/2095565695.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/point_blank.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 3696726732,
+    "name": "Toxic Bullets",
+    "cost": 3200,
+    "image": "/items/3696726732.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/toxic_bullets.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 2480592370,
+    "name": "Ricochet",
+    "cost": 6400,
+    "image": "/items/2480592370.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/ricochet.webp",
+    "components": [],
+    "tier": 4,
+    "category": "weapon"
+  },
+  {
+    "id": 3633614685,
+    "name": "Extra Health",
+    "cost": 800,
+    "image": "/items/3633614685.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/extra_health.webp",
+    "components": [],
+    "tier": 1,
+    "category": "vitality"
+  },
+  {
+    "id": 499683006,
+    "name": "Bullet Lifesteal",
+    "cost": 1600,
+    "image": "/items/499683006.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/bullet_lifesteal.webp",
+    "components": [],
+    "tier": 2,
+    "category": "vitality"
+  },
+  {
+    "id": 1047818222,
+    "name": "Debuff Reducer",
+    "cost": 1600,
+    "image": "/items/1047818222.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/debuff_reducer.webp",
+    "components": [],
+    "tier": 2,
+    "category": "vitality"
+  },
+  {
+    "id": 3731635960,
+    "name": "Dispel Magic",
+    "cost": 3200,
+    "image": "/items/3731635960.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/debuff_remover.webp",
+    "components": [],
+    "tier": 3,
+    "category": "vitality"
+  },
+  {
+    "id": 2163598980,
+    "name": "Spirit Resilience",
+    "cost": 3200,
+    "image": "/items/2163598980.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/spirit_resilience.webp",
+    "components": [],
+    "tier": 3,
+    "category": "vitality"
+  },
+  {
+    "id": 3140772621,
+    "name": "Bullet Resilience",
+    "cost": 3200,
+    "image": "/items/3140772621.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/bullet_resilience.webp",
+    "components": [],
+    "tier": 3,
+    "category": "vitality"
+  },
+  {
+    "id": 1378931225,
+    "name": "Metal Skin",
+    "cost": 3200,
+    "image": "/items/1378931225.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/metal_skin.webp",
+    "components": [],
+    "tier": 3,
+    "category": "vitality"
+  },
+  {
+    "id": 2566692615,
+    "name": "Healing Booster",
+    "cost": 1600,
+    "image": "/items/2566692615.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healing_booster.webp",
+    "components": [],
+    "tier": 2,
+    "category": "vitality"
+  },
+  {
+    "id": 3585132399,
+    "name": "Fortitude",
+    "cost": 3200,
+    "image": "/items/3585132399.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/fortitude.webp",
+    "components": [],
+    "tier": 3,
+    "category": "vitality"
+  },
+  {
+    "id": 865846625,
+    "name": "Leech",
+    "cost": 6400,
+    "image": "/items/865846625.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/leech.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 3399065363,
+    "name": "Sprint Boots",
+    "cost": 800,
+    "image": "/items/3399065363.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/sprint_boots.webp",
+    "components": [],
+    "tier": 1,
+    "category": "vitality"
+  },
+  {
+    "id": 3074274290,
+    "name": "Trophy Collector",
+    "cost": 1600,
+    "image": "/items/3074274290.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/trophy_collector.webp",
+    "components": [],
+    "tier": 2,
+    "category": "vitality"
+  },
+  {
+    "id": 2447176615,
+    "name": "Enduring Speed",
+    "cost": 1600,
+    "image": "/items/2447176615.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/enduring_speed.webp",
+    "components": [],
+    "tier": 2,
+    "category": "vitality"
+  },
+  {
+    "id": 334300056,
+    "name": "Stamina Mastery",
+    "cost": 3200,
+    "image": "/items/334300056.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/stamina_mastery.webp",
+    "components": [],
+    "tier": 3,
+    "category": "vitality"
+  },
+  {
+    "id": 668299740,
+    "name": "Rapid Rounds",
+    "cost": 800,
+    "image": "/items/668299740.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/rapid_rounds.webp",
+    "components": [],
+    "tier": 1,
+    "category": "weapon"
+  },
+  {
+    "id": 4139877411,
+    "name": "Extra Stamina",
+    "cost": 800,
+    "image": "/items/4139877411.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/extra_stamina.webp",
+    "components": [],
+    "tier": 1,
+    "category": "vitality"
+  },
+  {
+    "id": 2481177645,
+    "name": "Hunter's Aura",
+    "cost": 3200,
+    "image": "/items/2481177645.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/hunters_aura.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 1672893796,
+    "name": "Grit",
+    "cost": 800,
+    "image": "/items/1672893796.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/grit.webp",
+    "components": [],
+    "tier": 1,
+    "category": "vitality"
+  },
+  {
+    "id": 805079544,
+    "name": "Weapon Shielding",
+    "cost": 1600,
+    "image": "/items/805079544.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/weapon_shielding.webp",
+    "components": [],
+    "tier": 2,
+    "category": "vitality"
+  },
+  {
+    "id": 112198670,
+    "name": "Spirit Shielding",
+    "cost": 1600,
+    "image": "/items/112198670.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/spirit_shielding.webp",
+    "components": [],
+    "tier": 2,
+    "category": "vitality"
+  },
+  {
+    "id": 1235347618,
+    "name": "Battle Vest",
+    "cost": 1600,
+    "image": "/items/1235347618.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/battle_vest.webp",
+    "components": [],
+    "tier": 2,
+    "category": "vitality"
+  },
+  {
+    "id": 3970837787,
+    "name": "Enchanter's Emblem",
+    "cost": 1600,
+    "image": "/items/3970837787.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/enchanters_emblem.webp",
+    "components": [],
+    "tier": 2,
+    "category": "vitality"
+  },
+  {
+    "id": 968099481,
+    "name": "Extra Spirit",
+    "cost": 800,
+    "image": "/items/968099481.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/extra_spirit.webp",
+    "components": [],
+    "tier": 1,
+    "category": "spirit"
+  },
+  {
+    "id": 1439347412,
+    "name": "Mystic Regeneration",
+    "cost": 800,
+    "image": "/items/1439347412.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_regen.webp",
+    "components": [],
+    "tier": 1,
+    "category": "spirit"
+  },
+  {
+    "id": 7409189,
+    "name": "Improved Spirit",
+    "cost": 1600,
+    "image": "/items/7409189.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/improved_spirit.webp",
+    "components": [],
+    "tier": 2,
+    "category": "spirit"
+  },
+  {
+    "id": 2226497419,
+    "name": "Spiritual Overflow",
+    "cost": 6400,
+    "image": "/items/2226497419.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/spiritual_overflow.webp",
+    "components": [],
+    "tier": 4,
+    "category": "weapon"
+  },
+  {
+    "id": 3361075077,
+    "name": "Return Fire",
+    "cost": 1600,
+    "image": "/items/3361075077.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/return_fire.webp",
+    "components": [],
+    "tier": 2,
+    "category": "vitality"
+  },
+  {
+    "id": 1193964439,
+    "name": "Greater Expansion",
+    "cost": 3200,
+    "image": "/items/1193964439.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/greater_expansion.webp",
+    "components": [],
+    "tier": 3,
+    "category": "spirit"
+  },
+  {
+    "id": 754480263,
+    "name": "Mystic Expansion",
+    "cost": 800,
+    "image": "/items/754480263.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_reach.webp",
+    "components": [],
+    "tier": 1,
+    "category": "spirit"
+  },
+  {
+    "id": 3776945997,
+    "name": "Extra Charge",
+    "cost": 800,
+    "image": "/items/3776945997.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/extra_charge.webp",
+    "components": [],
+    "tier": 1,
+    "category": "spirit"
+  },
+  {
+    "id": 876563814,
+    "name": "Spirit Lifesteal",
+    "cost": 1600,
+    "image": "/items/876563814.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/spirit_lifesteal.webp",
+    "components": [],
+    "tier": 2,
+    "category": "vitality"
+  },
+  {
+    "id": 2971868509,
+    "name": "Bullet Resist Shredder",
+    "cost": 1600,
+    "image": "/items/2971868509.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/bullet_resist_shredder.webp",
+    "components": [],
+    "tier": 2,
+    "category": "spirit"
+  },
+  {
+    "id": 3577481646,
+    "name": "Mystic Reverb",
+    "cost": 6400,
+    "image": "/items/3577481646.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_reverb.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 1998374645,
+    "name": "Mystic Burst",
+    "cost": 800,
+    "image": "/items/1998374645.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_burst.webp",
+    "components": [],
+    "tier": 1,
+    "category": "spirit"
+  },
+  {
+    "id": 2121044373,
+    "name": "Tankbuster",
+    "cost": 3200,
+    "image": "/items/2121044373.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/tankbuster.webp",
+    "components": [],
+    "tier": 3,
+    "category": "spirit"
+  },
+  {
+    "id": 2081037738,
+    "name": "Mystic Vulnerability",
+    "cost": 1600,
+    "image": "/items/2081037738.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_vulnerability.webp",
+    "components": [],
+    "tier": 2,
+    "category": "spirit"
+  },
+  {
+    "id": 2603935618,
+    "name": "Healbane",
+    "cost": 1600,
+    "image": "/items/2603935618.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healbane.webp",
+    "components": [],
+    "tier": 2,
+    "category": "vitality"
+  },
+  {
+    "id": 1102081447,
+    "name": "Mystic Slow",
+    "cost": 1600,
+    "image": "/items/1102081447.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mystic_slow.webp",
+    "components": [],
+    "tier": 2,
+    "category": "spirit"
+  },
+  {
+    "id": 3005970438,
+    "name": "Escalating Exposure",
+    "cost": 6400,
+    "image": "/items/3005970438.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/escalating_exposure.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 787198704,
+    "name": "Rapid Recharge",
+    "cost": 3200,
+    "image": "/items/787198704.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/rapid_recharge.webp",
+    "components": [],
+    "tier": 3,
+    "category": "spirit"
+  },
+  {
+    "id": 424779525,
+    "name": "Omnicharge Signet",
+    "cost": 9999,
+    "image": "/items/424779525.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/omnicharge_pendant.webp",
+    "components": [],
+    "tier": 5,
+    "category": "spirit"
+  },
+  {
+    "id": 380806748,
+    "name": "Compress Cooldown",
+    "cost": 1600,
+    "image": "/items/380806748.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/improved_cooldown.webp",
+    "components": [],
+    "tier": 2,
+    "category": "spirit"
+  },
+  {
+    "id": 3261353684,
+    "name": "Superior Cooldown",
+    "cost": 3200,
+    "image": "/items/3261353684.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/superior_cooldown.webp",
+    "components": [],
+    "tier": 3,
+    "category": "spirit"
+  },
+  {
+    "id": 915014646,
+    "name": "Transcendent Cooldown",
+    "cost": 6400,
+    "image": "/items/915014646.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/transcendent_cooldown.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 1813726886,
+    "name": "Slowing Hex",
+    "cost": 1600,
+    "image": "/items/1813726886.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/slowing_hex.webp",
+    "components": [],
+    "tier": 2,
+    "category": "spirit"
+  },
+  {
+    "id": 1219329868,
+    "name": "Spirit Sap",
+    "cost": 1600,
+    "image": "/items/1219329868.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/spirit_sap.webp",
+    "components": [],
+    "tier": 2,
+    "category": "spirit"
+  },
+  {
+    "id": 2142980412,
+    "name": "Focus Lens",
+    "cost": 6400,
+    "image": "/items/2142980412.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/focus_lens.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 2922054143,
+    "name": "Rusted Barrel",
+    "cost": 800,
+    "image": "/items/2922054143.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/rusted_barrel.webp",
+    "components": [],
+    "tier": 1,
+    "category": "spirit"
+  },
+  {
+    "id": 2061878743,
+    "name": "Disarming Hex",
+    "cost": 3200,
+    "image": "/items/2061878743.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/disarming_hex.webp",
+    "components": [],
+    "tier": 3,
+    "category": "spirit"
+  },
+  {
+    "id": 1804594021,
+    "name": "Rescue Beam",
+    "cost": 3200,
+    "image": "/items/1804594021.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/rescue_beam.webp",
+    "components": [],
+    "tier": 3,
+    "category": "vitality"
+  },
+  {
+    "id": 3144988365,
+    "name": "Decay",
+    "cost": 3200,
+    "image": "/items/3144988365.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/decay.webp",
+    "components": [],
+    "tier": 3,
+    "category": "spirit"
+  },
+  {
+    "id": 2417568017,
+    "name": "Scourge",
+    "cost": 6400,
+    "image": "/items/2417568017.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/scourge.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 1254091416,
+    "name": "Knockdown",
+    "cost": 3200,
+    "image": "/items/1254091416.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/knockdown.webp",
+    "components": [],
+    "tier": 3,
+    "category": "spirit"
+  },
+  {
+    "id": 1371725689,
+    "name": "Phantom Strike",
+    "cost": 6400,
+    "image": "/items/1371725689.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/phantom_strike.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 3270001687,
+    "name": "Warp Stone",
+    "cost": 3200,
+    "image": "/items/3270001687.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/warp_stone.webp",
+    "components": [],
+    "tier": 3,
+    "category": "vitality"
+  },
+  {
+    "id": 1152158042,
+    "name": "Vortex Web",
+    "cost": 6400,
+    "image": "/items/1152158042.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/vortex_web.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 677738769,
+    "name": "Refresher",
+    "cost": 6400,
+    "image": "/items/677738769.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/refresher.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 630839635,
+    "name": "Echo Shard",
+    "cost": 6400,
+    "image": "/items/630839635.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/echo_shard.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 395944548,
+    "name": "Torment Pulse",
+    "cost": 3200,
+    "image": "/items/395944548.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/torment_pulse.webp",
+    "components": [],
+    "tier": 3,
+    "category": "spirit"
+  },
+  {
+    "id": 3361811174,
+    "name": "Cheat Death",
+    "cost": 6400,
+    "image": "/items/3361811174.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/cheat_death.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 1798666702,
+    "name": "Shadow Weave",
+    "cost": 3200,
+    "image": "/items/1798666702.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/shadow_weave.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 600033864,
+    "name": "Majestic Leap",
+    "cost": 3200,
+    "image": "/items/600033864.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/majestic_leap.webp",
+    "components": [],
+    "tier": 3,
+    "category": "vitality"
+  },
+  {
+    "id": 2956256701,
+    "name": "Healing Nova",
+    "cost": 3200,
+    "image": "/items/2956256701.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healing_nova.webp",
+    "components": [],
+    "tier": 3,
+    "category": "vitality"
+  },
+  {
+    "id": 2059712766,
+    "name": "Restorative Locket",
+    "cost": 1600,
+    "image": "/items/2059712766.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/restorative_locket.webp",
+    "components": [],
+    "tier": 2,
+    "category": "vitality"
+  },
+  {
+    "id": 1710079648,
+    "name": "Healing Rite",
+    "cost": 800,
+    "image": "/items/1710079648.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healing_rite.webp",
+    "components": [],
+    "tier": 1,
+    "category": "vitality"
+  },
+  {
+    "id": 4121584236,
+    "name": "Shrink Ray",
+    "cost": 9999,
+    "image": "/items/4121584236.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/shrink_ray.webp",
+    "components": [],
+    "tier": 5,
+    "category": "spirit"
+  },
+  {
+    "id": 1797283378,
+    "name": "Infuser",
+    "cost": 6400,
+    "image": "/items/1797283378.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/infuser.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 857669956,
+    "name": "Guardian Ward",
+    "cost": 1600,
+    "image": "/items/857669956.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/guardian_ward.webp",
+    "components": [],
+    "tier": 2,
+    "category": "vitality"
+  },
+  {
+    "id": 1662311306,
+    "name": "Divine Barrier",
+    "cost": 6400,
+    "image": "/items/1662311306.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/divine_barrier.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 1932939246,
+    "name": "Alchemical Fire",
+    "cost": 3200,
+    "image": "/items/1932939246.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/alchemical_fire.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 989206714,
+    "name": "Blood Tribute",
+    "cost": 3200,
+    "image": "/items/989206714.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/blood_tribute.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 3403085434,
+    "name": "Fleetfoot",
+    "cost": 1600,
+    "image": "/items/3403085434.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/fleetfoot.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 3977876567,
+    "name": "Kinetic Dash",
+    "cost": 1600,
+    "image": "/items/3977876567.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/kinetic_dash.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 1150006784,
+    "name": "Arcane Surge",
+    "cost": 1600,
+    "image": "/items/1150006784.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/arcane_surge.webp",
+    "components": [],
+    "tier": 2,
+    "category": "spirit"
+  },
+  {
+    "id": 3357231760,
+    "name": "Unstoppable",
+    "cost": 6400,
+    "image": "/items/3357231760.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/unstoppable.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 2407781327,
+    "name": "Colossus",
+    "cost": 6400,
+    "image": "/items/2407781327.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/colossus.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 1976391348,
+    "name": "Cold Front",
+    "cost": 1600,
+    "image": "/items/1976391348.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/cold_front.webp",
+    "components": [],
+    "tier": 2,
+    "category": "spirit"
+  },
+  {
+    "id": 3812615317,
+    "name": "Arctic Blast",
+    "cost": 6400,
+    "image": "/items/3812615317.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/arctic_blast.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 2533252781,
+    "name": "Ethereal Shift",
+    "cost": 6400,
+    "image": "/items/2533252781.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/ethereal_shift.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 2617435668,
+    "name": "Cursed Relic",
+    "cost": 6400,
+    "image": "/items/2617435668.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/curse.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 2951612397,
+    "name": "Duration Extender",
+    "cost": 1600,
+    "image": "/items/2951612397.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/duration_extender.webp",
+    "components": [],
+    "tier": 2,
+    "category": "spirit"
+  },
+  {
+    "id": 2717651715,
+    "name": "Superior Duration",
+    "cost": 3200,
+    "image": "/items/2717651715.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/superior_duration.webp",
+    "components": [],
+    "tier": 3,
+    "category": "spirit"
+  },
+  {
+    "id": 365620721,
+    "name": "Glass Cannon",
+    "cost": 6400,
+    "image": "/items/365620721.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/glass_cannon.webp",
+    "components": [],
+    "tier": 4,
+    "category": "weapon"
+  },
+  {
+    "id": 1409190604,
+    "name": "Fury Trance",
+    "cost": 3200,
+    "image": "/items/1409190604.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/fury_trance.webp",
+    "components": [],
+    "tier": 3,
+    "category": "vitality"
+  },
+  {
+    "id": 1055679805,
+    "name": "Vampiric Burst",
+    "cost": 6400,
+    "image": "/items/1055679805.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/vampiric_burst.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 1252627263,
+    "name": "Lifestrike",
+    "cost": 3200,
+    "image": "/items/1252627263.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/lifestrike.webp",
+    "components": [],
+    "tier": 3,
+    "category": "vitality"
+  },
+  {
+    "id": 465043967,
+    "name": "Spirit Strike",
+    "cost": 800,
+    "image": "/items/465043967.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/spirit_strike.webp",
+    "components": [],
+    "tier": 1,
+    "category": "spirit"
+  },
+  {
+    "id": 3190916303,
+    "name": "Spirit Snatch",
+    "cost": 3200,
+    "image": "/items/3190916303.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/spirit_snatch.webp",
+    "components": [],
+    "tier": 3,
+    "category": "spirit"
+  },
+  {
+    "id": 26002154,
+    "name": "Melee Charge",
+    "cost": 1600,
+    "image": "/items/26002154.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/melee_charge.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 800008313,
+    "name": "Crushing Fists",
+    "cost": 6400,
+    "image": "/items/800008313.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/crushing_fists.webp",
+    "components": [],
+    "tier": 4,
+    "category": "weapon"
+  },
+  {
+    "id": 2820116164,
+    "name": "Diviner's Kevlar",
+    "cost": 6400,
+    "image": "/items/2820116164.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/diviners_kevlar.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 2947183272,
+    "name": "Radiant Regeneration",
+    "cost": 3200,
+    "image": "/items/2947183272.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/radiant_regeneration.webp",
+    "components": [],
+    "tier": 3,
+    "category": "spirit"
+  },
+  {
+    "id": 2519598785,
+    "name": "Boundless Spirit",
+    "cost": 6400,
+    "image": "/items/2519598785.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/boundless_spirit.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 2739107182,
+    "name": "Burst Fire",
+    "cost": 3200,
+    "image": "/items/2739107182.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/burst_fire.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 2829638276,
+    "name": "Extra Regen",
+    "cost": 800,
+    "image": "/items/2829638276.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/extra_regen.webp",
+    "components": [],
+    "tier": 1,
+    "category": "vitality"
+  },
+  {
+    "id": 1292979587,
+    "name": "Surge of Power",
+    "cost": 3200,
+    "image": "/items/1292979587.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/surge_of_power.webp",
+    "components": [],
+    "tier": 3,
+    "category": "spirit"
+  },
+  {
+    "id": 1925087134,
+    "name": "Suppressor",
+    "cost": 1600,
+    "image": "/items/1925087134.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/suppressor.webp",
+    "components": [],
+    "tier": 2,
+    "category": "spirit"
+  },
+  {
+    "id": 84321454,
+    "name": "Quicksilver Reload",
+    "cost": 1600,
+    "image": "/items/84321454.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/quicksilver_reload.webp",
+    "components": [],
+    "tier": 2,
+    "category": "spirit"
+  },
+  {
+    "id": 3919289022,
+    "name": "Mercurial Magnum",
+    "cost": 6400,
+    "image": "/items/3919289022.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/mercurial_magnum.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 2407033488,
+    "name": "Intensifying Magazine",
+    "cost": 1600,
+    "image": "/items/2407033488.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/intensifying_magazine.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 2463960640,
+    "name": "Escalating Resilience",
+    "cost": 3200,
+    "image": "/items/2463960640.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/escalating_resilience.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 4104549924,
+    "name": "Swift Striker",
+    "cost": 1600,
+    "image": "/items/4104549924.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/swift_striker.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 865958998,
+    "name": "Veil Walker",
+    "cost": 3200,
+    "image": "/items/865958998.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/veil_walker.webp",
+    "components": [],
+    "tier": 3,
+    "category": "vitality"
+  },
+  {
+    "id": 1644605047,
+    "name": "Reactive Barrier",
+    "cost": 1600,
+    "image": "/items/1644605047.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/reactive_barrier.webp",
+    "components": [],
+    "tier": 2,
+    "category": "vitality"
+  },
+  {
+    "id": 951866250,
+    "name": "Indomitable",
+    "cost": 6400,
+    "image": "/items/951866250.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/indomitable.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 3862866912,
+    "name": "Restorative Shot",
+    "cost": 800,
+    "image": "/items/3862866912.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/restorative_shot.webp",
+    "components": [],
+    "tier": 1,
+    "category": "weapon"
+  },
+  {
+    "id": 2356412290,
+    "name": "Titanic Magazine",
+    "cost": 1600,
+    "image": "/items/2356412290.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/titanic_magazine.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 3647584222,
+    "name": "Split Shot",
+    "cost": 1600,
+    "image": "/items/3647584222.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/split_shot.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 381961617,
+    "name": "Active Reload",
+    "cost": 1600,
+    "image": "/items/381961617.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/active_reload.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 2800629741,
+    "name": "Magic Carpet",
+    "cost": 6400,
+    "image": "/items/2800629741.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/magic_carpet.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 343572757,
+    "name": "Spirit Burn",
+    "cost": 6400,
+    "image": "/items/343572757.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/spirit_burn.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 493591231,
+    "name": "Lightning Scroll",
+    "cost": 6400,
+    "image": "/items/493591231.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/lightning_scroll.webp",
+    "components": [],
+    "tier": 4,
+    "category": "spirit"
+  },
+  {
+    "id": 3028234315,
+    "name": "Witchmail",
+    "cost": 6400,
+    "image": "/items/3028234315.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/witchmail.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 1427630806,
+    "name": "Healing Tempo",
+    "cost": 6400,
+    "image": "/items/1427630806.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/healing_tempo.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 673001892,
+    "name": "Armor Piercer",
+    "cost": 6400,
+    "image": "/items/673001892.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/armor_piercing_rounds.webp",
+    "components": [],
+    "tier": 4,
+    "category": "weapon"
+  },
+  {
+    "id": 3269957497,
+    "name": "Infinite Rounds",
+    "cost": 9999,
+    "image": "/items/3269957497.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/infinite_rounds.webp",
+    "components": [],
+    "tier": 5,
+    "category": "weapon"
+  },
+  {
+    "id": 3491236900,
+    "name": "Plated Armor",
+    "cost": 6400,
+    "image": "/items/3491236900.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/plated_armor.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 1955841979,
+    "name": "Spellbreaker",
+    "cost": 6400,
+    "image": "/items/1955841979.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/spellbreaker.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 1250307611,
+    "name": "Juggernaut",
+    "cost": 6400,
+    "image": "/items/1250307611.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/vitality/juggernaut.webp",
+    "components": [],
+    "tier": 4,
+    "category": "vitality"
+  },
+  {
+    "id": 2221211450,
+    "name": "Spellslinger",
+    "cost": 6400,
+    "image": "/items/2221211450.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/spell_slinger.webp",
+    "components": [],
+    "tier": 4,
+    "category": "weapon"
+  },
+  {
+    "id": 98582110,
+    "name": "Stalker",
+    "cost": 1600,
+    "image": "/items/98582110.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/backstabber.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 690458959,
+    "name": "Express Shot",
+    "cost": 3200,
+    "image": "/items/690458959.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/express_shot.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 1736094134,
+    "name": "Seraphim Wings",
+    "cost": 9999,
+    "image": "/items/1736094134.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/icarus_wings.webp",
+    "components": [],
+    "tier": 5,
+    "category": "vitality"
+  },
+  {
+    "id": 2054088113,
+    "name": "Mystical Piano",
+    "cost": 9999,
+    "image": "/items/2054088113.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/mystical_piano.webp",
+    "components": [],
+    "tier": 5,
+    "category": "spirit"
+  },
+  {
+    "id": 3949773228,
+    "name": "Nullification Burst",
+    "cost": 9999,
+    "image": "/items/3949773228.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/nullification_aura.webp",
+    "components": [],
+    "tier": 5,
+    "category": "vitality"
+  },
+  {
+    "id": 3729138568,
+    "name": "Celestial Blessing",
+    "cost": 9999,
+    "image": "/items/3729138568.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/celestial_guidance.webp",
+    "components": [],
+    "tier": 5,
+    "category": "vitality"
+  },
+  {
+    "id": 230297145,
+    "name": "Eternal Gift",
+    "cost": 9999,
+    "image": "/items/230297145.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/eternal_gift.webp",
+    "components": [],
+    "tier": 5,
+    "category": "vitality"
+  },
+  {
+    "id": 4050602737,
+    "name": "Mystic Conduit",
+    "cost": 9999,
+    "image": "/items/4050602737.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/patrons_blessing.webp",
+    "components": [],
+    "tier": 5,
+    "category": "spirit"
+  },
+  {
+    "id": 3568217437,
+    "name": "Haunting Shot",
+    "cost": 9999,
+    "image": "/items/3568217437.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/eldritch_shot.webp",
+    "components": [],
+    "tier": 5,
+    "category": "weapon"
+  },
+  {
+    "id": 3523480953,
+    "name": "Cloak of Opportunity",
+    "cost": 9999,
+    "image": "/items/3523480953.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/cloak_of_opportunity.webp",
+    "components": [],
+    "tier": 5,
+    "category": "vitality"
+  },
+  {
+    "id": 64550694,
+    "name": "Runed Gauntlets",
+    "cost": 9999,
+    "image": "/items/64550694.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/runed_gauntlets.webp",
+    "components": [],
+    "tier": 5,
+    "category": "weapon"
+  },
+  {
+    "id": 1825399334,
+    "name": "Electric Slippers",
+    "cost": 9999,
+    "image": "/items/1825399334.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/electric_slippers.webp",
+    "components": [],
+    "tier": 5,
+    "category": "vitality"
+  },
+  {
+    "id": 1132564516,
+    "name": "Prism Blast",
+    "cost": 9999,
+    "image": "/items/1132564516.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/prism_blast.webp",
+    "components": [],
+    "tier": 5,
+    "category": "spirit"
+  },
+  {
+    "id": 1558545403,
+    "name": "Unstable Concoction",
+    "cost": 9999,
+    "image": "/items/1558545403.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/unstable_concoction.webp",
+    "components": [],
+    "tier": 5,
+    "category": "spirit"
+  },
+  {
+    "id": 2068250483,
+    "name": "Frostbite Charm",
+    "cost": 9999,
+    "image": "/items/2068250483.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/frostbite.webp",
+    "components": [],
+    "tier": 5,
+    "category": "spirit"
+  },
+  {
+    "id": 2319629810,
+    "name": "Shadow Strike",
+    "cost": 9999,
+    "image": "/items/2319629810.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/brawl/shadow_strike.webp",
+    "components": [],
+    "tier": 5,
+    "category": "vitality"
+  },
+  {
+    "id": 3294954488,
+    "name": "Ballistic Enchantment",
+    "cost": 3200,
+    "image": "/items/3294954488.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/alchemical_seal.webp",
+    "components": [],
+    "tier": 3,
+    "category": "weapon"
+  },
+  {
+    "id": 1763073141,
+    "name": "Recharging Rush",
+    "cost": 1600,
+    "image": "/items/1763073141.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/weapon/recharging_rounds.webp",
+    "components": [],
+    "tier": 2,
+    "category": "weapon"
+  },
+  {
+    "id": 2462046703,
+    "name": "Golden Goose Egg",
+    "cost": 800,
+    "image": "/items/2462046703.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/items/spirit/goose_egg.webp",
+    "components": [],
+    "tier": 1,
+    "category": "spirit"
+  }
+]

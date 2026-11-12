@@ -1,0 +1,8 @@
+.panel-transition {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 1920px;
+  height: 1080px;
+  pointer-events: none;
+  transform: translate3d(0, 0, 0);
+}

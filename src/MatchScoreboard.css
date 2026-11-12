@@ -1,0 +1,435 @@
+.deadlock-scoreboard {
+  background:
+    radial-gradient(ellipse at 50% -10%, #65734f3d, transparent 62%),
+    repeating-linear-gradient(115deg, #a3ad7903 0 1px, transparent 1px 8px),
+    #1d231f;
+  color: #eee4ce;
+  padding: 26px 32px;
+  display: grid;
+  grid-template-rows: 94px minmax(0, 1fr) 174px 32px;
+  gap: 12px;
+  font-family: "DLAR Arabic", Inter, Cairo, sans-serif;
+}
+.deadlock-scoreboard::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px solid #b7b48b35;
+  pointer-events: none;
+}
+.ds-ribbon {
+  display: grid;
+  grid-template-columns: 1fr 234px 1fr;
+  background: #eee4ce;
+  color: #28332b;
+  border-top: 3px solid #c4b57d;
+  position: relative;
+}
+.ds-team-heading {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 13px 20px;
+  border-bottom: 3px solid #a5b4ad;
+  min-width: 0;
+}
+.ds-team-heading.ds-team-0 {
+  grid-column: 1;
+  border-color: #bd9e62;
+}
+.ds-team-heading.ds-team-1 {
+  grid-column: 3;
+  flex-direction: row-reverse;
+}
+.ds-team-heading > img {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  object-fit: contain;
+}
+.ds-team-sigil {
+  font-size: 48px;
+  color: #8c925e;
+}
+.ds-team-title {
+  flex: 1;
+  min-width: 0;
+}
+.ds-team-1 .ds-team-title {
+  text-align: right;
+}
+.ds-team-title h2 {
+  font:
+    600 29px "DLAR Arabic",
+    "Barlow Condensed",
+    Cairo,
+    sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 4px 0 0;
+}
+.ds-team-heading small {
+  font:
+    600 10px "DLAR Arabic",
+    Inter,
+    sans-serif;
+  letter-spacing: 1.6px;
+  display: block;
+}
+.ds-victory .ds-team-title small {
+  color: #667844;
+}
+.ds-team-total {
+  text-align: center;
+  min-width: 62px;
+}
+.ds-team-total b {
+  display: block;
+  font:
+    600 30px "DLAR Arabic",
+    "Barlow Condensed",
+    sans-serif;
+  margin-top: 4px;
+}
+.ds-series {
+  border-left: 1px solid #69755944;
+  padding-left: 16px;
+  text-align: center;
+}
+.ds-team-1 .ds-series {
+  border-left: 0;
+  border-right: 1px solid #69755944;
+  padding-left: 0;
+  padding-right: 16px;
+}
+.ds-series b {
+  font:
+    600 35px "DLAR Arabic",
+    "Barlow Condensed",
+    sans-serif;
+}
+.ds-series small {
+  font-size: 8px;
+}
+.ds-match-clock {
+  position: absolute;
+  top: -3px;
+  bottom: 0;
+  left: calc(50% - 117px);
+  width: 234px;
+  background: #3c4837;
+  color: #eee4ce;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+  padding: 5px 12px;
+}
+.ds-match-clock b {
+  font:
+    500 42px "DLAR Arabic",
+    "Barlow Condensed",
+    sans-serif;
+  line-height: 1;
+}
+.ds-match-clock small {
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+.ds-match-clock > span {
+  font-size: 9px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ds-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 158px minmax(0, 1fr);
+  gap: 16px;
+  min-height: 0;
+  align-items: stretch;
+}
+.ds-roster {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+.ds-roster-0 {
+  grid-column: 1;
+  grid-row: 1;
+}
+.ds-roster-1 {
+  grid-column: 3;
+  grid-row: 1;
+}
+.ds-player,
+.ds-labels {
+  display: grid;
+  grid-template-rows: minmax(130px, 1fr) 42px repeat(7, 31px) 85px 132px 26px;
+  min-width: 0;
+}
+.ds-player {
+  border-top: 2px solid #c4a46a;
+  background: #2b322a;
+}
+.ds-without-sources .ds-player,
+.ds-without-sources .ds-labels {
+  grid-template-rows: minmax(130px, 1fr) 42px repeat(7, 31px) 132px 26px;
+}
+.ds-roster-1 .ds-player {
+  border-color: #8faeb5;
+}
+.ds-portrait {
+  position: relative;
+  overflow: hidden;
+  background: #333d30;
+}
+.ds-portrait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 -20px 25px -16px #161e19;
+}
+.ds-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+}
+.ds-portrait > b {
+  position: absolute;
+  z-index: 1;
+  top: 8px;
+  left: 6px;
+  right: 6px;
+  background: #d0b56f;
+  padding: 5px;
+  text-align: center;
+  color: #293124;
+  font:
+    600 11px "DLAR Arabic",
+    Inter,
+    sans-serif;
+  letter-spacing: 2px;
+}
+.ds-key-player-badge {
+  position: absolute;
+  z-index: 1;
+  top: 8px;
+  left: 6px;
+  max-width: calc(100% - 12px);
+  padding: 3px 5px;
+  border: 1px solid #9baa7f70;
+  background: #253127eb;
+  color: #d6ddc6;
+  font:
+    600 9px/1.2 "DLAR Arabic",
+    Inter,
+    sans-serif;
+  letter-spacing: 0.7px;
+  white-space: nowrap;
+}
+.ds-player-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.15;
+  font:
+    600 16px/1.15 "DLAR Arabic",
+    "Barlow Condensed",
+    Cairo,
+    sans-serif;
+  padding: 4px;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  border-bottom: 2px solid #bb9d63;
+  color: #fff6de;
+}
+.ds-roster-1 .ds-player-name {
+  border-color: #8faeb5;
+}
+.ds-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font:
+    500 25px/1 "DLAR Arabic",
+    "Barlow Condensed",
+    sans-serif;
+  font-variant-numeric: tabular-nums;
+  background: #ffffff04;
+  border-bottom: 1px solid #ffffff08;
+}
+.ds-number:nth-child(even) {
+  background: #00000016;
+}
+.ds-number.ds-best {
+  background: linear-gradient(0deg, #a0ad6733, transparent);
+  color: #e5edb9;
+  box-shadow: inset 0 -1px #a3b27788;
+}
+.ds-sources {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  padding: 5px;
+  border-top: 1px solid #c4c39b33;
+  background: #20271f;
+}
+.ds-sources > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 10px;
+  line-height: 1.2;
+}
+.ds-sources > div span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #b9c2a2;
+}
+.ds-sources > div b {
+  font-size: 10px;
+  color: #ece4cb;
+}
+.ds-unavailable {
+  color: #89947f;
+  font-size: 10px;
+  text-align: center;
+  line-height: 1.5;
+}
+.ds-items {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 28px;
+  gap: 3px;
+  align-content: center;
+  padding: 3px;
+}
+.ds-items > span {
+  border: 1px solid #afab7e33;
+  background: #ffffff04;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  color: #b8b99e;
+}
+.ds-items img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.ds-items .weapon {
+  border-color: #b58e4988;
+  background: #9a713c22;
+}
+.ds-items .vitality {
+  border-color: #91a76688;
+  background: #788e5522;
+}
+.ds-items .spirit {
+  border-color: #a394bc88;
+  background: #84759f22;
+}
+.ds-items-many {
+  grid-auto-rows: 18px;
+  gap: 2px;
+}
+.ds-items > small {
+  grid-column: 1/-1;
+  color: #89947f;
+  text-align: center;
+  font-size: 10px;
+  align-self: center;
+}
+.ds-abilities {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-top: 1px solid #b1b68c22;
+  background: #232b23;
+}
+.ds-abilities > span {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  color: #c4cbb1;
+}
+.ds-abilities img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+.ds-labels {
+  grid-column: 2;
+  grid-row: 1;
+  color: #bfc8aa;
+  text-align: center;
+}
+.ds-labels .ds-community-mark {
+  grid-row: 1/3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  padding: 12px 4px;
+}
+.ds-community-mark img {
+  filter: brightness(0) saturate(100%) invert(90%) sepia(14%) saturate(422%)
+    hue-rotate(351deg);
+  width: 94px;
+  height: 94px;
+  object-fit: contain;
+}
+.ds-community-mark span {
+  font:
+    500 14px/1.4 "DLAR Arabic",
+    "Barlow Condensed",
+    Cairo,
+    sans-serif;
+  letter-spacing: 1px;
+}
+.ds-community-mark b {
+  border-block: 1px solid #c5bf8055;
+  padding: 8px 4px;
+  font:
+    500 16px "DLAR Arabic",
+    "Barlow Condensed",
+    sans-serif;
+  letter-spacing: 3px;
+  color: #ded6b6;
+}
+.ds-labels > span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font:
+    500 15px "DLAR Arabic",
+    "Barlow Condensed",
+    sans-serif;
+  letter-spacing: 1px;
+}
+.ds-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  font:
+    10px "DLAR Arabic",
+    Inter,
+    sans-serif;
+  letter-spacing: 1px;
+  color: #9aa78f;
+  border-top: 1px solid #c5c8a333;
+  padding-top: 8px;
+}

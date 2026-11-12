@@ -4,12 +4,34 @@
     "name": "Infernus",
     "image": "/heroes/1.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/inferno_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/inferno_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/inferno_card_critical.webp",
+    "gloatImage": "/heroes/1-gloat.webp",
+    "criticalImage": "/heroes/1-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/inferno_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/inferno_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/inferno/inferno_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/inferno/inferno_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/inferno/inferno_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "inferno/inferno_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/7e/7ec5edce56db0a73b7ac2b13838a374a832672850711210b1c4ea9e6ce498daf.mp3"
+      },
+      {
+        "filename": "inferno/inferno_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/cf/cfe72729350a6fc420e24f3cf331b549928bb0cfa50aea28c2b2c629b1791c19.mp3"
+      },
+      {
+        "filename": "inferno/inferno_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/25/25dd90effe6947cbdaf02b6e7c177173d8617cea90c715789b74d1893350baec.mp3"
+      },
+      {
+        "filename": "inferno/inferno_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/9e/9e24ea2b45fe9dbb3b57a99878584b83e532e50ef4af5d7d2213f784e5f7b109.mp3"
+      }
     ]
   },
   {
@@ -17,12 +39,34 @@
     "name": "Seven",
     "image": "/heroes/2.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/gigawatt_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/gigawatt_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/gigawatt_card_critical.webp",
+    "gloatImage": "/heroes/2-gloat.webp",
+    "criticalImage": "/heroes/2-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/gigawatt_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/gigawatt_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/gigawatt/gigawatt_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/gigawatt/gigawatt_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/gigawatt/gigawatt_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "gigawatt/gigawatt_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/be/be92fb0317ee68dccfcedc94527251d0601541b215ac6bad85503246a3558b96.mp3"
+      },
+      {
+        "filename": "gigawatt/gigawatt_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/a2/a221f31361cd2519ebb7e61bd23405f85960a6f28de0bf0106bac463c1f2f7c8.mp3"
+      },
+      {
+        "filename": "gigawatt/gigawatt_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/9e/9e9f0f0cb69e0db1f8c983fadc6e281f611f85b6309b9b74493085f509043108.mp3"
+      },
+      {
+        "filename": "gigawatt/gigawatt_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/e1/e1abb100311eface9ef8f48fcbde6cde10b525c21fa3b7269d7961b12195b4fe.mp3"
+      }
     ]
   },
   {
@@ -30,12 +74,34 @@
     "name": "Vindicta",
     "image": "/heroes/3.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/hornet_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/hornet_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/hornet_card_critical.webp",
+    "gloatImage": "/heroes/3-gloat.webp",
+    "criticalImage": "/heroes/3-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/hornet_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/hornet_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/hornet/hornet_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/hornet/hornet_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/hornet/hornet_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "hornet/hornet_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/c8/c807ebb7aeb03de7156b38d7c7658095f1343b069241a033be37a9a0fe3100d8.mp3"
+      },
+      {
+        "filename": "hornet/hornet_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/e3/e30463d415649dbf2d2fd8e8c823f0c373324e199ba0ea9ad7885a381425c6e6.mp3"
+      },
+      {
+        "filename": "hornet/hornet_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/5b/5b50735a0f89abcf985d35f48b53da9e42c7c77d0dcdbec5fcebaf1c09f41f82.mp3"
+      },
+      {
+        "filename": "hornet/hornet_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/50/5065b2a1f95220b28ff6e87f66011f5ea3db0b8272cfbd7fb2d3fc6d976e5547.mp3"
+      }
     ]
   },
   {
@@ -43,12 +109,34 @@
     "name": "Lady Geist",
     "image": "/heroes/4.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/spectre_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/spectre_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/spectre_card_critical.webp",
+    "gloatImage": "/heroes/4-gloat.webp",
+    "criticalImage": "/heroes/4-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/spectre_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/spectre_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/ghost/ghost_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/ghost/ghost_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/ghost/ghost_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "ghost/ghost_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/e0/e0f4f0dc989b7274914e05cd40bf9e16c185bcb4e7d3b04cc15b75bfbc7bdb58.mp3"
+      },
+      {
+        "filename": "ghost/ghost_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/eb/eb836fd8f86a7890cec56511bce5082424144ccd437356819242ccb5daebe15f.mp3"
+      },
+      {
+        "filename": "ghost/ghost_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/d1/d1a67dcfcad8f5aa2d3ea0ed0bbea0fe50587fcb5fd880f9b0c5b18d9784b9f7.mp3"
+      },
+      {
+        "filename": "ghost/ghost_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/1f/1feae537d14a9d05a76c986b80d34920c0dd4c7e49b08be599f519ba377ddceb.mp3"
+      }
     ]
   },
   {
@@ -56,12 +144,34 @@
     "name": "Abrams",
     "image": "/heroes/6.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bull_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bull_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bull_card_critical.webp",
+    "gloatImage": "/heroes/6-gloat.webp",
+    "criticalImage": "/heroes/6-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bull_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bull_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/atlas/atlas_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/atlas/atlas_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/atlas/atlas_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "atlas/atlas_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/ed/ed8f9feec56d9e69783070197c7ad78b1ed2bce93c75e5d7b470d5a820680acb.mp3"
+      },
+      {
+        "filename": "atlas/atlas_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/a1/a1e4896307176b352800d422118970001e09fc74d49e15e7c49944f59dd2abd2.mp3"
+      },
+      {
+        "filename": "atlas/atlas_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/ff/ff40a6a964b6f25888b4e5142b159d9d7598cc763e11af5bf6f8ee943aec8f23.mp3"
+      },
+      {
+        "filename": "atlas/atlas_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/60/6088f19c5b620a2933604cb26129bddd1d1c53a8725b5d9226149f23a405a575.mp3"
+      }
     ]
   },
   {
@@ -69,12 +179,34 @@
     "name": "Wraith",
     "image": "/heroes/7.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/wraith_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/wraith_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/wraith_card_critical.webp",
+    "gloatImage": "/heroes/7-gloat.webp",
+    "criticalImage": "/heroes/7-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/wraith_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/wraith_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/wraith/wraith_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/wraith/wraith_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/wraith/wraith_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "wraith/wraith_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/d9/d93087af06ea96bd312246a5384c13df0db6a584f7e7d8d471863d8c9a18e1a1.mp3"
+      },
+      {
+        "filename": "wraith/wraith_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/10/10f23f37edba61eaf501da546aad0b108ba6d544c7c528a4936073c4f83c5b2d.mp3"
+      },
+      {
+        "filename": "wraith/wraith_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/2c/2c12ffbf810d997c201f129118fa49d15add963c46b73699f789b61857231bf2.mp3"
+      },
+      {
+        "filename": "wraith/wraith_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/03/032210f9f703caae1eea99c2293f13515f29841aba7ef9dafe2b78d87af43983.mp3"
+      }
     ]
   },
   {
@@ -82,12 +214,34 @@
     "name": "McGinnis",
     "image": "/heroes/8.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/engineer_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/engineer_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/engineer_card_critical.webp",
+    "gloatImage": "/heroes/8-gloat.webp",
+    "criticalImage": "/heroes/8-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/engineer_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/engineer_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/forge/forge_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/forge/forge_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/forge/forge_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "forge/forge_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/66/66e896c4964a2b998b10a5be61cff2e005c9565d924a8504871120456bdbc48a.mp3"
+      },
+      {
+        "filename": "forge/forge_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/d3/d30205d49d5230c0812179e55dc1d169014b838096b51c1433bb124c44a5ccbe.mp3"
+      },
+      {
+        "filename": "forge/forge_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/f6/f6a6bbcd2f8209c18dfba84d9705d30a693bf69d292d05f7a7a17790cea517a6.mp3"
+      },
+      {
+        "filename": "forge/forge_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/3f/3f57d70acdf883c98afdde2ea1f7e6ccd46e083a782077773609e8f6db7a804e.mp3"
+      }
     ]
   },
   {
@@ -95,12 +249,34 @@
     "name": "Paradox",
     "image": "/heroes/10.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chrono_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chrono_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chrono_card_critical.webp",
+    "gloatImage": "/heroes/10-gloat.webp",
+    "criticalImage": "/heroes/10-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chrono_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chrono_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/chrono/chrono_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/chrono/chrono_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/chrono/chrono_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "chrono/chrono_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/4c/4c340e52b8bb54b5dbdf5f84e6cbe73fc8c9d2a774d7221914baa286baded6ea.mp3"
+      },
+      {
+        "filename": "chrono/chrono_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/f0/f07c9d23fb89ed07492eeae6454c72096a31372c624ad7cb818c5e22e00291ea.mp3"
+      },
+      {
+        "filename": "chrono/chrono_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/02/0216ea9a72e742c34a41e209e9467f66821196a7ea4b3cd75e0e49e1ca27f505.mp3"
+      },
+      {
+        "filename": "chrono/chrono_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/48/48db5334f49462f879f91c66a48d33a535c2e2a1b28d74ce77f4b0d10ea607fd.mp3"
+      }
     ]
   },
   {
@@ -108,12 +284,34 @@
     "name": "Dynamo",
     "image": "/heroes/11.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/sumo_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/sumo_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/sumo_card_critical.webp",
+    "gloatImage": "/heroes/11-gloat.webp",
+    "criticalImage": "/heroes/11-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/sumo_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/sumo_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/dynamo/dynamo_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/dynamo/dynamo_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/dynamo/dynamo_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "dynamo/dynamo_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/15/158ff60e45a34f4119cccd971a1d9d2f7efc0aedae37a4f4cfb3f78140344a7e.mp3"
+      },
+      {
+        "filename": "dynamo/dynamo_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/1c/1c189c1f5d2f54ba6246134fa5b579a2def5518a0f73f95febe20ae3d2a9b607.mp3"
+      },
+      {
+        "filename": "dynamo/dynamo_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/be/becf511daa365377803d8cb76f5578a72de014a6b4466712e541a15a3404f132.mp3"
+      },
+      {
+        "filename": "dynamo/dynamo_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/39/39856bee7bcbee85500673223e793b6d9347afaab264442a388330503bd325a9.mp3"
+      }
     ]
   },
   {
@@ -121,12 +319,34 @@
     "name": "Kelvin",
     "image": "/heroes/12.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kelvin_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kelvin_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kelvin_card_critical.webp",
+    "gloatImage": "/heroes/12-gloat.webp",
+    "criticalImage": "/heroes/12-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kelvin_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kelvin_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/kelvin/kelvin_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/kelvin/kelvin_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/kelvin/kelvin_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "kelvin/kelvin_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/e4/e45aacb0a9db1e90bf21cafe1f15d9a2734c02ef46b0a4c127206d07f4893a3f.mp3"
+      },
+      {
+        "filename": "kelvin/kelvin_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/52/52d07c44d9f83f61d05feb330fb02290b89d38b88735db97cc3c057bfd239263.mp3"
+      },
+      {
+        "filename": "kelvin/kelvin_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/31/310af191f4b7c29b4d837fa6236b50569ed6f7aef9562bc879d67cfec68f507d.mp3"
+      },
+      {
+        "filename": "kelvin/kelvin_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/61/61549518765c803449080089c60a8dac5ae24e6e28b87bea657642076474702c.mp3"
+      }
     ]
   },
   {
@@ -134,12 +354,34 @@
     "name": "Haze",
     "image": "/heroes/13.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/haze_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/haze_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/haze_card_critical.webp",
+    "gloatImage": "/heroes/13-gloat.webp",
+    "criticalImage": "/heroes/13-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/haze_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/haze_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/haze/haze_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/haze/haze_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/haze/haze_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "haze/haze_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/40/40cfcdc1bd3b8252a20863feafbed51357386905e6755399ae5194c63a8e20bf.mp3"
+      },
+      {
+        "filename": "haze/haze_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/bd/bdae52a2237f90dc5a521a8aa96c6a3b88e8de0760fa159f2ee1043d2bdb31c4.mp3"
+      },
+      {
+        "filename": "haze/haze_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/5c/5c5e6a9abea9fe7b3ca0e706e579383a0863c48837cc502561939091b852f241.mp3"
+      },
+      {
+        "filename": "haze/haze_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/91/91f96814849d3d690062d4952cba0198393d74ea08d0d8673460f88caadc5cd3.mp3"
+      }
     ]
   },
   {
@@ -147,12 +389,34 @@
     "name": "Holliday",
     "image": "/heroes/14.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/astro_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/astro_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/astro_card_critical.webp",
+    "gloatImage": "/heroes/14-gloat.webp",
+    "criticalImage": "/heroes/14-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/astro_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/astro_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/astro/astro_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/astro/astro_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/astro/astro_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "astro/astro_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/5a/5a8ea60618fcc389c6b840fd3ec11306f092a24145c1be629694adc57ea128de.mp3"
+      },
+      {
+        "filename": "astro/astro_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/06/06b2055e0dc6bb26ce0f86550faed10085916377ba62360def61e62c74dc82cd.mp3"
+      },
+      {
+        "filename": "astro/astro_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/a4/a4119d0cd27a75ed7c3ecfcdb4ea9ce31ce9f79bade04a68142e2cb982a09642.mp3"
+      },
+      {
+        "filename": "astro/astro_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/7b/7bcf9c3d1b8ed7527ff109ab77df77b942a726a0b82598c80a5b58e2af96b45d.mp3"
+      }
     ]
   },
   {
@@ -160,12 +424,34 @@
     "name": "Bebop",
     "image": "/heroes/15.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bebop_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bebop_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bebop_card_critical.webp",
+    "gloatImage": "/heroes/15-gloat.webp",
+    "criticalImage": "/heroes/15-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bebop_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bebop_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/bebop/bebop_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/bebop/bebop_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/bebop/bebop_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "bebop/bebop_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/f8/f89a4fc5c496d451e30796fc85259b44f481770f2b14049676a1be78e0d88ac0.mp3"
+      },
+      {
+        "filename": "bebop/bebop_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/c8/c85aac631f8376805057f4617bbd61f35119ac3d55ac43e1e43ff4b25aa6cd60.mp3"
+      },
+      {
+        "filename": "bebop/bebop_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/92/92f8a5a4ca54a051250f1cce2fcfa2a5b05a5b4eacde5d70a2c3797f2ebc079e.mp3"
+      },
+      {
+        "filename": "bebop/bebop_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/dd/dd444be4d84effd237bd69cbde458fbdb502e37ffd9822dc70f1145a59376b7f.mp3"
+      }
     ]
   },
   {
@@ -173,12 +459,34 @@
     "name": "Calico",
     "image": "/heroes/16.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nano_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nano_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nano_card_critical.webp",
+    "gloatImage": "/heroes/16-gloat.webp",
+    "criticalImage": "/heroes/16-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nano_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nano_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/nano/nano_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/nano/nano_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/nano/nano_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "nano/nano_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/ea/ea1652e073e646c8f99969fa404f3f2157a76958bb13afb9631f2e95d73ea9aa.mp3"
+      },
+      {
+        "filename": "nano/nano_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/da/dab577ad7dc667145d28d8bb81d2daa6c510b2b1dd7a5bef36f8add576b120c0.mp3"
+      },
+      {
+        "filename": "nano/nano_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/b9/b91475eb8271516f44ba1ba35fd101dfc63435137e43d2b7037704b32191995f.mp3"
+      },
+      {
+        "filename": "nano/nano_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/b1/b110c8127885e1072a5475e2bb18b17c4eb06715052b8651091c867ff101f7b1.mp3"
+      }
     ]
   },
   {
@@ -186,12 +494,34 @@
     "name": "Grey Talon",
     "image": "/heroes/17.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/archer_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/archer_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/archer_card_critical.webp",
+    "gloatImage": "/heroes/17-gloat.webp",
+    "criticalImage": "/heroes/17-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/archer_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/archer_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/orion/orion_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/orion/orion_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/orion/orion_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "orion/orion_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/04/045408832c76b4723625b0ba58c4ca5cf83a3d16c76f096f1ab52ab7522060e1.mp3"
+      },
+      {
+        "filename": "orion/orion_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/22/224568dc7265297201bbdb2e28d96c59c364398aaea6f74b1601aeb8b076ed49.mp3"
+      },
+      {
+        "filename": "orion/orion_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/7f/7fcc83f072d61e911a0b9e7f0bbd366120bd07511ae618fafa0e4df8591b4ef7.mp3"
+      },
+      {
+        "filename": "orion/orion_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/20/20b295c142475457954df45eebacd8ef5868419efac085e8d34fd0dc47cbe501.mp3"
+      }
     ]
   },
   {
@@ -199,12 +529,34 @@
     "name": "Mo & Krill",
     "image": "/heroes/18.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/digger_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/digger_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/digger_card_critical.webp",
+    "gloatImage": "/heroes/18-gloat.webp",
+    "criticalImage": "/heroes/18-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/digger_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/digger_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/krill/krill_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/krill/krill_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/krill/krill_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "krill/krill_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/a4/a467ae9940d0b345eaa5a8ffad6232a7c254af0ca03b6042576620d58b8c2937.mp3"
+      },
+      {
+        "filename": "krill/krill_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/11/11911ddee0007881cd49ac2beaeca52dabd12ed0903958197237dcbd82826997.mp3"
+      },
+      {
+        "filename": "krill/krill_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/14/1422bb7bc35b4e759ef0c82cc2d246b6c867e7b3f274edfaddbed9f7819b9a57.mp3"
+      },
+      {
+        "filename": "krill/krill_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/9e/9e2010ee8c8cd99cc96c5a8d14280c51b6c9fdcc23ab6617dcc66c9b9ffcdc65.mp3"
+      }
     ]
   },
   {
@@ -212,12 +564,34 @@
     "name": "Shiv",
     "image": "/heroes/19.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/shiv_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/shiv_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/shiv_card_critical.webp",
+    "gloatImage": "/heroes/19-gloat.webp",
+    "criticalImage": "/heroes/19-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/shiv_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/shiv_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/shiv/shiv_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/shiv/shiv_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/shiv/shiv_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "shiv/shiv_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/2e/2e5854c3eb21209c34a1db44dfecc8a313bef82dfbf352ce2ff14799d34f9b63.mp3"
+      },
+      {
+        "filename": "shiv/shiv_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/31/31e26eeae212daed4ed641d9d88287e6fb9233be7d5052db4a5c74a35f799479.mp3"
+      },
+      {
+        "filename": "shiv/shiv_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/14/14fa34452a854ae147b65e2970c3504c05f4e8d19dae916f72aef4a2bd18156c.mp3"
+      },
+      {
+        "filename": "shiv/shiv_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/e4/e47380ae544a37b1fbac2babd7fc4df506a47277f3d3f807a30a4c289288e61d.mp3"
+      }
     ]
   },
   {
@@ -225,12 +599,34 @@
     "name": "Ivy",
     "image": "/heroes/20.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tengu_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tengu_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tengu_card_critical.webp",
+    "gloatImage": "/heroes/20-gloat.webp",
+    "criticalImage": "/heroes/20-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tengu_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tengu_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/tengu/tengu_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/tengu/tengu_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/tengu/tengu_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "tengu/tengu_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/29/29df3dc7ef47b31691a82628842bda9a7a2897048bfd81087d1d517576898a80.mp3"
+      },
+      {
+        "filename": "tengu/tengu_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/c5/c503fc25ab2c4440e902e27486a1f9b38c092134b83ad6d74e88176a9108bbe3.mp3"
+      },
+      {
+        "filename": "tengu/tengu_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/42/425ef56e431c0c6f9da682afa1031019b4979f991decfcdbce20a630f3e16831.mp3"
+      },
+      {
+        "filename": "tengu/tengu_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/55/557e5af93f545dfb6d08bc0b29c805a08bf862d8ac5c6791ac48570fe1a4a4fc.mp3"
+      }
     ]
   },
   {
@@ -238,12 +634,34 @@
     "name": "Warden",
     "image": "/heroes/25.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/warden_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/warden_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/warden_card_critical.webp",
+    "gloatImage": "/heroes/25-gloat.webp",
+    "criticalImage": "/heroes/25-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/warden_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/warden_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/warden/warden_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/warden/warden_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/warden/warden_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "warden/warden_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/de/de2844b0ba84ca4582555ae255d29c09d219f9bf91d6d2a37b1b85de034c1cc4.mp3"
+      },
+      {
+        "filename": "warden/warden_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/91/91e418fad8253fe5b0dda9f2fb262064e46270ec134e635cb67117edf6a7f9a2.mp3"
+      },
+      {
+        "filename": "warden/warden_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/07/07a1714738c313ddf2d1c10ee0c589e8d014f3165d375501a609330b17224c74.mp3"
+      },
+      {
+        "filename": "warden/warden_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/90/90f1ccb8eaf9d97607ae943ee1e9edb749777d96f078d37e67953a174f5fcf82.mp3"
+      }
     ]
   },
   {
@@ -251,12 +669,34 @@
     "name": "Yamato",
     "image": "/heroes/27.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/yamato_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/yamato_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/yamato_card_critical.webp",
+    "gloatImage": "/heroes/27-gloat.webp",
+    "criticalImage": "/heroes/27-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/yamato_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/yamato_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/yamato/yamato_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/yamato/yamato_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/yamato/yamato_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "yamato/yamato_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/90/9015572efd4b68587481ecbcc98f981efcedb069060988342454342aefe4726a.mp3"
+      },
+      {
+        "filename": "yamato/yamato_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/93/93e8ac90ef6b78367c42d5954444abe314cf6e0f48116f9db37a09127c6fbd6a.mp3"
+      },
+      {
+        "filename": "yamato/yamato_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/da/dad5ebc062d418575acbff4abb35f0a0bb8f3b4fb31e636cc77a88ab25180461.mp3"
+      },
+      {
+        "filename": "yamato/yamato_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/90/9069dae8d50cf0d2a867969b3ed7af8ef3275c23aa1ecc49b631efac15f00851.mp3"
+      }
     ]
   },
   {
@@ -264,12 +704,34 @@
     "name": "Lash",
     "image": "/heroes/31.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/lash_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/lash_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/lash_card_critical.webp",
+    "gloatImage": "/heroes/31-gloat.webp",
+    "criticalImage": "/heroes/31-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/lash_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/lash_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/lash/lash_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/lash/lash_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/lash/lash_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "lash/lash_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/90/90979eceea6d5083f2a530448b7cf96fe697bcb34eb4f96dccfec16af7b238fd.mp3"
+      },
+      {
+        "filename": "lash/lash_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/a6/a6136a1210d48d41dff16589877c900e03338972d8eb810233db681276f2e03f.mp3"
+      },
+      {
+        "filename": "lash/lash_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/2e/2e08ed832cc6ed1e898c6f70fdef1418d48476dc854801016be7568fa650b449.mp3"
+      },
+      {
+        "filename": "lash/lash_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/0c/0c8c1916084df181bd6a9c5fcac9900036998581755c7e02884bb2f2827e53f9.mp3"
+      }
     ]
   },
   {
@@ -277,12 +739,34 @@
     "name": "Viscous",
     "image": "/heroes/35.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/viscous_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/viscous_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/viscous_card_critical.webp",
+    "gloatImage": "/heroes/35-gloat.webp",
+    "criticalImage": "/heroes/35-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/viscous_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/viscous_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/viscous/viscous_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/viscous/viscous_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/viscous/viscous_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "viscous/viscous_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/aa/aabfc3841eaa351fe30446a07d51f9aee614ef371c6b9dd627df141e0f69d1e3.mp3"
+      },
+      {
+        "filename": "viscous/viscous_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/e2/e2b7ef99c811b330090054337ccccb3987bc34bd49e3e8046a2c93a1cc81ce33.mp3"
+      },
+      {
+        "filename": "viscous/viscous_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/bb/bb96bf4681944587e56c32b832ce2e7850c9e08f3431e4998fd08ffc8f4a5cf7.mp3"
+      },
+      {
+        "filename": "viscous/viscous_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/22/221881caf813329df30c03d5e46cc1fb658b20fecb577e23427656c0050545ce.mp3"
+      }
     ]
   },
   {
@@ -290,12 +774,34 @@
     "name": "Pocket",
     "image": "/heroes/50.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/synth_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/synth_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/synth_card_critical.webp",
+    "gloatImage": "/heroes/50-gloat.webp",
+    "criticalImage": "/heroes/50-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/synth_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/synth_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/synth/synth_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/synth/synth_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/synth/synth_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "synth/synth_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/be/bec74a7185f8ce71fd732d167495efd1cf4f1329f05f6682798aa3496d5ae3a4.mp3"
+      },
+      {
+        "filename": "synth/synth_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/d4/d4bddd6992d9f7d59d1935c50b857dc85bfb35fa51d5d21e199f545294cfc4e4.mp3"
+      },
+      {
+        "filename": "synth/synth_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/4a/4a1685c45faed18de8f3ec3fe9518ab8d9eeca7a7b8e2af096ccdf702ff83645.mp3"
+      },
+      {
+        "filename": "synth/synth_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/47/479cf764f360861f96f70cfd753865de4d61993723c2de7d07644d174f3c53a8.mp3"
+      }
     ]
   },
   {
@@ -303,12 +809,34 @@
     "name": "Mirage",
     "image": "/heroes/52.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/mirage_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/mirage_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/mirage_card_critical.webp",
+    "gloatImage": "/heroes/52-gloat.webp",
+    "criticalImage": "/heroes/52-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/mirage_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/mirage_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/mirage/mirage_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/mirage/mirage_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/mirage/mirage_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "mirage/mirage_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/88/883b85fb09520a9a0729d8aefc75eecb49a46795207ad83d80be583ec5e2de9b.mp3"
+      },
+      {
+        "filename": "mirage/mirage_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/11/11b942c9a760de43489ddaec4fd08e14f26d1556f7defce6a1ed0a3b41de5b2d.mp3"
+      },
+      {
+        "filename": "mirage/mirage_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/ee/eef5151d20f8f8864bf4fe67b2c7d9851dc82bb6cebff774e3394b10a8757fe5.mp3"
+      },
+      {
+        "filename": "mirage/mirage_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/2a/2aa2b38da1c4d0c3426fa306adef33f915a727bdf36ad67418d363c362dfbc33.mp3"
+      }
     ]
   },
   {
@@ -316,12 +844,34 @@
     "name": "Vyper",
     "image": "/heroes/58.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kali_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kali_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kali_card_critical.webp",
+    "gloatImage": "/heroes/58-gloat.webp",
+    "criticalImage": "/heroes/58-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kali_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kali_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/viper/viper_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/viper/viper_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/viper/viper_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "viper/viper_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/28/285a8fa2f294f41327a8dbf9e0569d2fa44ad69ef0614a40e938128760e60ca9.mp3"
+      },
+      {
+        "filename": "viper/viper_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/d5/d5cc481c25c2dc5579b6998faa34ecec5261920d96ee670778651239a8b9da85.mp3"
+      },
+      {
+        "filename": "viper/viper_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/d7/d729ef342afbe4e2001a41f4a1c3f1658b4e2d6c5078eccd5af6d07aeba0459a.mp3"
+      },
+      {
+        "filename": "viper/viper_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/9a/9a6cb23251ddd5fdd0f748387891c24ee458d38e5054f3c869a96722f9cec476.mp3"
+      }
     ]
   },
   {
@@ -329,23 +879,50 @@
     "name": "Sinclair",
     "image": "/heroes/60.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/magician_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/magician_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/magician_card_critical.webp",
+    "gloatImage": "/heroes/60-gloat.webp",
+    "criticalImage": "/heroes/60-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/magician_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/magician_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.vlviewer.com/deadlock/audio/sha256/d3/d32962f50facb28bb01fd2a4b596fc3677fcb10e559949ecdf6bfff6220114c2.mp3"
-    ]
+    ],
+    "banVoiceLines": []
   },
   {
     "id": 63,
     "name": "Mina",
     "image": "/heroes/63.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/vampirebat_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/vampirebat_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/vampirebat_card_critical.webp",
+    "gloatImage": "/heroes/63-gloat.webp",
+    "criticalImage": "/heroes/63-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/vampirebat_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/vampirebat_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/vampirebat/vampirebat_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/vampirebat/vampirebat_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/vampirebat/vampirebat_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "vampirebat/vampirebat_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/ab/ab26e337c1377580701823761f3aba23f1ebd8bade726a468fb8925b041fb36f.mp3"
+      },
+      {
+        "filename": "vampirebat/vampirebat_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/a2/a218afa68ae20e5ed8ff729a7221fe9fb2fd5f1a92f473076aebab1fa0cb5f8e.mp3"
+      },
+      {
+        "filename": "vampirebat/vampirebat_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/01/01b8dc4ee8564874073d5a9a752afc43a7200bcb17094fdf0ee15c144ce2e440.mp3"
+      },
+      {
+        "filename": "vampirebat/vampirebat_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/7e/7ec388abc8d68337137224882c28401c8239d83032df722e16460381d99575ed.mp3"
+      }
     ]
   },
   {
@@ -353,12 +930,34 @@
     "name": "Drifter",
     "image": "/heroes/64.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/drifter_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/drifter_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/drifter_card_critical.webp",
+    "gloatImage": "/heroes/64-gloat.webp",
+    "criticalImage": "/heroes/64-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/drifter_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/drifter_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/drifter/drifter_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/drifter/drifter_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/drifter/drifter_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "drifter/drifter_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/35/35a5c5aa939895f8230297f6651dd8f0995b4cf8f334537ac0c69a5ecefb9052.mp3"
+      },
+      {
+        "filename": "drifter/drifter_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/f2/f2577a83925dd7e6fe42767033778d56c935de8fbdcc2b2305133a03ed113fff.mp3"
+      },
+      {
+        "filename": "drifter/drifter_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/83/8378b21372f80ed5bc43897f34232afc925cbb81043e6217a63024f3756008bd.mp3"
+      },
+      {
+        "filename": "drifter/drifter_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/a2/a22d25a23dc1415efd80f81438a10a812e65971bef4b0bd5b93408fd76f75791.mp3"
+      }
     ]
   },
   {
@@ -366,12 +965,34 @@
     "name": "Venator",
     "image": "/heroes/65.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/priest_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/priest_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/priest_card_critical.webp",
+    "gloatImage": "/heroes/65-gloat.webp",
+    "criticalImage": "/heroes/65-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/priest_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/priest_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/priest/priest_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/priest/priest_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/priest/priest_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "priest/priest_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/16/169f4ceb84e3efff84f2630186545ff116c0f45a49481cac895aaaca3df0ee5f.mp3"
+      },
+      {
+        "filename": "priest/priest_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/01/01ffaccff8fbdaefd65da7006e5a1c822e07f46b9e190e9e4fe8081558574b79.mp3"
+      },
+      {
+        "filename": "priest/priest_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/b6/b67e982409728e9ebd3a48e70a6a01ba897f07685a8926af3698f24d85a39935.mp3"
+      },
+      {
+        "filename": "priest/priest_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/13/13d9feaf694e0f0fc6692fc2c98d06e9572cc9e70626bdf28ae24f9c416a2df3.mp3"
+      }
     ]
   },
   {
@@ -379,12 +1000,34 @@
     "name": "Victor",
     "image": "/heroes/66.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/frank_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/frank_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/frank_card_critical.webp",
+    "gloatImage": "/heroes/66-gloat.webp",
+    "criticalImage": "/heroes/66-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/frank_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/frank_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/frank/frank_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/frank/frank_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/frank/frank_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "frank/frank_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/7e/7e7da04c6013483a47e105c22bfcce9464784f9f9787c9077a79ec1bd9ec3456.mp3"
+      },
+      {
+        "filename": "frank/frank_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/f4/f4b8618ab7094e511c28acf34cb57be2560504b9c7db725b82674d73efb39a28.mp3"
+      },
+      {
+        "filename": "frank/frank_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/a1/a1d95ac8e61dd032ee950233fd9a19b7e506a5f2c95c19767ab7f44fc95e7076.mp3"
+      },
+      {
+        "filename": "frank/frank_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/aa/aa3020e6706e69065d0b1201305855b3303efee12799a645ebbc2c5682936038.mp3"
+      }
     ]
   },
   {
@@ -392,12 +1035,34 @@
     "name": "Paige",
     "image": "/heroes/67.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bookworm_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bookworm_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bookworm_card_critical.webp",
+    "gloatImage": "/heroes/67-gloat.webp",
+    "criticalImage": "/heroes/67-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bookworm_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bookworm_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/bookworm/bookworm_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/bookworm/bookworm_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/bookworm/bookworm_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "bookworm/bookworm_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/31/31148069ad2380c87d13ed2d182ae18db9f287756fd420edfbf2fb465fd2c4a5.mp3"
+      },
+      {
+        "filename": "bookworm/bookworm_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/82/826db078e754da5cd8b0ebbaccd2ca8711a82e5ccbdbcb4567847c8151b45bfa.mp3"
+      },
+      {
+        "filename": "bookworm/bookworm_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/c5/c5afe58da0a70db115c6f896ea1526161acf6a04a650cb25c0ad1001fe4a416f.mp3"
+      },
+      {
+        "filename": "bookworm/bookworm_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/bc/bcaad060bea7bda1faca6398fab90504264922b84d0db12c8c12f70487ba6835.mp3"
+      }
     ]
   },
   {
@@ -405,12 +1070,34 @@
     "name": "The Doorman",
     "image": "/heroes/69.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/doorman_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/doorman_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/doorman_card_critical.webp",
+    "gloatImage": "/heroes/69-gloat.webp",
+    "criticalImage": "/heroes/69-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/doorman_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/doorman_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/doorman/doorman_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/doorman/doorman_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/doorman/doorman_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "doorman/doorman_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/2a/2aaee5f724a7bb45e005f993d64478efe885c3d1d5c7b427d7c670bcec58c8be.mp3"
+      },
+      {
+        "filename": "doorman/doorman_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/61/613c193e5da150ab1f84c70761524f407aba295b0bbf2bd76072b3ec5d4bb3a8.mp3"
+      },
+      {
+        "filename": "doorman/doorman_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/0e/0e147bdfa794b61a266bd1cc6ae9031d889831795b9995f1cd0a2168504fa4e0.mp3"
+      },
+      {
+        "filename": "doorman/doorman_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/76/769196d3c18b0693235c583444ac2bb1e1200abaab3ea4c17d8097ae293c8480.mp3"
+      }
     ]
   },
   {
@@ -418,12 +1105,34 @@
     "name": "Billy",
     "image": "/heroes/72.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/punkgoat_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/punkgoat_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/punkgoat_card_critical.webp",
+    "gloatImage": "/heroes/72-gloat.webp",
+    "criticalImage": "/heroes/72-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/punkgoat_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/punkgoat_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/punkgoat/punkgoat_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/punkgoat/punkgoat_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/punkgoat/punkgoat_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "punkgoat/punkgoat_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/bd/bdec61c33862c9fe9cb840f321d5028a35a184deca66cfdab8865a2e8737079a.mp3"
+      },
+      {
+        "filename": "punkgoat/punkgoat_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/be/bef9925ecceeaf5cf7c3996e4c254ce77d996d85614859d400f7546b556774e2.mp3"
+      },
+      {
+        "filename": "punkgoat/punkgoat_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/75/75d53d6232c4574f10588d2d3c951014d747cb139bf0ea48fc7dacded501ebeb.mp3"
+      },
+      {
+        "filename": "punkgoat/punkgoat_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/9d/9df5131e89173a93072a592b479519e6005ed37bdd1f37bb422eb7b9e589af61.mp3"
+      }
     ]
   },
   {
@@ -431,12 +1140,34 @@
     "name": "Graves",
     "image": "/heroes/76.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/necro_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/necro_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/necro_card_critical.webp",
+    "gloatImage": "/heroes/76-gloat.webp",
+    "criticalImage": "/heroes/76-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/necro_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/necro_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/necro/necro_select_03.mp3",
       "https://cdn.goonlock.com/voices/vo/necro/necro_select_04.mp3",
       "https://cdn.goonlock.com/voices/vo/necro/necro_select_05.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "necro/necro_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/b7/b791134ffa026d97105d594fd611f0c88db5d4971ef65ddd16ab189019563928.mp3"
+      },
+      {
+        "filename": "necro/necro_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/08/0854a4ac5f88a6d7f82e247566add141242bd736d2456f1b7eac9d1ccc459551.mp3"
+      },
+      {
+        "filename": "necro/necro_unselect_05.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/31/31c18fcac3f72ddcbd08024327f5be395e8ed6c99e17180f2a3974113e21023c.mp3"
+      },
+      {
+        "filename": "necro/necro_unselect_06.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/61/6101c1f3fc7278ff4085f6aa9bcdfcd079aec39f636d084a981a37021c1a3199.mp3"
+      }
     ]
   },
   {
@@ -444,12 +1175,34 @@
     "name": "Apollo",
     "image": "/heroes/77.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/fencer_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/fencer_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/fencer_card_critical.webp",
+    "gloatImage": "/heroes/77-gloat.webp",
+    "criticalImage": "/heroes/77-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/fencer_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/fencer_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/fencer/fencer_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/fencer/fencer_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/fencer/fencer_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "fencer/fencer_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/ed/edd7b93094dd76500a77eb979c80e5bd291eca2ec872fe2514ca8a5d5adfd3b0.mp3"
+      },
+      {
+        "filename": "fencer/fencer_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/ea/ea85710b8429686017e473c29f45c5f05a0a923479068b6eafb6f87e0ecf6d1d.mp3"
+      },
+      {
+        "filename": "fencer/fencer_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/a4/a498319f61dd88eaee56d06e6d6654dc8caaa5e3805e39b5ad61c16fccf80f33.mp3"
+      },
+      {
+        "filename": "fencer/fencer_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/4c/4cb4cf752db1a053619cae92113c8634c9d3cd70651688358e20532403b65768.mp3"
+      }
     ]
   },
   {
@@ -457,10 +1210,32 @@
     "name": "Deadman Danny",
     "image": "/heroes/78.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/deadpack_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/deadpack_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/deadpack_card_critical.webp",
+    "gloatImage": "/heroes/78-gloat.webp",
+    "criticalImage": "/heroes/78-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/deadpack_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/deadpack_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.vlviewer.com/deadlock/audio/sha256/8f/8f6f56abf7b08b274dd20611e0df7e3128daf7afc92da57c8a6f1c317e3e492b.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "deadpack/deadpack_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/01/01932b5836b645aa7a94f762a9ce2589e6151ad43bb794a07abf45171871d6c7.mp3"
+      },
+      {
+        "filename": "deadpack/deadpack_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/18/1850a291f4338e3ea0b6c27f31c139c422d701562a1e60d3943da87902570867.mp3"
+      },
+      {
+        "filename": "deadpack/deadpack_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/8f/8fd608cb841549fc3bee5e18b2c9f313082376bdd4418fe1f38144a6dccaaa39.mp3"
+      },
+      {
+        "filename": "deadpack/deadpack_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/8f/8f1ead521b9b395a2a787b8265dfa327f83be6c3d6fae56f2f8badf5f11d56b4.mp3"
+      }
     ]
   },
   {
@@ -468,12 +1243,34 @@
     "name": "Rem",
     "image": "/heroes/79.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/familiar_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/familiar_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/familiar_card_critical.webp",
+    "gloatImage": "/heroes/79-gloat.webp",
+    "criticalImage": "/heroes/79-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/familiar_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/familiar_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/familiar/familiar_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/familiar/familiar_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/familiar/familiar_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "familiar/familiar_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/9b/9b23bb8778e3e5d4ffbb79ae26eff27cf928b28bfd64c97ec782463a313db682.mp3"
+      },
+      {
+        "filename": "familiar/familiar_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/5e/5ee526543b2026c25d59d2fbc0f39ef2f4b6267acea5ba43c4144fc31f386218.mp3"
+      },
+      {
+        "filename": "familiar/familiar_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/a7/a70b095d2d00c376b6eda76501666e0652724702d91646a1b9d1444a4ab93536.mp3"
+      },
+      {
+        "filename": "familiar/familiar_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/a5/a5922cb675e0763c62dab79c4ddf19f570ae2efb90c5c39ccb267e2fb6c1e991.mp3"
+      }
     ]
   },
   {
@@ -481,12 +1278,34 @@
     "name": "Silver",
     "image": "/heroes/80.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/werewolf_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/werewolf_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/werewolf_card_critical.webp",
+    "gloatImage": "/heroes/80-gloat.webp",
+    "criticalImage": "/heroes/80-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/werewolf_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/werewolf_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/werewolf/werewolf_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/werewolf/werewolf_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/werewolf/werewolf_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "werewolf/werewolf_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/f0/f047960272ff304ba3114e9b97ed191a6809c9b3c2275b55fcd6d5ebd6c7d1ae.mp3"
+      },
+      {
+        "filename": "werewolf/werewolf_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/51/51a571d1e92b9d24525a84138c20f752a00156b608240e9b2344de926ca8dae9.mp3"
+      },
+      {
+        "filename": "werewolf/werewolf_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/86/8693e196ba73059507e13ed3c96b7216b242dc4f2b1d0505ca86659df479390c.mp3"
+      },
+      {
+        "filename": "werewolf/werewolf_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/5c/5cb3e2660e67f1b4e0dd0281a901308ee1a4837f16af0ddbe961cbc9e8ef4aff.mp3"
+      }
     ]
   },
   {
@@ -494,12 +1313,34 @@
     "name": "Celeste",
     "image": "/heroes/81.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/unicorn_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/unicorn_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/unicorn_card_critical.webp",
+    "gloatImage": "/heroes/81-gloat.webp",
+    "criticalImage": "/heroes/81-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/unicorn_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/unicorn_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.goonlock.com/voices/vo/unicorn/unicorn_select_01.mp3",
       "https://cdn.goonlock.com/voices/vo/unicorn/unicorn_select_02.mp3",
       "https://cdn.goonlock.com/voices/vo/unicorn/unicorn_select_03.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "unicorn/unicorn_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/66/6668afbfc3c60adb201f085ed4fec441abde17755afc6ac8285f02f4b4eb6e5e.mp3"
+      },
+      {
+        "filename": "unicorn/unicorn_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/7f/7f6fb281f184f2f649e12db7e61c8d7e46dd692d8044d241c349fe830e83b22a.mp3"
+      },
+      {
+        "filename": "unicorn/unicorn_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/23/2346a6f5256576e6cab8671997c62ea9eb050a84cb1c5b76c19fc776459d194f.mp3"
+      },
+      {
+        "filename": "unicorn/unicorn_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/30/30348197b7e3a3fd847ddd4d633c4676f6c55927db487b267fcaf48f1dd6bf5a.mp3"
+      }
     ]
   },
   {
@@ -507,10 +1348,32 @@
     "name": "Rat King",
     "image": "/heroes/84.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/ratking_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/ratking_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/ratking_card_critical.webp",
+    "gloatImage": "/heroes/84-gloat.webp",
+    "criticalImage": "/heroes/84-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/ratking_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/ratking_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.vlviewer.com/deadlock/audio/sha256/0a/0a414807989ef295097ebd910547ffa2eb5c96fdd553ea09d97911e50fa1ed45.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "ratking/ratking_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/65/653a2705a8c7ea8b4b4afeac448f7d53642380c799f2f8605f4570a543406f94.mp3"
+      },
+      {
+        "filename": "ratking/ratking_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/45/457c09c865c49575c71f6891fc35e098dd2281f28da6fb42ae3192d7f51e4b42.mp3"
+      },
+      {
+        "filename": "ratking/ratking_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/53/53aeb387965346b422719ff339bb8947f32b78afb9c2e96b4eea3b2e331f00aa.mp3"
+      },
+      {
+        "filename": "ratking/ratking_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/71/71e1edf98119105d7af6060d827307c7f8cd1051fc3be72d2f18f6687584ccda.mp3"
+      }
     ]
   },
   {
@@ -518,10 +1381,104 @@
     "name": "Solomon",
     "image": "/heroes/85.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chessmaster_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chessmaster_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chessmaster_card_critical.webp",
+    "gloatImage": "/heroes/85-gloat.webp",
+    "criticalImage": "/heroes/85-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chessmaster_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chessmaster_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.vlviewer.com/deadlock/audio/sha256/6a/6aaf46f9118f554e73faf081e66552ec260194ff053f221cb3fa2900c37056b9.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "chessmaster/chessmaster_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/03/0327da1dfe65453cc2ba3e54a8e62b30b53569c696c7cdb10d85eebd1c94d5b1.mp3"
+      },
+      {
+        "filename": "chessmaster/chessmaster_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/8c/8c30dbede6ed923e5ad518ef9d18f6e064996b885374b7d1904fbc94176d8275.mp3"
+      },
+      {
+        "filename": "chessmaster/chessmaster_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/66/6621c1df3178386a914aecff669e9d31ed1d638cddd39ddc37b1d1f80a58a609.mp3"
+      },
+      {
+        "filename": "chessmaster/chessmaster_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/5f/5f5f6b2c8305010c23103c75c3a0b9ccd487ba939fb76ea68c2ef717a78ad11e.mp3"
+      }
+    ]
+  },
+  {
+    "id": 86,
+    "name": "Violet",
+    "image": "/heroes/86.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/artist_card.webp",
+    "gloatImage": "/heroes/86-gloat.webp",
+    "criticalImage": "/heroes/86-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/artist_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/artist_card_critical.webp"
+    },
+    "voiceLines": [
+      "/voices/86-select-1.mp3",
+      "/voices/86-select-2.mp3",
+      "/voices/86-select-3.mp3",
+      "/voices/86-select-4.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "artist/artist_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/43/43c3104635267edebd0d48c9bcfb7420d0f7fe19d4c058a195a1e69cbb532ffe.mp3"
+      },
+      {
+        "filename": "artist/artist_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/e2/e2db2bde28c35287f2bfcc0475c7b10a1057cd68e89ed8f05c5f21574aee0fbb.mp3"
+      },
+      {
+        "filename": "artist/artist_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/1e/1e57e10c464a765718085b32f4b3fc708ad9f43afd8d853e0affb8b6227f1191.mp3"
+      },
+      {
+        "filename": "artist/artist_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/07/077539c9706f387a6bfe4348fb571c18f554c5327a34fdfdbb0c876ede6ae90a.mp3"
+      }
+    ]
+  },
+  {
+    "id": 87,
+    "name": "Nurse Harrow",
+    "image": "/heroes/87.webp",
+    "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nurse_card.webp",
+    "gloatImage": "/heroes/87-gloat.webp",
+    "criticalImage": "/heroes/87-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nurse_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nurse_card_critical.webp"
+    },
+    "voiceLines": [
+      "/voices/87-select-1.mp3",
+      "/voices/87-select-2.mp3",
+      "/voices/87-select-3.mp3",
+      "/voices/87-select-4.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "nurse/nurse_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/e3/e35250e33212cb3cf58ec5ae3ad81deb75d713d7fbc985de4b34d7f58748efd1.mp3"
+      },
+      {
+        "filename": "nurse/nurse_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/c4/c48a114cba9b734e7eb43ef64cd1d380a56206a321f2f2c1a7af34a40c96e740.mp3"
+      },
+      {
+        "filename": "nurse/nurse_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/61/61676cecbcacd6459b32ccc2036349dcf6581c582b9172637dc0b3cdb53099cc.mp3"
+      },
+      {
+        "filename": "nurse/nurse_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/cb/cb59df4ca994fedbdcc12fbbe655f641eafa01026e6b6d598761f0517da90d97.mp3"
+      }
     ]
   },
   {
@@ -529,10 +1486,32 @@
     "name": "Baba",
     "image": "/heroes/88.webp",
     "source": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/baba_card.webp",
-    "gloatImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/baba_card_gloat.webp",
-    "criticalImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/baba_card_critical.webp",
+    "gloatImage": "/heroes/88-gloat.webp",
+    "criticalImage": "/heroes/88-critical.webp",
+    "variantSources": {
+      "gloat": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/baba_card_gloat.webp",
+      "critical": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/baba_card_critical.webp"
+    },
     "voiceLines": [
       "https://cdn.vlviewer.com/deadlock/audio/sha256/48/48151eed21b016d8b17e7198d5631b743c0903f852fcdd855b2ca2355f491e56.mp3"
+    ],
+    "banVoiceLines": [
+      {
+        "filename": "baba/baba_unselect_01.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/bc/bc21fdb863120adc1e7052a1d68f85248bcddccceb1022ed0e9075a2f9bb819e.mp3"
+      },
+      {
+        "filename": "baba/baba_unselect_02.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/7c/7c345e4387dd9fecc6e00c26c75c22d4722537f2e1076c77d1f14301d9ccd598.mp3"
+      },
+      {
+        "filename": "baba/baba_unselect_03.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/ca/caaf76f2f60f58b4f004d62d44e0d74dbbf2c60a302785f5f7ff0f792ef9e951.mp3"
+      },
+      {
+        "filename": "baba/baba_unselect_04.mp3",
+        "url": "https://cdn.vlviewer.com/deadlock/audio/sha256/33/33ced38a0fc249ca2ba39918d497bed1d1162f0ab23e062b5aab3ec9c88ae04e.mp3"
+      }
     ]
   }
 ]

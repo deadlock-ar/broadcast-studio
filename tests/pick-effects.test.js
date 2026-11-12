@@ -4,6 +4,9 @@ import {
   createPickTracker,
   createVoicePlayer,
   createPickFlashController,
+  createSelectionTracker,
+  selectionVoiceLines,
+  BAN_EFFECT_DURATION_MS,
 } from "../src/pick-effects.js";
 import {
   cleanConfig,
@@ -115,6 +118,78 @@ test("only new picks trigger effects, including replacement and clear/re-pick; j
   assert.deepEqual(tracker.observe(makeDemo()), []);
 });
 
+test("bans and picks share ordered events without replaying timers, joins, clears or reconnects", () => {
+  const tracker = createSelectionTracker();
+  const snapshot = makeDemo();
+  assert.deepEqual(tracker.observe(snapshot), []);
+  const ban = snapshot.steps.find((s) => s.selectionType === "ban");
+  ban.heroId = 7;
+  assert.deepEqual(
+    tracker.observe(snapshot).map((s) => [s.selectionType, s.heroId]),
+    [["ban", 7]],
+  );
+  assert.deepEqual(
+    tracker.observe({ ...snapshot, currentTimer: { team1StepTimer: 10 } }),
+    [],
+  );
+  ban.heroId = null;
+  assert.deepEqual(tracker.observe(snapshot), []);
+  ban.heroId = 8;
+  assert.equal(tracker.observe(snapshot)[0].heroId, 8);
+  ban.heroId = 11;
+  assert.deepEqual(tracker.observe(snapshot, { initial: true }), []);
+  tracker.reset();
+  assert.deepEqual(tracker.observe(snapshot), []);
+});
+
+test("ban animations expire independently of six-second pick effects", () => {
+  const t = flashHarness();
+  t.controller.show("pick", 1);
+  t.controller.show("ban", 7, BAN_EFFECT_DURATION_MS);
+  t.advance(BAN_EFFECT_DURATION_MS);
+  assert.deepEqual(t.states.at(-1), { pick: 1 });
+  t.advance(6000 - BAN_EFFECT_DURATION_MS);
+  assert.deepEqual(t.states.at(-1), {});
+});
+
+test("ban audio uses only verified unselect clips with independent saved controls", () => {
+  const heroes = JSON.parse(
+    fs.readFileSync(new URL("../src/heroes.json", import.meta.url)),
+  );
+  const config = cleanConfig({
+    banAnimation: "shutter",
+    voiceLines: false,
+    banVoiceLines: true,
+  });
+  assert.deepEqual(decodeConfig(encodeConfig(config)), config);
+  assert.equal(cleanConfig({ banAnimation: "invalid" }).banAnimation, "strike");
+  assert.equal(cleanConfig({ voiceLines: false }).banVoiceLines, false);
+  assert.equal(cleanConfig({ banAnimation: "none" }).banAnimation, "none");
+  for (const hero of heroes) {
+    if (hero.id === 60) {
+      assert.deepEqual(hero.banVoiceLines, []);
+      continue;
+    }
+    assert.equal(hero.banVoiceLines.length, 4, hero.name);
+    for (const voice of hero.banVoiceLines) {
+      assert.match(voice.filename, /_unselect_\d+\.mp3$/);
+      assert.match(
+        voice.url,
+        /^https:\/\/cdn\.vlviewer\.com\/deadlock\/audio\/sha256\/.+\.mp3$/,
+      );
+    }
+    assert.deepEqual(
+      selectionVoiceLines(hero, "ban", config),
+      hero.banVoiceLines.map((v) => v.url),
+    );
+    assert.deepEqual(selectionVoiceLines(hero, "pick", config), []);
+    assert.deepEqual(
+      selectionVoiceLines(hero, "ban", { ...config, banVoiceLines: false }),
+      [],
+    );
+  }
+});
+
 function audioHarness() {
   const plays = [],
     timers = new Map(),
@@ -210,18 +285,25 @@ test("every current hero has gloat, critical, and genuine selection audio metada
   const heroes = JSON.parse(
     fs.readFileSync(new URL("../src/heroes.json", import.meta.url)),
   );
-  assert.ok(heroes.length >= 42);
+  assert.ok(heroes.length >= 44);
   for (const hero of heroes) {
-    assert.match(
-      hero.gloatImage,
-      /^https:\/\/assets-bucket\.deadlock-api\.com\/.*gloat.*webp$/,
-    );
-    assert.match(
-      hero.criticalImage,
-      /^https:\/\/assets-bucket\.deadlock-api\.com\/.*critical.*webp$/,
-    );
+    assert.match(hero.gloatImage, /^\/heroes\/\d+-gloat\.webp$/);
+    assert.match(hero.criticalImage, /^\/heroes\/\d+-critical\.webp$/);
     assert.ok(hero.voiceLines.length, hero.name + " needs a selection clip");
     for (const url of hero.voiceLines)
-      assert.match(url, /^https:\/\/cdn\.(goonlock|vlviewer)\.com\/.*\.mp3$/);
+      assert.match(
+        url,
+        /^(https:\/\/cdn\.(goonlock|vlviewer)\.com\/.*|\/voices\/\d+-select-\d+)\.mp3$/,
+      );
+    for (const asset of [
+      hero.image,
+      hero.gloatImage,
+      hero.criticalImage,
+      ...hero.voiceLines.filter((v) => v.startsWith("/")),
+    ])
+      assert.ok(
+        fs.statSync(new URL("../public" + asset, import.meta.url)).size > 100,
+        `${hero.name} missing ${asset}`,
+      );
   }
 });

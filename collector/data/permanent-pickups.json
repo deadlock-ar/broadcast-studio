@@ -1,0 +1,122 @@
+[
+  {
+    "type": "spirit_permanent_pickup",
+    "id": 2201601853
+  },
+  {
+    "type": "spirit_permanent_pickup_lv2",
+    "id": 3992882918
+  },
+  {
+    "type": "spirit_permanent_pickup_lv3",
+    "id": 488089530
+  },
+  {
+    "type": "firerate_permanent_pickup",
+    "id": 2345479643
+  },
+  {
+    "type": "firerate_permanent_pickup_lv2",
+    "id": 386684932
+  },
+  {
+    "type": "firerate_permanent_pickup_lv3",
+    "id": 3061460371
+  },
+  {
+    "type": "ammo_permanent_pickup",
+    "id": 2889034835
+  },
+  {
+    "type": "ammo_permanent_pickup_lv2",
+    "id": 2592582493
+  },
+  {
+    "type": "ammo_permanent_pickup_lv3",
+    "id": 1782442278
+  },
+  {
+    "type": "hp_permanent_pickup",
+    "id": 305643471
+  },
+  {
+    "type": "hp_permanent_pickup_lv2",
+    "id": 1781761146
+  },
+  {
+    "type": "hp_permanent_pickup_lv3",
+    "id": 2902074031
+  },
+  {
+    "type": "cd_permanent_pickup",
+    "id": 891412337
+  },
+  {
+    "type": "cd_permanent_pickup_lv2",
+    "id": 894425830
+  },
+  {
+    "type": "cd_permanent_pickup_lv3",
+    "id": 2271692252
+  },
+  {
+    "type": "wp_permanent_pickup",
+    "id": 1058891786
+  },
+  {
+    "type": "wp_permanent_pickup_lv2",
+    "id": 1433909151
+  },
+  {
+    "type": "wp_permanent_pickup_lv3",
+    "id": 3448082679
+  },
+  {
+    "type": "bulletresist_permanent_pickup",
+    "id": 3407213892
+  },
+  {
+    "type": "bulletresist_permanent_pickup_lv2",
+    "id": 963723944
+  },
+  {
+    "type": "bulletresist_permanent_pickup_lv3",
+    "id": 3798173205
+  },
+  {
+    "type": "spiritresist_permanent_pickup",
+    "id": 3189816955
+  },
+  {
+    "type": "spiritresist_permanent_pickup_lv2",
+    "id": 1657689550
+  },
+  {
+    "type": "spiritresist_permanent_pickup_lv3",
+    "id": 1423304060
+  },
+  {
+    "type": "range_permanent_pickup",
+    "id": 2026455596
+  },
+  {
+    "type": "range_permanent_pickup_lv2",
+    "id": 1467321126
+  },
+  {
+    "type": "range_permanent_pickup_lv3",
+    "id": 2315155970
+  },
+  {
+    "type": "movespeed_permanent_pickup",
+    "id": 1561840282
+  },
+  {
+    "type": "movespeed_permanent_pickup_lv2",
+    "id": 1217850003
+  },
+  {
+    "type": "movespeed_permanent_pickup_lv3",
+    "id": 732010334
+  }
+]

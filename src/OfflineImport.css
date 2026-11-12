@@ -1,0 +1,64 @@
+.offline-import {
+  padding: 32px;
+  max-width: 1000px;
+}
+.offline-intro {
+  border-left: 3px solid #9ba578;
+  padding-left: 24px;
+  margin-bottom: 28px;
+}
+.offline-intro h2 {
+  font:
+    38px "DLAR Arabic",
+    Georgia,
+    serif;
+  margin: 8px 0 14px;
+}
+.offline-intro p {
+  max-width: 720px;
+  line-height: 1.7;
+}
+.offline-import form {
+  display: grid;
+  gap: 18px;
+  max-width: 700px;
+}
+.offline-import form > label:not(.check-label) {
+  display: grid;
+  gap: 8px;
+}
+.offline-import input:not([type="checkbox"]),
+.offline-import select {
+  width: 100%;
+}
+.offline-import .check-label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.offline-import .production-hint {
+  margin: 0;
+  line-height: 1.6;
+}
+.offline-import .button {
+  justify-self: start;
+}
+.offline-result {
+  margin-top: 28px;
+  background: #e8edda;
+  border: 1px solid #9fa988;
+  padding: 22px;
+}
+.offline-result h3 {
+  margin-top: 0;
+}
+.offline-import details {
+  margin-top: 30px;
+  border-top: 1px solid #c3bea8;
+  padding-top: 20px;
+  line-height: 1.8;
+}
+.offline-import summary {
+  cursor: pointer;
+  font-weight: 600;
+}

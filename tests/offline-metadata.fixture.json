@@ -1,0 +1,4343 @@
+{
+  "match_info": {
+    "match_id": 120513539,
+    "duration_s": 2525,
+    "winning_team": 0,
+    "players": [
+      {
+        "player_slot": 3,
+        "team": 0,
+        "hero_id": 31,
+        "kills": 8,
+        "deaths": 13,
+        "assists": 21,
+        "net_worth": 40623,
+        "mvp_rank": null,
+        "account_id": 1,
+        "stats": [
+          {
+            "time_stamp_s": 180,
+            "player_damage": 624,
+            "boss_damage": 0,
+            "player_healing": 26,
+            "net_worth": 1745,
+            "kills": 0,
+            "deaths": 1,
+            "assists": 0,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": null,
+                "damage": 624,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 2,
+                "damage": 333,
+                "gold": 654,
+                "gold_orbs": 352
+              },
+              {
+                "source": 3,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 129,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 1200,
+            "player_damage": 16824,
+            "boss_damage": 3385,
+            "player_healing": 5192,
+            "net_worth": 18060,
+            "kills": 5,
+            "deaths": 7,
+            "assists": 4,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 5,
+                "damage": 16824,
+                "gold": 1989,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 43,
+                "damage": 14586,
+                "gold": 5512,
+                "gold_orbs": 3456
+              },
+              {
+                "source": 3,
+                "kills": 5,
+                "damage": 3771,
+                "gold": 1685,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": 1,
+                "damage": 3385,
+                "gold": 1976,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 423,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 211,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 493,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 1222,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 4,
+                "damage": null,
+                "gold": 834,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 2525,
+            "player_damage": 55375,
+            "boss_damage": 7183,
+            "player_healing": 11989,
+            "net_worth": 40623,
+            "kills": 7,
+            "deaths": 14,
+            "assists": 21,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 7,
+                "damage": 55375,
+                "gold": 3967,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 63,
+                "damage": 27196,
+                "gold": 8317,
+                "gold_orbs": 6104
+              },
+              {
+                "source": 3,
+                "kills": 11,
+                "damage": 9445,
+                "gold": 2886,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": 1,
+                "damage": 7183,
+                "gold": 4605,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 2073,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 211,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 4879,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 2451,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 21,
+                "damage": null,
+                "gold": 4685,
+                "gold_orbs": null
+              }
+            ]
+          }
+        ],
+        "items": [
+          {
+            "game_time_s": 26,
+            "item_id": 3561817145,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 64,
+            "item_id": 2010028405,
+            "upgrade_id": 1,
+            "sold_time_s": 879,
+            "flags": 1,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 100,
+            "item_id": 519124136,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 112,
+            "item_id": 519124136,
+            "upgrade_id": 1039061940,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 196608
+          }
+        ],
+        "power_up_buffs": []
+      },
+      {
+        "player_slot": 8,
+        "team": 1,
+        "hero_id": 19,
+        "kills": 12,
+        "deaths": 12,
+        "assists": 14,
+        "net_worth": 45874,
+        "mvp_rank": null,
+        "account_id": 2,
+        "stats": [
+          {
+            "time_stamp_s": 180,
+            "player_damage": 1359,
+            "boss_damage": 0,
+            "player_healing": 121,
+            "net_worth": 1830,
+            "kills": 0,
+            "deaths": 0,
+            "assists": 1,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": null,
+                "damage": 1359,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 7,
+                "damage": 2055,
+                "gold": 701,
+                "gold_orbs": 340
+              },
+              {
+                "source": 3,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 26,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 1,
+                "damage": null,
+                "gold": 163,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 1200,
+            "player_damage": 23352,
+            "boss_damage": 4235,
+            "player_healing": 5751,
+            "net_worth": 16834,
+            "kills": 6,
+            "deaths": 5,
+            "assists": 7,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 6,
+                "damage": 23352,
+                "gold": 2932,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 39,
+                "damage": 13795,
+                "gold": 4372,
+                "gold_orbs": 2663
+              },
+              {
+                "source": 3,
+                "kills": 8,
+                "damage": 1661,
+                "gold": 1049,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": 1,
+                "damage": 4235,
+                "gold": 2064,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 523,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 246,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 420,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 1345,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 7,
+                "damage": null,
+                "gold": 1374,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 2525,
+            "player_damage": 61401,
+            "boss_damage": 5546,
+            "player_healing": 14089,
+            "net_worth": 45874,
+            "kills": 12,
+            "deaths": 14,
+            "assists": 14,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 12,
+                "damage": 61401,
+                "gold": 10535,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 84,
+                "damage": 39982,
+                "gold": 8974,
+                "gold_orbs": 5470
+              },
+              {
+                "source": 3,
+                "kills": 19,
+                "damage": 17087,
+                "gold": 4601,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": 1,
+                "damage": 5546,
+                "gold": 3896,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 2238,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 272,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 2023,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 5652,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 14,
+                "damage": null,
+                "gold": 2591,
+                "gold_orbs": null
+              }
+            ]
+          }
+        ],
+        "items": [
+          {
+            "game_time_s": 25,
+            "item_id": 2460791803,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 43,
+            "item_id": 2460791803,
+            "upgrade_id": 446676805,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 196608
+          },
+          {
+            "game_time_s": 60,
+            "item_id": 3862866912,
+            "upgrade_id": 1,
+            "sold_time_s": 1983,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 121,
+            "item_id": 1458044103,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          }
+        ],
+        "power_up_buffs": []
+      },
+      {
+        "player_slot": 1,
+        "team": 0,
+        "hero_id": 18,
+        "kills": 2,
+        "deaths": 13,
+        "assists": 33,
+        "net_worth": 48034,
+        "mvp_rank": null,
+        "account_id": 3,
+        "stats": [
+          {
+            "time_stamp_s": 180,
+            "player_damage": 1035,
+            "boss_damage": 0,
+            "player_healing": 572,
+            "net_worth": 1723,
+            "kills": 0,
+            "deaths": 0,
+            "assists": 0,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": null,
+                "damage": 1035,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 6,
+                "damage": 1346,
+                "gold": 782,
+                "gold_orbs": 341
+              },
+              {
+                "source": 3,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 1200,
+            "player_damage": 14289,
+            "boss_damage": 557,
+            "player_healing": 6409,
+            "net_worth": 14742,
+            "kills": 1,
+            "deaths": 7,
+            "assists": 7,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 1,
+                "damage": 14289,
+                "gold": 1311,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 21,
+                "damage": 7792,
+                "gold": 3828,
+                "gold_orbs": 2459
+              },
+              {
+                "source": 3,
+                "kills": 3,
+                "damage": 3017,
+                "gold": 1170,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": 557,
+                "gold": 1553,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 423,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 139,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 1678,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 784,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 7,
+                "damage": null,
+                "gold": 868,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 2525,
+            "player_damage": 36182,
+            "boss_damage": 4492,
+            "player_healing": 24054,
+            "net_worth": 48034,
+            "kills": 2,
+            "deaths": 13,
+            "assists": 33,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 2,
+                "damage": 36182,
+                "gold": 2788,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 96,
+                "damage": 55131,
+                "gold": 13487,
+                "gold_orbs": 9316
+              },
+              {
+                "source": 3,
+                "kills": 7,
+                "damage": 6508,
+                "gold": 2655,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": 4492,
+                "gold": 3806,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 423,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 139,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 5566,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 1613,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 33,
+                "damage": null,
+                "gold": 7562,
+                "gold_orbs": null
+              }
+            ]
+          }
+        ],
+        "items": [
+          {
+            "game_time_s": 4,
+            "item_id": 1454278799,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 39,
+            "item_id": 1454278799,
+            "upgrade_id": 1394491752,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 196608
+          },
+          {
+            "game_time_s": 52,
+            "item_id": 754480263,
+            "upgrade_id": 1,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 1454278799,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 187,
+            "item_id": 1998374645,
+            "upgrade_id": 1,
+            "sold_time_s": 2196,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          }
+        ],
+        "power_up_buffs": []
+      },
+      {
+        "player_slot": 11,
+        "team": 1,
+        "hero_id": 12,
+        "kills": 20,
+        "deaths": 7,
+        "assists": 27,
+        "net_worth": 49842,
+        "mvp_rank": 2,
+        "account_id": 4,
+        "stats": [
+          {
+            "time_stamp_s": 180,
+            "player_damage": 1105,
+            "boss_damage": 227,
+            "player_healing": 553,
+            "net_worth": 1809,
+            "kills": 0,
+            "deaths": 0,
+            "assists": 0,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": null,
+                "damage": 1105,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 7,
+                "damage": 2421,
+                "gold": 673,
+                "gold_orbs": 455
+              },
+              {
+                "source": 3,
+                "kills": 2,
+                "damage": 239,
+                "gold": 81,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": 227,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 1200,
+            "player_damage": 20459,
+            "boss_damage": 5001,
+            "player_healing": 14548,
+            "net_worth": 21461,
+            "kills": 8,
+            "deaths": 2,
+            "assists": 10,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 8,
+                "damage": 20459,
+                "gold": 3678,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 53,
+                "damage": 16354,
+                "gold": 5039,
+                "gold_orbs": 3029
+              },
+              {
+                "source": 3,
+                "kills": 27,
+                "damage": 9906,
+                "gold": 4199,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": 1,
+                "damage": 5001,
+                "gold": 1854,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 555,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 29,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 1332,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 10,
+                "damage": null,
+                "gold": 1435,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 2525,
+            "player_damage": 75081,
+            "boss_damage": 19038,
+            "player_healing": 56224,
+            "net_worth": 49842,
+            "kills": 19,
+            "deaths": 7,
+            "assists": 27,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 19,
+                "damage": 75081,
+                "gold": 12085,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 92,
+                "damage": 41887,
+                "gold": 9104,
+                "gold_orbs": 6715
+              },
+              {
+                "source": 3,
+                "kills": 37,
+                "damage": 16643,
+                "gold": 7645,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": 1,
+                "damage": 19038,
+                "gold": 4365,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 2270,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 29,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 1744,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 27,
+                "damage": null,
+                "gold": 5651,
+                "gold_orbs": null
+              }
+            ]
+          }
+        ],
+        "items": [
+          {
+            "game_time_s": 6,
+            "item_id": 18921423,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 52,
+            "item_id": 18921423,
+            "upgrade_id": 724459899,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 196608
+          },
+          {
+            "game_time_s": 55,
+            "item_id": 3077079169,
+            "upgrade_id": 1,
+            "sold_time_s": 241,
+            "flags": 1,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 99,
+            "item_id": 2351041382,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          }
+        ],
+        "power_up_buffs": []
+      },
+      {
+        "player_slot": 7,
+        "team": 1,
+        "hero_id": 78,
+        "kills": 12,
+        "deaths": 11,
+        "assists": 23,
+        "net_worth": 42741,
+        "mvp_rank": null,
+        "account_id": 5,
+        "stats": [
+          {
+            "time_stamp_s": 180,
+            "player_damage": 723,
+            "boss_damage": 0,
+            "player_healing": 0,
+            "net_worth": 2018,
+            "kills": 1,
+            "deaths": 0,
+            "assists": 0,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 1,
+                "damage": 723,
+                "gold": 359,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 6,
+                "damage": 1771,
+                "gold": 697,
+                "gold_orbs": 336
+              },
+              {
+                "source": 3,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 26,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 1200,
+            "player_damage": 16077,
+            "boss_damage": 3049,
+            "player_healing": 3731,
+            "net_worth": 19079,
+            "kills": 7,
+            "deaths": 4,
+            "assists": 11,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 7,
+                "damage": 16077,
+                "gold": 3938,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 54,
+                "damage": 25808,
+                "gold": 5613,
+                "gold_orbs": 3244
+              },
+              {
+                "source": 3,
+                "kills": 3,
+                "damage": 710,
+                "gold": 627,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": 3049,
+                "gold": 1911,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 523,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 84,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 284,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 707,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 11,
+                "damage": null,
+                "gold": 1726,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 2525,
+            "player_damage": 66414,
+            "boss_damage": 5873,
+            "player_healing": 17629,
+            "net_worth": 42741,
+            "kills": 13,
+            "deaths": 12,
+            "assists": 23,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 13,
+                "damage": 66414,
+                "gold": 6954,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 82,
+                "damage": 40533,
+                "gold": 9587,
+                "gold_orbs": 6786
+              },
+              {
+                "source": 3,
+                "kills": 11,
+                "damage": 8099,
+                "gold": 3755,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": 5873,
+                "gold": 4193,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 2238,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 84,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 2995,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 1496,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 23,
+                "damage": null,
+                "gold": 4610,
+                "gold_orbs": null
+              }
+            ]
+          }
+        ],
+        "items": [
+          {
+            "game_time_s": 18,
+            "item_id": 374042410,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 52,
+            "item_id": 374042410,
+            "upgrade_id": 1358271381,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 196608
+          },
+          {
+            "game_time_s": 58,
+            "item_id": 3077079169,
+            "upgrade_id": 1,
+            "sold_time_s": 199,
+            "flags": 1,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 122,
+            "item_id": 1904698842,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          }
+        ],
+        "power_up_buffs": []
+      },
+      {
+        "player_slot": 10,
+        "team": 1,
+        "hero_id": 60,
+        "kills": 3,
+        "deaths": 5,
+        "assists": 30,
+        "net_worth": 52170,
+        "mvp_rank": null,
+        "account_id": 6,
+        "stats": [
+          {
+            "time_stamp_s": 180,
+            "player_damage": 1031,
+            "boss_damage": 0,
+            "player_healing": 0,
+            "net_worth": 1632,
+            "kills": 0,
+            "deaths": 0,
+            "assists": 2,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": null,
+                "damage": 1031,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 7,
+                "damage": 2231,
+                "gold": 535,
+                "gold_orbs": 201
+              },
+              {
+                "source": 3,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 26,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 2,
+                "damage": null,
+                "gold": 270,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 1200,
+            "player_damage": 6807,
+            "boss_damage": 3089,
+            "player_healing": 0,
+            "net_worth": 19047,
+            "kills": 0,
+            "deaths": 1,
+            "assists": 9,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": null,
+                "damage": 6807,
+                "gold": 177,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 54,
+                "damage": 17550,
+                "gold": 5971,
+                "gold_orbs": 3109
+              },
+              {
+                "source": 3,
+                "kills": 7,
+                "damage": 2674,
+                "gold": 2059,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": 2,
+                "damage": 3089,
+                "gold": 2007,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 523,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 83,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 1646,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 1477,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 9,
+                "damage": null,
+                "gold": 1305,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 2525,
+            "player_damage": 34361,
+            "boss_damage": 10943,
+            "player_healing": 13082,
+            "net_worth": 52170,
+            "kills": 3,
+            "deaths": 5,
+            "assists": 30,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 3,
+                "damage": 34361,
+                "gold": 2389,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 130,
+                "damage": 51552,
+                "gold": 15988,
+                "gold_orbs": 9084
+              },
+              {
+                "source": 3,
+                "kills": 18,
+                "damage": 12677,
+                "gold": 5258,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": 3,
+                "damage": 10943,
+                "gold": 4268,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 2238,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 83,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 1651,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 3652,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 30,
+                "damage": null,
+                "gold": 6702,
+                "gold_orbs": null
+              }
+            ]
+          }
+        ],
+        "items": [
+          {
+            "game_time_s": 1,
+            "item_id": 12456023,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 73,
+            "item_id": 12456023,
+            "upgrade_id": 1924360335,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 196608
+          },
+          {
+            "game_time_s": 87,
+            "item_id": 3077079169,
+            "upgrade_id": 1,
+            "sold_time_s": 242,
+            "flags": 1,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 125,
+            "item_id": 3156905386,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          }
+        ],
+        "power_up_buffs": []
+      },
+      {
+        "player_slot": 12,
+        "team": 1,
+        "hero_id": 86,
+        "kills": 7,
+        "deaths": 7,
+        "assists": 34,
+        "net_worth": 45056,
+        "mvp_rank": null,
+        "account_id": 7,
+        "stats": [
+          {
+            "time_stamp_s": 180,
+            "player_damage": 1789,
+            "boss_damage": 0,
+            "player_healing": 0,
+            "net_worth": 2033,
+            "kills": 2,
+            "deaths": 0,
+            "assists": 0,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 2,
+                "damage": 1789,
+                "gold": 597,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 3,
+                "damage": 868,
+                "gold": 528,
+                "gold_orbs": 195
+              },
+              {
+                "source": 3,
+                "kills": null,
+                "damage": 96,
+                "gold": 88,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 25,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 1200,
+            "player_damage": 19280,
+            "boss_damage": 3493,
+            "player_healing": 6074,
+            "net_worth": 18230,
+            "kills": 5,
+            "deaths": 1,
+            "assists": 14,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 5,
+                "damage": 19280,
+                "gold": 1810,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 30,
+                "damage": 10530,
+                "gold": 4282,
+                "gold_orbs": 2553
+              },
+              {
+                "source": 3,
+                "kills": 13,
+                "damage": 3156,
+                "gold": 2073,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": 3493,
+                "gold": 2025,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 523,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 80,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 544,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 1683,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 14,
+                "damage": null,
+                "gold": 2129,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 2525,
+            "player_damage": 56598,
+            "boss_damage": 16372,
+            "player_healing": 22345,
+            "net_worth": 45056,
+            "kills": 8,
+            "deaths": 8,
+            "assists": 34,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 8,
+                "damage": 56598,
+                "gold": 2895,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 95,
+                "damage": 44642,
+                "gold": 11105,
+                "gold_orbs": 7377
+              },
+              {
+                "source": 3,
+                "kills": 23,
+                "damage": 8967,
+                "gold": 4265,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": 16372,
+                "gold": 4286,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 2238,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 105,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 1905,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 3476,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 34,
+                "damage": null,
+                "gold": 7303,
+                "gold_orbs": null
+              }
+            ]
+          }
+        ],
+        "items": [
+          {
+            "game_time_s": 22,
+            "item_id": 836615329,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 74,
+            "item_id": 836615329,
+            "upgrade_id": 1468838525,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 196608
+          },
+          {
+            "game_time_s": 106,
+            "item_id": 968099481,
+            "upgrade_id": 1,
+            "sold_time_s": 1270,
+            "flags": 1,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 127,
+            "item_id": 3612874202,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          }
+        ],
+        "power_up_buffs": []
+      },
+      {
+        "player_slot": 5,
+        "team": 0,
+        "hero_id": 4,
+        "kills": 5,
+        "deaths": 13,
+        "assists": 19,
+        "net_worth": 42735,
+        "mvp_rank": null,
+        "account_id": 8,
+        "stats": [
+          {
+            "time_stamp_s": 180,
+            "player_damage": 586,
+            "boss_damage": 0,
+            "player_healing": 116,
+            "net_worth": 1385,
+            "kills": 0,
+            "deaths": 1,
+            "assists": 0,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": null,
+                "damage": 586,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 4,
+                "damage": 1788,
+                "gold": 526,
+                "gold_orbs": 259
+              },
+              {
+                "source": 3,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 1200,
+            "player_damage": 15548,
+            "boss_damage": 1259,
+            "player_healing": 5629,
+            "net_worth": 16283,
+            "kills": 1,
+            "deaths": 9,
+            "assists": 8,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 1,
+                "damage": 15548,
+                "gold": 914,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 35,
+                "damage": 12132,
+                "gold": 4057,
+                "gold_orbs": 2917
+              },
+              {
+                "source": 3,
+                "kills": 13,
+                "damage": 5593,
+                "gold": 2279,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": 1259,
+                "gold": 1879,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 423,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 56,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 1537,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 966,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 8,
+                "damage": null,
+                "gold": 940,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 2525,
+            "player_damage": 61590,
+            "boss_damage": 4505,
+            "player_healing": 37853,
+            "net_worth": 42735,
+            "kills": 5,
+            "deaths": 15,
+            "assists": 19,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 5,
+                "damage": 61590,
+                "gold": 4116,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 118,
+                "damage": 48804,
+                "gold": 10920,
+                "gold_orbs": 8616
+              },
+              {
+                "source": 3,
+                "kills": 35,
+                "damage": 18944,
+                "gold": 7104,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": 4505,
+                "gold": 4026,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 423,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 56,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 1989,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 2082,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 19,
+                "damage": null,
+                "gold": 3645,
+                "gold_orbs": null
+              }
+            ]
+          }
+        ],
+        "items": [
+          {
+            "game_time_s": 38,
+            "item_id": 715325746,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 58,
+            "item_id": 715325746,
+            "upgrade_id": 1159730478,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 196608
+          },
+          {
+            "game_time_s": 60,
+            "item_id": 1439347412,
+            "upgrade_id": 1,
+            "sold_time_s": 1117,
+            "flags": 1,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 112,
+            "item_id": 218284420,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          }
+        ],
+        "power_up_buffs": []
+      },
+      {
+        "player_slot": 4,
+        "team": 0,
+        "hero_id": 63,
+        "kills": 3,
+        "deaths": 11,
+        "assists": 24,
+        "net_worth": 43526,
+        "mvp_rank": null,
+        "account_id": 9,
+        "stats": [
+          {
+            "time_stamp_s": 180,
+            "player_damage": 743,
+            "boss_damage": 0,
+            "player_healing": 14,
+            "net_worth": 2110,
+            "kills": 0,
+            "deaths": 0,
+            "assists": 0,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": null,
+                "damage": 743,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 10,
+                "damage": 1682,
+                "gold": 953,
+                "gold_orbs": 434
+              },
+              {
+                "source": 3,
+                "kills": 3,
+                "damage": 483,
+                "gold": 123,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 1200,
+            "player_damage": 16158,
+            "boss_damage": 0,
+            "player_healing": 7802,
+            "net_worth": 19246,
+            "kills": 1,
+            "deaths": 6,
+            "assists": 9,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 1,
+                "damage": 16158,
+                "gold": 789,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 38,
+                "damage": 9855,
+                "gold": 5008,
+                "gold_orbs": 1871
+              },
+              {
+                "source": 3,
+                "kills": 87,
+                "damage": 27504,
+                "gold": 6490,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": null,
+                "gold": 1527,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 300,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 133,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 3396,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 9,
+                "damage": null,
+                "gold": 1129,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 2525,
+            "player_damage": 44978,
+            "boss_damage": 5481,
+            "player_healing": 14735,
+            "net_worth": 43526,
+            "kills": 4,
+            "deaths": 13,
+            "assists": 24,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 4,
+                "damage": 44978,
+                "gold": 3168,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 98,
+                "damage": 40957,
+                "gold": 13281,
+                "gold_orbs": 5052
+              },
+              {
+                "source": 3,
+                "kills": 123,
+                "damage": 43388,
+                "gold": 10553,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": 5481,
+                "gold": 3538,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 300,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 133,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 98,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 5322,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 24,
+                "damage": null,
+                "gold": 4248,
+                "gold_orbs": null
+              }
+            ]
+          }
+        ],
+        "items": [
+          {
+            "game_time_s": 4,
+            "item_id": 1233782561,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 45,
+            "item_id": 968099481,
+            "upgrade_id": 1,
+            "sold_time_s": 403,
+            "flags": 1,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 96,
+            "item_id": 193508101,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 108,
+            "item_id": 193508101,
+            "upgrade_id": 1172844730,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 196608
+          }
+        ],
+        "power_up_buffs": []
+      },
+      {
+        "player_slot": 9,
+        "team": 1,
+        "hero_id": 80,
+        "kills": 13,
+        "deaths": 9,
+        "assists": 25,
+        "net_worth": 42997,
+        "mvp_rank": 3,
+        "account_id": 10,
+        "stats": [
+          {
+            "time_stamp_s": 180,
+            "player_damage": 1604,
+            "boss_damage": 210,
+            "player_healing": 265,
+            "net_worth": 1758,
+            "kills": 0,
+            "deaths": 0,
+            "assists": 0,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": null,
+                "damage": 1604,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 8,
+                "damage": 1792,
+                "gold": 668,
+                "gold_orbs": 448
+              },
+              {
+                "source": 3,
+                "kills": 1,
+                "damage": 219,
+                "gold": 42,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": 210,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 1200,
+            "player_damage": 18756,
+            "boss_damage": 2089,
+            "player_healing": 6057,
+            "net_worth": 19019,
+            "kills": 10,
+            "deaths": 3,
+            "assists": 9,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 10,
+                "damage": 18756,
+                "gold": 2701,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 31,
+                "damage": 8392,
+                "gold": 3642,
+                "gold_orbs": 2143
+              },
+              {
+                "source": 3,
+                "kills": 7,
+                "damage": 2019,
+                "gold": 1769,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": 1,
+                "damage": 2089,
+                "gold": 1605,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 2677,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 28,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 928,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 2533,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 9,
+                "damage": null,
+                "gold": 1264,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 2525,
+            "player_damage": 53306,
+            "boss_damage": 15610,
+            "player_healing": 19168,
+            "net_worth": 42997,
+            "kills": 17,
+            "deaths": 9,
+            "assists": 25,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 17,
+                "damage": 53306,
+                "gold": 7154,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 54,
+                "damage": 15949,
+                "gold": 8002,
+                "gold_orbs": 4965
+              },
+              {
+                "source": 3,
+                "kills": 19,
+                "damage": 9991,
+                "gold": 4224,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": 1,
+                "damage": 15610,
+                "gold": 4116,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 4392,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 53,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 2559,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 3146,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 25,
+                "damage": null,
+                "gold": 4710,
+                "gold_orbs": null
+              }
+            ]
+          }
+        ],
+        "items": [
+          {
+            "game_time_s": 2,
+            "item_id": 1385849824,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 52,
+            "item_id": 1385849824,
+            "upgrade_id": 692597378,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 196608
+          },
+          {
+            "game_time_s": 56,
+            "item_id": 3862866912,
+            "upgrade_id": 1,
+            "sold_time_s": 1781,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 99,
+            "item_id": 2717130900,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          }
+        ],
+        "power_up_buffs": []
+      },
+      {
+        "player_slot": 2,
+        "team": 0,
+        "hero_id": 7,
+        "kills": 28,
+        "deaths": 8,
+        "assists": 13,
+        "net_worth": 69035,
+        "mvp_rank": 1,
+        "account_id": 11,
+        "stats": [
+          {
+            "time_stamp_s": 180,
+            "player_damage": 613,
+            "boss_damage": 0,
+            "player_healing": 61,
+            "net_worth": 1455,
+            "kills": 0,
+            "deaths": 0,
+            "assists": 0,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": null,
+                "damage": 613,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 7,
+                "damage": 2017,
+                "gold": 528,
+                "gold_orbs": 204
+              },
+              {
+                "source": 3,
+                "kills": 3,
+                "damage": 411,
+                "gold": 123,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 1200,
+            "player_damage": 8863,
+            "boss_damage": 14811,
+            "player_healing": 1692,
+            "net_worth": 24012,
+            "kills": 5,
+            "deaths": 4,
+            "assists": 3,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 5,
+                "damage": 8863,
+                "gold": 2826,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 82,
+                "damage": 30256,
+                "gold": 7243,
+                "gold_orbs": 4971
+              },
+              {
+                "source": 3,
+                "kills": 27,
+                "damage": 12734,
+                "gold": 3862,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": 3,
+                "damage": 14811,
+                "gold": 3817,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 423,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 108,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 1401,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 3,
+                "damage": null,
+                "gold": 296,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 2525,
+            "player_damage": 71588,
+            "boss_damage": 26100,
+            "player_healing": 16347,
+            "net_worth": 69035,
+            "kills": 26,
+            "deaths": 9,
+            "assists": 13,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 26,
+                "damage": 71588,
+                "gold": 21081,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 206,
+                "damage": 96312,
+                "gold": 16312,
+                "gold_orbs": 13126
+              },
+              {
+                "source": 3,
+                "kills": 43,
+                "damage": 51935,
+                "gold": 7686,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": 5,
+                "damage": 26100,
+                "gold": 6426,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 423,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 108,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 2170,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 13,
+                "damage": null,
+                "gold": 2663,
+                "gold_orbs": null
+              }
+            ]
+          }
+        ],
+        "items": [
+          {
+            "game_time_s": 10,
+            "item_id": 1999680326,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 58,
+            "item_id": 1999680326,
+            "upgrade_id": 334138523,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 196608
+          },
+          {
+            "game_time_s": 60,
+            "item_id": 1009965641,
+            "upgrade_id": 1,
+            "sold_time_s": 2406,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 111,
+            "item_id": 1842576017,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          }
+        ],
+        "power_up_buffs": []
+      },
+      {
+        "player_slot": 6,
+        "team": 0,
+        "hero_id": 27,
+        "kills": 5,
+        "deaths": 10,
+        "assists": 31,
+        "net_worth": 47198,
+        "mvp_rank": null,
+        "account_id": 12,
+        "stats": [
+          {
+            "time_stamp_s": 180,
+            "player_damage": 784,
+            "boss_damage": 0,
+            "player_healing": 402,
+            "net_worth": 1466,
+            "kills": 0,
+            "deaths": 1,
+            "assists": 0,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": null,
+                "damage": 784,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 6,
+                "damage": 1375,
+                "gold": 500,
+                "gold_orbs": 195
+              },
+              {
+                "source": 3,
+                "kills": 3,
+                "damage": 398,
+                "gold": 123,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 126,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 1200,
+            "player_damage": 11075,
+            "boss_damage": 37,
+            "player_healing": 7039,
+            "net_worth": 16887,
+            "kills": 2,
+            "deaths": 4,
+            "assists": 10,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 2,
+                "damage": 11075,
+                "gold": 1096,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 38,
+                "damage": 13986,
+                "gold": 4364,
+                "gold_orbs": 2279
+              },
+              {
+                "source": 3,
+                "kills": 17,
+                "damage": 7840,
+                "gold": 3086,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": 37,
+                "gold": 1549,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 423,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 211,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 570,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 1816,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 10,
+                "damage": null,
+                "gold": 1378,
+                "gold_orbs": null
+              }
+            ]
+          },
+          {
+            "time_stamp_s": 2525,
+            "player_damage": 34524,
+            "boss_damage": 4204,
+            "player_healing": 25410,
+            "net_worth": 47198,
+            "kills": 6,
+            "deaths": 10,
+            "assists": 31,
+            "gold_sources": [
+              {
+                "source": 1,
+                "kills": 6,
+                "damage": 34524,
+                "gold": 6048,
+                "gold_orbs": 0
+              },
+              {
+                "source": 2,
+                "kills": 91,
+                "damage": 46785,
+                "gold": 11134,
+                "gold_orbs": 5676
+              },
+              {
+                "source": 3,
+                "kills": 25,
+                "damage": 11658,
+                "gold": 5936,
+                "gold_orbs": 0
+              },
+              {
+                "source": 4,
+                "kills": null,
+                "damage": 4204,
+                "gold": 3676,
+                "gold_orbs": 0
+              },
+              {
+                "source": 5,
+                "kills": null,
+                "damage": null,
+                "gold": 2985,
+                "gold_orbs": null
+              },
+              {
+                "source": 7,
+                "kills": null,
+                "damage": null,
+                "gold": 211,
+                "gold_orbs": null
+              },
+              {
+                "source": 8,
+                "kills": null,
+                "damage": null,
+                "gold": 1006,
+                "gold_orbs": null
+              },
+              {
+                "source": 12,
+                "kills": null,
+                "damage": null,
+                "gold": 4160,
+                "gold_orbs": null
+              },
+              {
+                "source": 9,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 10,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 11,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 13,
+                "kills": null,
+                "damage": null,
+                "gold": 0,
+                "gold_orbs": null
+              },
+              {
+                "source": 6,
+                "kills": 31,
+                "damage": null,
+                "gold": 6482,
+                "gold_orbs": null
+              }
+            ]
+          }
+        ],
+        "items": [
+          {
+            "game_time_s": 22,
+            "item_id": 2366960452,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 69,
+            "item_id": 3862866912,
+            "upgrade_id": 1,
+            "sold_time_s": 72,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 72,
+            "item_id": 1437614329,
+            "upgrade_id": 1,
+            "sold_time_s": 864,
+            "flags": 1,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          },
+          {
+            "game_time_s": 100,
+            "item_id": 2566573207,
+            "upgrade_id": 0,
+            "sold_time_s": 0,
+            "flags": 0,
+            "imbued_ability_id": 0,
+            "upgrade_info": 65536
+          }
+        ],
+        "power_up_buffs": []
+      }
+    ]
+  },
+  "banned_hero_ids": [],
+  "pregame_hero_ids": {}
+}

@@ -1,0 +1,494 @@
+[
+  {
+    "id": 1142270357,
+    "heroId": 1,
+    "heroName": "Infernus",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/inferno_card.webp",
+    "className": "ability_fire_bomb",
+    "name": "Concussive Combustion",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/inferno_bomb.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 2061574352,
+    "heroId": 2,
+    "heroName": "Seven",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/gigawatt_card.webp",
+    "className": "citadel_ability_storm_cloud",
+    "name": "Storm Cloud",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/giga_storm.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 775377419,
+    "heroId": 3,
+    "heroName": "Vindicta",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/hornet_card.webp",
+    "className": "citadel_ability_hornet_snipe",
+    "name": "Assassinate",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/hornet/hornet_assassinate.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 1307289689,
+    "heroId": 4,
+    "heroName": "Lady Geist",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/spectre_card.webp",
+    "className": "ability_health_swap",
+    "name": "Soul Exchange",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/spectre/blood_exchange.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 509856396,
+    "heroId": 6,
+    "heroName": "Abrams",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bull_card.webp",
+    "className": "citadel_ability_bull_leap",
+    "name": "Seismic Impact",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/bull_jump.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 2981692841,
+    "heroId": 7,
+    "heroName": "Wraith",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/wraith_card.webp",
+    "className": "citadel_ability_psychic_lift",
+    "name": "Telekinesis",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/wraith_lift.webp",
+    "modifiers": [
+      2249624695
+    ],
+    "detection": "damage + validated target effect"
+  },
+  {
+    "id": 3503044146,
+    "heroId": 8,
+    "heroName": "McGinnis",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/engineer_card.webp",
+    "className": "citadel_ability_rocket_barrage",
+    "name": "Heavy Barrage",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/engineer_rockets.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 2917891787,
+    "heroId": 10,
+    "heroName": "Paradox",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chrono_card.webp",
+    "className": "citadel_ability_chrono_swap",
+    "name": "Paradoxical Swap",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/chrono/chrono_swap.webp",
+    "modifiers": [
+      2137908006
+    ],
+    "detection": "damage + validated target effect"
+  },
+  {
+    "id": 249410288,
+    "heroId": 11,
+    "heroName": "Dynamo",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/sumo_card.webp",
+    "className": "citadel_ability_self_vacuum",
+    "name": "Singularity",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/sumo/sumo_vacuum.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 3826390464,
+    "heroId": 12,
+    "heroName": "Kelvin",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kelvin_card.webp",
+    "className": "ability_ice_dome",
+    "name": "Frozen Shelter",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/kelvin/frozen_shelter.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 731943444,
+    "heroId": 13,
+    "heroName": "Haze",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/haze_card.webp",
+    "className": "ability_bullet_flurry",
+    "name": "Bullet Dance",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/haze/haze_bullet_flurry.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 3190606822,
+    "heroId": 14,
+    "heroName": "Holliday",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/astro_card.webp",
+    "className": "ability_gravity_lasso",
+    "name": "Spirit Lasso",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/astro/holliday_spirit_lasso.webp",
+    "modifiers": [
+      2311212432
+    ],
+    "detection": "damage + validated target effect"
+  },
+  {
+    "id": 3832675871,
+    "heroId": 15,
+    "heroName": "Bebop",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bebop_card.webp",
+    "className": "citadel_ability_bebop_laser_beam",
+    "name": "Hyper Beam",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/bebop/bebop_hyper_beam.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 2054144742,
+    "heroId": 16,
+    "heroName": "Calico",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nano_card.webp",
+    "className": "ability_nano_shadow_pulse",
+    "name": "Return to Shadows",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/nano/nano_shadow_pulse.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 3242902780,
+    "heroId": 17,
+    "heroName": "Grey Talon",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/archer_card.webp",
+    "className": "ability_guided_arrow",
+    "name": "Guided Owl",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/archer/archer_guided_arrow.webp",
+    "modifiers": [
+      1201131818
+    ],
+    "detection": "damage + validated target effect"
+  },
+  {
+    "id": 1917840730,
+    "heroId": 18,
+    "heroName": "Mo & Krill",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/digger_card.webp",
+    "className": "ability_ult_combo",
+    "name": "Combo",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/grappler/grappler_combo.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 1835738020,
+    "heroId": 19,
+    "heroName": "Shiv",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/shiv_card.webp",
+    "className": "citadel_ability_shiv_killing_blow",
+    "name": "Killing Blow",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/shiv/shiv_killing_blow.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 1247583368,
+    "heroId": 20,
+    "heroName": "Ivy",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/tengu_card.webp",
+    "className": "citadel_ability_tengu_airlift",
+    "name": "Air Drop",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/tengu/tengu_lightning_crash.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 2702908623,
+    "heroId": 25,
+    "heroName": "Warden",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/warden_card.webp",
+    "className": "ability_warden_riot_protocol",
+    "name": "Last Stand",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/warden/warden_riot_protocol.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 3319782965,
+    "heroId": 27,
+    "heroName": "Yamato",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/yamato_card.webp",
+    "className": "citadel_ability_infinity_slash",
+    "name": "Shadow Transformation",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/yamato/yamato_blinding_steel.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 397010810,
+    "heroId": 31,
+    "heroName": "Lash",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/lash_card.webp",
+    "className": "citadel_ability_lash_ultimate",
+    "name": "Death Slam",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/lash/lash_counter_lash.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 4206531918,
+    "heroId": 35,
+    "heroName": "Viscous",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/viscous_card.webp",
+    "className": "viscous_goo_bowling_ball",
+    "name": "Goo Ball",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/viscous/viscous_goo_sphere.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 2954330093,
+    "heroId": 50,
+    "heroName": "Pocket",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/synth_card.webp",
+    "className": "synth_affliction",
+    "name": "Affliction",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/synth/synth_affliction.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 2604653402,
+    "heroId": 52,
+    "heroName": "Mirage",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/mirage_card.webp",
+    "className": "mirage_teleport",
+    "name": "Traveler",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/mirage/mirage_teleport.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 1594727071,
+    "heroId": 58,
+    "heroName": "Vyper",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/kali_card.webp",
+    "className": "ability_viper_petrifybola",
+    "name": "Petrifying Bola",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/viper/viper_petrifybola.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 191022746,
+    "heroId": 60,
+    "heroName": "Sinclair",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/magician_card.webp",
+    "className": "ability_magician_copyult",
+    "name": "Audience Participation",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/magician/magician_copyult.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 3379486147,
+    "heroId": 63,
+    "heroName": "Mina",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/vampirebat_card.webp",
+    "className": "ability_vampirebat_batswarm",
+    "name": "Nox Nostra",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/vampirebat/vampirebat_nox_nostra.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 1168182161,
+    "heroId": 64,
+    "heroName": "Drifter",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/drifter_card.webp",
+    "className": "drifter_darkness",
+    "name": "Eternal Night",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/drifter/darkness.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 2918874166,
+    "heroId": 65,
+    "heroName": "Venator",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/priest_card.webp",
+    "className": "ability_priest_weaponswap",
+    "name": "Ira Domini",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/priest/priest_crossbow.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 3493884851,
+    "heroId": 66,
+    "heroName": "Victor",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/frank_card.webp",
+    "className": "ability_frank_revive",
+    "name": "Shocking Reanimation",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/frank/frank_shocking_reanimation.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 1841901343,
+    "heroId": 67,
+    "heroName": "Paige",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/bookworm_card.webp",
+    "className": "ability_bookworm_knightcharge",
+    "name": "Rallying Charge",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/bookworm/bookworm_charge.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 1703045691,
+    "heroId": 69,
+    "heroName": "The Doorman",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/doorman_card.webp",
+    "className": "ability_doorman_hotel",
+    "name": "Hotel Guest",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/doorman/doorman_elevator.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 3762861984,
+    "heroId": 72,
+    "heroName": "Billy",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/punkgoat_card.webp",
+    "className": "ability_punkgoat_tether",
+    "name": "Chain Gang",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/punkgoat/goat_chaingang.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 4110547059,
+    "heroId": 76,
+    "heroName": "Graves",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/necro_card.webp",
+    "className": "ability_necro_gravestone",
+    "name": "Borrowed Decree",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/necro/necro_gravestone.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 494112189,
+    "heroId": 77,
+    "heroName": "Apollo",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/fencer_card.webp",
+    "className": "ability_fencer_ultimate",
+    "name": "Itani Lo Sahn",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/fencer/fencer_ult.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 1026127931,
+    "heroId": 78,
+    "heroName": "Deadman Danny",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/deadpack_card.webp",
+    "className": "ability_deadpack_ultimate",
+    "name": "Close The Deal",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/deadpack/deadpack_flight.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 2396527575,
+    "heroId": 79,
+    "heroName": "Rem",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/familiar_card.webp",
+    "className": "ability_familiar_ability01",
+    "name": "Naptime",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/familiar/familiar_sleep.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 515791019,
+    "heroId": 80,
+    "heroName": "Silver",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/werewolf_card.webp",
+    "className": "ability_werewolf_transformation",
+    "name": "Lycan Curse",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/werewolf/werewolf_lycancurse.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 2590796390,
+    "heroId": 81,
+    "heroName": "Celeste",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/unicorn_card.webp",
+    "className": "ability_unicorn_dazzlingorb",
+    "name": "Shining Wonder",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/unicorn/unicorn_orb.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 1627989937,
+    "heroId": 84,
+    "heroName": "Rat King",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/ratking_card.webp",
+    "className": "ability_ratking_standard_bearer",
+    "name": "Rule, Ratannia!",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/ratking/ratking_flag.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 1389230689,
+    "heroId": 85,
+    "heroName": "Solomon",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/chessmaster_card.webp",
+    "className": "ability_chessmaster_queen",
+    "name": "Develop Queen",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/chess/chessmaster_queen.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 2516700978,
+    "heroId": 86,
+    "heroName": "Violet",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/artist_card.webp",
+    "className": "ability_artist_bamboogrove",
+    "name": "Abstract Landscape",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/artist/artist_landscape.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 3427093887,
+    "heroId": 87,
+    "heroName": "Nurse Harrow",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/nurse_card.webp",
+    "className": "ability_nurse_fear",
+    "name": "Lurking Terrors",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/nurse/medicine_bag.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  },
+  {
+    "id": 299875845,
+    "heroId": 88,
+    "heroName": "Baba",
+    "heroImage": "https://assets-bucket.deadlock-api.com/assets-api-res/images/heroes/baba_card.webp",
+    "className": "ability_baba_ultimate_2",
+    "name": "Feed The Birds",
+    "image": "https://assets-bucket.deadlock-api.com/assets-api-res/images/abilities/baba/pigeon_launcher.webp",
+    "modifiers": [],
+    "detection": "damage only; utility effects unverified"
+  }
+]

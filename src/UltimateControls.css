@@ -1,0 +1,63 @@
+.ultimate-controls .ultimate-master {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+.ultimate-controls input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #65734f;
+}
+.ultimate-controls summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.ultimate-controls .ultimate-search {
+  display: grid;
+  gap: 6px;
+  max-width: 420px;
+  margin: 14px 0;
+}
+.ultimate-table-wrap {
+  max-height: 470px;
+  overflow: auto;
+}
+.ultimate-controls table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.ultimate-controls th,
+.ultimate-controls td {
+  padding: 10px;
+  border-bottom: 1px solid #65734f33;
+}
+.ultimate-controls thead th {
+  text-align: left;
+  position: sticky;
+  top: 0;
+  background: #e3e8d8;
+  color: #293529;
+  z-index: 1;
+}
+.ultimate-controls tbody th {
+  text-align: left;
+}
+.ultimate-controls tbody th strong,
+.ultimate-controls tbody th span {
+  display: block;
+}
+.ultimate-controls tbody th span,
+.ultimate-controls td small {
+  font-size: 12px;
+  color: #65705b;
+  font-weight: 400;
+}
+.ultimate-controls td {
+  min-width: 100px;
+}
+.ultimate-controls td small {
+  display: block;
+  margin-top: 4px;
+}

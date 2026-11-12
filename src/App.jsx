@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import heroes from "./heroes.json";
 import { usePickEffects } from "./use-pick-effects";
+import DraftClock from "./DraftClock.jsx";
+import { draftClockLabel, draftClockPhase } from "./draft-clock.js";
 import { PICK_EFFECT_FADE_MS } from "./pick-effects";
 import { createPickFlame } from "./pick-sparks";
 import {
@@ -15,11 +17,26 @@ import {
   teamSlots,
 } from "./draft";
 import "./App.css";
+import "./FeedbackUpdates.css";
+import TeamLogo from "./TeamLogo.jsx";
 import StatPanels from "./StatPanels";
+import ProductionStudio from "./ProductionStudio";
+import MatchOverlayControls from "./MatchOverlayControls.jsx";
+import BracketStudio from "./BracketStudio.jsx";
+import PlayerBannersStudio from "./PlayerBannersStudio.jsx";
+import CasterStudio from "./CasterStudio.jsx";
+import DraftMatchSelector from "./DraftMatchSelector.jsx";
+import SharedOutputs from "./SharedOutputs.jsx";
+import Analytics from "./Analytics.jsx";
+import TournamentSwitcher from "./TournamentSwitcher.jsx";
+import DataLibrary from "./DataLibrary.jsx";
+import "./TournamentTools.css";
+import { useWorkspace, useWorkspaceField } from "./workspace-context.js";
 
 const roster = Object.fromEntries(heroes.map((h) => [h.id, h]));
 const params = new URLSearchParams(window.location.search);
-const isOverlay = params.get("view") === "overlay";
+const isOverlay =
+  params.get("view") === "overlay" || window.location.pathname === "/obs/draft";
 if (isOverlay) document.documentElement.classList.add("broadcast-document");
 let saved = {};
 try {
@@ -142,15 +159,7 @@ function TeamMark({ team, number }) {
   return (
     <span className={`team-mark team-${number}`}>
       <span>{team.tag || team.name?.slice(0, 3) || `T${number}`}</span>
-      {team.logo && (
-        <img
-          src={team.logo}
-          alt=""
-          onError={(e) => {
-            e.currentTarget.style.display = "none";
-          }}
-        />
-      )}
+      <TeamLogo logo={team.logo} />
     </span>
   );
 }
@@ -172,7 +181,15 @@ function PickFlame({ active }) {
   );
 }
 
-function HeroSlot({ slot, index, type, active, flashing, onSelect }) {
+function HeroSlot({
+  slot,
+  index,
+  type,
+  active,
+  flashing,
+  banAnimation = "strike",
+  onSelect,
+}) {
   const hero = roster[slot.heroId];
   const image =
     type === "ban" ? hero?.criticalImage || hero?.image : hero?.image;
@@ -216,7 +233,12 @@ function HeroSlot({ slot, index, type, active, flashing, onSelect }) {
         </span>
       )}
       {hero && <span className="hero-label">{hero.name}</span>}
-      {type === "ban" && slot.heroId && <span className="ban-slash" />}
+      {type === "ban" && slot.heroId && (
+        <>
+          <span className="ban-shutters" aria-hidden="true" />
+          <span className="ban-slash" aria-hidden="true" />
+        </>
+      )}
       {active && (
         <span className="active-slot-label">
           {type === "ban" ? "BANNING" : "PICKING"}
@@ -224,7 +246,7 @@ function HeroSlot({ slot, index, type, active, flashing, onSelect }) {
       )}
     </>
   );
-  const cls = `hero-slot ${type} ${slot.heroId ? "filled" : ""} ${active ? "active" : ""} ${flashing ? "new-pick" : ""}`;
+  const cls = `hero-slot ${type} ${type === "ban" ? `ban-${banAnimation}` : ""} ${slot.heroId ? "filled" : ""} ${active ? "active" : ""} ${flashing ? (type === "ban" ? "new-ban" : "new-pick") : ""}`;
   return onSelect ? (
     <button
       className={cls}
@@ -241,6 +263,99 @@ function HeroSlot({ slot, index, type, active, flashing, onSelect }) {
     >
       {content}
     </div>
+  );
+}
+
+const banStyles = [
+  {
+    id: "strike",
+    name: "Diagonal strike",
+    description: "A quick red slash, a small impact, then a muted portrait.",
+  },
+  {
+    id: "shutter",
+    name: "Closing shutters",
+    description:
+      "Two dark panels close over the hero, then settle into the ban.",
+  },
+  {
+    id: "fade",
+    name: "Fade to ink",
+    description: "The portrait slowly loses its color beneath a soft ink wash.",
+  },
+];
+
+function BanAnimationExamples({ selected, onSelect }) {
+  const [replay, setReplay] = useState(0);
+  return (
+    <section
+      className="ban-animation-examples"
+      aria-label="Ban animation examples"
+    >
+      <div className="ban-examples-heading">
+        <div>
+          <h3>Ban animation examples</h3>
+          <p>
+            Replay these samples without changing the draft. Your chosen style
+            is saved with this tournament.
+          </p>
+        </div>
+        <button
+          className="button secondary"
+          type="button"
+          onClick={() => setReplay((v) => v + 1)}
+        >
+          Replay ban examples
+        </button>
+      </div>
+      <div className="ban-example-grid">
+        {banStyles.map((style) => (
+          <article
+            key={style.id}
+            className={selected === style.id ? "selected" : ""}
+          >
+            <div className="ban-example-stage">
+              <HeroSlot
+                key={replay}
+                slot={{ id: `example-${style.id}`, heroId: 7 }}
+                index={0}
+                type="ban"
+                flashing
+                banAnimation={style.id}
+              />
+            </div>
+            <h4>{style.name}</h4>
+            <p>{style.description}</p>
+            <button
+              className="button secondary"
+              type="button"
+              onClick={() => onSelect(style.id)}
+              aria-pressed={selected === style.id}
+            >
+              {selected === style.id
+                ? "Selected"
+                : `Use ${style.name.toLowerCase()}`}
+            </button>
+          </article>
+        ))}
+      </div>
+      <button
+        type="button"
+        className="text-button"
+        onClick={() => onSelect("none")}
+        aria-pressed={selected === "none"}
+      >
+        Turn ban animation off
+      </button>
+      <label className="ban-voice-example">
+        Preview Wraith’s deselection voice line
+        <audio
+          controls
+          preload="none"
+          src={roster[7].banVoiceLines?.[0]?.url}
+        />
+      </label>
+    </section>
   );
 }
 
@@ -268,20 +383,6 @@ function DraftBoard({
       logo: t.logo || (config.useSourceNames ? source?.teamLogo : ""),
     };
   });
-  const timer = snapshot?.currentTimer;
-  const seconds = timer?.[`team${timer?.activeTeam}StepTimer`];
-  const reserve = timer?.[`team${timer?.activeTeam}ReserveTimer`];
-  const time = Number.isFinite(seconds)
-    ? `${Math.floor(Math.max(0, seconds) / 60)}:${String(Math.floor(Math.max(0, seconds)) % 60).padStart(2, "0")}`
-    : "—";
-  const phase =
-    snapshot?.status === "COMPLETED"
-      ? "Draft complete"
-      : snapshot?.status === "PAUSED"
-        ? "Draft paused"
-        : active
-          ? `${teams[active.teamNumber - 1].name} ${active.selectionType === "ban" ? "banning" : "picking"}`
-          : "Waiting for the draft";
   const disconnected = mode === "live" && status.state !== "live";
   return (
     <div
@@ -343,21 +444,36 @@ function DraftBoard({
                 />
               ))}
             </div>
-            {config.showBans && (
-              <div className="ban-row">
-                <span>BANS</span>
-                {teamSlots(snapshot, number, "ban").map((slot, i) => (
-                  <HeroSlot
-                    slot={slot}
-                    index={i}
-                    type="ban"
-                    key={slot.id}
-                    active={active?.id === slot.id}
-                    onSelect={onSelect}
-                  />
-                ))}
-              </div>
-            )}
+            <div className="draft-team-footer">
+              {config.showBans && (
+                <div className="ban-row">
+                  <span>BANS</span>
+                  {teamSlots(snapshot, number, "ban").map((slot, i) => (
+                    <HeroSlot
+                      slot={slot}
+                      index={i}
+                      type="ban"
+                      key={slot.id}
+                      active={active?.id === slot.id}
+                      flashing={
+                        config.banAnimation !== "none" &&
+                        flashes[slot.id] === slot.heroId
+                      }
+                      banAnimation={config.banAnimation}
+                      onSelect={onSelect}
+                    />
+                  ))}
+                </div>
+              )}
+              <DraftClock
+                key={`${snapshot?.draftCode || mode}:${config.event}:${config.game}:${number}`}
+                snapshot={snapshot}
+                connected={!disconnected}
+                enabled={config.showTimer && mode === "live"}
+                teams={teams}
+                team={number}
+              />
+            </div>
           </section>
         ))}
         <div className="draft-center">
@@ -375,17 +491,11 @@ function DraftBoard({
               <small>{config.round}</small>
             </span>
           )}
-          <span className="draft-phase">{phase}</span>
-          {config.showTimer && mode === "live" && (
-            <span className="draft-timer">
-              {disconnected ? "—" : time}
-              <small>
-                {Number.isFinite(reserve) && !disconnected
-                  ? `RESERVE ${reserve}s`
-                  : "DRAFT TIMER"}
-              </small>
-            </span>
-          )}
+          <span
+            className={`draft-phase ${snapshot?.status === "COMPLETED" ? "draft-complete" : ""}`}
+          >
+            {draftClockLabel(draftClockPhase(snapshot), teams)}
+          </span>
         </div>
       </div>
       {config.layout === "board" && (
@@ -398,10 +508,10 @@ function DraftBoard({
               ? "DEMO • SAMPLE DRAFT"
               : mode === "manual"
                 ? "MANUAL DRAFT"
-                : disconnected
-                  ? "AWAITING LIVE UPDATES"
-                  : snapshot?.status === "COMPLETED"
-                    ? "DRAFT COMPLETE"
+                : snapshot?.status === "COMPLETED"
+                  ? "DRAFT COMPLETE"
+                  : disconnected
+                    ? "AWAITING LIVE UPDATES"
                     : "HERO DRAFT"}
           </span>
         </div>
@@ -499,21 +609,39 @@ function Modal({ title, onClose, children }) {
   );
 }
 
+function useTournamentLocal(scope, initial) {
+  const [saved, setSaved] = useState({ scope, value: initial });
+  return [
+    saved.scope === scope ? saved.value : initial,
+    (value) => setSaved({ scope, value }),
+  ];
+}
 export default function App() {
-  const [config, setConfig] = useState(initialConfig);
-  const [code, setCode] = useState(initialCode);
-  const [link, setLink] = useState(
-    initialCode ? `https://statlocker.gg/draft/${initialCode}` : "",
+  const shared = useWorkspace(),
+    cloud = Boolean(shared);
+  const [config, setConfig] = useWorkspaceField(["config"], initialConfig);
+  const [code, setCode] = useWorkspaceField(["draft", "code"], initialCode);
+  const [link, setLink] = useTournamentLocal(
+    shared?.data.activeTournamentId,
+    code ? `https://statlocker.gg/draft/${code}` : "",
   );
-  const [password, setPassword] = useState("");
-  const [activePassword, setActivePassword] = useState("");
+  const [password, setPassword] = useTournamentLocal(
+    shared?.data.activeTournamentId,
+    "",
+  );
+  const [activePassword, setActivePassword] = useTournamentLocal(
+    shared?.data.activeTournamentId,
+    "",
+  );
   const initialDemo = isOverlay
     ? params.get("demo") === "1"
     : saved.mode === "demo" && !initialCode;
-  const [mode, setMode] = useState(
+  const [mode, setMode] = useWorkspaceField(
+    ["draft", "mode"],
     initialDemo ? "demo" : initialCode ? "live" : "manual",
   );
-  const [snapshot, setSnapshot] = useState(
+  const [snapshot, setSnapshot] = useWorkspaceField(
+    ["draft", "snapshot"],
     initialDemo
       ? makeDemo()
       : isOverlay && linkedSnapshot
@@ -532,12 +660,12 @@ export default function App() {
     audioRef,
   } = usePickEffects(
     snapshot,
-    `${mode}:${code}`,
+    `${shared?.data.activeTournamentId || ""}:${mode}:${code}`,
     initialSnapshots,
     config,
     isOverlay,
   );
-  const [status, setStatus] = useState({
+  const [status, setStatus] = useWorkspaceField(["draft", "status"], {
     state: "idle",
     message: "Paste a draft link to connect.",
   });
@@ -546,7 +674,19 @@ export default function App() {
   const [toast, setToast] = useState("");
   const [activity, setActivity] = useState([]);
   const [tab, setTab] = useState(
-    params.get("tab") === "stats" ? "stats" : "studio",
+    [
+      "stats",
+      "live",
+      "overlay",
+      "bracket",
+      "banners",
+      "casters",
+      "outputs",
+      "analytics",
+      "data",
+    ].includes(params.get("tab"))
+      ? params.get("tab")
+      : "studio",
   );
   const [guide, setGuide] = useState(false);
   const [picker, setPicker] = useState(null);
@@ -564,7 +704,7 @@ export default function App() {
     return () => observer.disconnect();
   }, []);
   useEffect(() => {
-    if (!code) return;
+    if (cloud || !code) return;
     return openDraftConnection(
       code,
       {
@@ -605,9 +745,9 @@ export default function App() {
       },
       { password: activePassword },
     );
-  }, [code, retry, activePassword]);
+  }, [cloud, code, retry, activePassword, setStatus, setSnapshot]);
   useEffect(() => {
-    if (isOverlay) return;
+    if (isOverlay || cloud) return;
     try {
       localStorage.setItem(
         STORAGE_KEY,
@@ -620,9 +760,9 @@ export default function App() {
         ),
       );
     }
-  }, [config, code, mode, snapshot]);
+  }, [cloud, config, code, mode, snapshot]);
   useEffect(() => {
-    if (!isOverlay) return;
+    if (!isOverlay || cloud) return;
     const handler = (event) => {
       if (event.key === STORAGE_KEY && event.newValue) {
         try {
@@ -637,7 +777,7 @@ export default function App() {
     };
     window.addEventListener("storage", handler);
     return () => window.removeEventListener("storage", handler);
-  }, []);
+  }, [cloud, setConfig, setSnapshot]);
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(""), 6000);
@@ -649,15 +789,27 @@ export default function App() {
       ...c,
       teams: c.teams.map((t, j) => (j === i ? { ...t, [key]: value } : t)),
     }));
-  const url = broadcastUrl(
-    config,
-    code,
-    mode === "demo",
-    window.location.origin,
-    snapshot,
-  );
+  const url = cloud
+    ? new URL("/obs/draft", window.location.origin).href
+    : broadcastUrl(
+        config,
+        code,
+        mode === "demo",
+        window.location.origin,
+        snapshot,
+      );
   const connect = (e) => {
     e.preventDefault();
+    if (shared) {
+      shared
+        .command("draft/connect", { mode: "live", code: link, password })
+        .then(() => {
+          setError("");
+          setPassword("");
+        })
+        .catch((e) => setError(e.message));
+      return;
+    }
     try {
       const nextCode = parseDraftCode(link);
       setError("");
@@ -683,6 +835,12 @@ export default function App() {
     }
   };
   const demo = () => {
+    if (shared) {
+      shared
+        .command("draft/connect", { mode: "demo" })
+        .catch((e) => setToast(e.message));
+      return;
+    }
     setCode("");
     setMode("demo");
     setSnapshot(makeDemo());
@@ -692,6 +850,12 @@ export default function App() {
     );
   };
   const manual = () => {
+    if (shared) {
+      shared
+        .command("draft/connect", { mode: "manual" })
+        .catch((e) => setToast(e.message));
+      return;
+    }
     setCode("");
     setMode("manual");
     setSnapshot((s) =>
@@ -728,6 +892,13 @@ export default function App() {
     });
   };
   const selectHero = (heroId) => {
+    if (shared) {
+      shared
+        .command("draft/manual", { stepId: picker.id, heroId })
+        .catch((e) => setToast(e.message));
+      setPicker(null);
+      return;
+    }
     setSnapshot((s) => {
       const d = s || blankDraft();
       return {
@@ -812,7 +983,7 @@ export default function App() {
             flashes={flashes}
           />
         </div>
-        {config.voiceLines && soundBlocked && (
+        {(config.voiceLines || config.banVoiceLines) && soundBlocked && (
           <button
             className="enable-broadcast-sound button primary"
             onClick={enableSound}
@@ -843,13 +1014,56 @@ export default function App() {
             <Icon name="studio" />
             Draft studio<span>01</span>
           </button>
+          {tab === "stats" && (
+            <button
+              className={tab === "stats" ? "selected" : ""}
+              onClick={() => setTab("stats")}
+            >
+              <Icon name="settings" />
+              API stats
+            </button>
+          )}
           <button
-            className={tab === "stats" ? "selected" : ""}
-            onClick={() => setTab("stats")}
+            className={tab === "live" ? "selected" : ""}
+            onClick={() => setTab("live")}
           >
-            <Icon name="settings" />
-            Stat panels<span>02</span>
+            <Icon name="play" />
+            Live desk<span>02</span>
           </button>
+          <button
+            className={tab === "overlay" ? "selected" : ""}
+            onClick={() => setTab("overlay")}
+          >
+            <Icon name="studio" />
+            Match overlay
+          </button>
+          {cloud && (
+            <button
+              className={tab === "bracket" ? "selected" : ""}
+              onClick={() => setTab("bracket")}
+            >
+              <Icon name="studio" />
+              Bracket
+            </button>
+          )}
+          {cloud && (
+            <button
+              className={tab === "casters" ? "selected" : ""}
+              onClick={() => setTab("casters")}
+            >
+              <Icon name="studio" />
+              Caster desk
+            </button>
+          )}
+          {cloud && (
+            <button
+              className={tab === "banners" ? "selected" : ""}
+              onClick={() => setTab("banners")}
+            >
+              <Icon name="studio" />
+              Player banners
+            </button>
+          )}
           <button
             className={tab === "settings" ? "selected" : ""}
             onClick={() => setTab("settings")}
@@ -857,10 +1071,34 @@ export default function App() {
             <Icon name="settings" />
             Broadcast settings
           </button>
-          <button onClick={() => setGuide(true)}>
-            <Icon name="help" />
-            Setup guide
-          </button>
+          {cloud && (
+            <button
+              className={tab === "analytics" ? "selected" : ""}
+              onClick={() => setTab("analytics")}
+            >
+              <Icon name="settings" />
+              Tournament reports
+            </button>
+          )}
+          {cloud && (
+            <button
+              className={tab === "outputs" ? "selected" : ""}
+              onClick={() => setTab("outputs")}
+            >
+              <Icon name="external" />
+              OBS outputs
+            </button>
+          )}
+          {cloud && (
+            <button
+              className={tab === "data" ? "selected" : ""}
+              onClick={() => setTab("data")}
+            >
+              <Icon name="settings" />
+              Data library
+            </button>
+          )}
+          {shared?.logout && <button onClick={shared.logout}>Sign out</button>}
         </nav>
         <div className="sidebar-bottom">
           <span className="sidebar-star">✦</span>
@@ -869,7 +1107,8 @@ export default function App() {
           <div className="sidebar-admin">
             <span>AR</span>
             <div>
-              Broadcast admin<small>LOCAL WORKSPACE</small>
+              Broadcast admin
+              <small>{cloud ? "SHARED WORKSPACE" : "LOCAL WORKSPACE"}</small>
             </div>
             <i />
           </div>
@@ -883,13 +1122,74 @@ export default function App() {
           </span>
           <span className="save-state">
             <Icon name="check" size={14} />
-            {saveError ? "Backup recommended" : "Saved in this browser"}
+            {cloud
+              ? shared.saving
+                ? "Saving shared changes…"
+                : !shared.connected
+                  ? "Reconnecting…"
+                  : shared.error
+                    ? "Changes need attention"
+                    : "Shared studio connected"
+              : saveError
+                ? "Backup recommended"
+                : "Saved in this browser"}
           </span>
         </header>
+        {cloud && <TournamentSwitcher />}
         <div
-          className={`workspace-content${tab === "stats" ? " stats-tab" : ""}`}
+          inert={shared?.changingTournament || undefined}
+          aria-busy={shared?.changingTournament || undefined}
+          className={`workspace-content${tab === "stats" ? " stats-tab" : tab === "live" ? " production-tab" : tab === "overlay" ? " overlay-tab" : tab === "bracket" ? " bracket-tab" : tab === "casters" ? " casters-tab" : tab === "banners" ? " banners-tab" : tab === "outputs" ? " outputs-tab" : tab === "analytics" ? " analytics-tab" : tab === "data" ? " data-tab" : tab === "settings" ? " settings-only" : ""}`}
         >
-          <StatPanels config={config} active={tab === "stats"} />
+          <StatPanels
+            key={`stats:${shared?.data.activeTournamentId}`}
+            config={config}
+            active={tab === "stats"}
+          />
+          <ProductionStudio
+            key={`live:${shared?.data.activeTournamentId}`}
+            config={config}
+            active={tab === "live"}
+          />
+          <MatchOverlayControls
+            key={`overlay:${shared?.data.activeTournamentId}`}
+            config={config}
+            snapshot={snapshot}
+            active={tab === "overlay"}
+            onOpenDraft={() => setTab("studio")}
+          />
+          {cloud && (
+            <BracketStudio
+              key={`bracket:${shared.data.activeTournamentId}`}
+              active={tab === "bracket"}
+            />
+          )}
+          {cloud && (
+            <Analytics
+              key={`analytics:${shared.data.activeTournamentId}`}
+              config={config}
+              active={tab === "analytics"}
+            />
+          )}
+          {cloud && (
+            <CasterStudio
+              key={`casters:${shared.data.activeTournamentId}`}
+              active={tab === "casters"}
+            />
+          )}
+          {cloud && (
+            <PlayerBannersStudio
+              key={`banners:${shared.data.activeTournamentId}`}
+              active={tab === "banners"}
+            />
+          )}
+          {cloud && (
+            <DataLibrary
+              key={`data:${shared.data.activeTournamentId}`}
+              active={tab === "data"}
+            />
+          )}
+          {cloud && <SharedOutputs />}
           <div className="page-heading">
             <div>
               <span className="eyebrow">THE BROADCAST STARTS HERE</span>
@@ -913,6 +1213,16 @@ export default function App() {
               Open broadcast
             </a>
           </div>
+          {cloud && tab === "studio" && (
+            <DraftMatchSelector
+              key={`draft-match:${shared.data.activeTournamentId}`}
+              onStarted={() => {
+                setLink("");
+                setPassword("");
+                setError("");
+              }}
+            />
+          )}
           <div className="main-grid">
             <section className="preview-panel">
               <div className="panel-toolbar">
@@ -949,7 +1259,10 @@ export default function App() {
                     onSelect={
                       mode === "manual"
                         ? (slot) => {
-                            setPicker(slot);
+                            setPicker({
+                              ...slot,
+                              tournamentId: shared?.data.activeTournamentId,
+                            });
                             setSearch("");
                           }
                         : null
@@ -965,7 +1278,7 @@ export default function App() {
                 <div className="preview-actions">
                   <button
                     className="text-button"
-                    disabled={!config.voiceLines}
+                    disabled={!config.voiceLines && !config.banVoiceLines}
                     onClick={togglePreviewSound}
                   >
                     {previewSound ? "Mute preview" : "Preview sound"}
@@ -998,6 +1311,28 @@ export default function App() {
                 </p>
               </div>
               <form onSubmit={connect}>
+                {cloud && (
+                  <Field label="Manual draft format">
+                    <select
+                      value={snapshot.banCount || 3}
+                      disabled={mode === "live"}
+                      onChange={(e) =>
+                        shared
+                          .command("draft/rule", {
+                            banCount: Number(e.target.value),
+                          })
+                          .catch((e) => setError(e.message))
+                      }
+                    >
+                      <option value={3}>Competitive · 3 bans per team</option>
+                      <option value={2}>Classic · 2 bans per team</option>
+                    </select>
+                    <small>
+                      Changing format saves the current draft and starts an
+                      empty board. Live rooms use their own order.
+                    </small>
+                  </Field>
+                )}
                 <Field label="Statlocker draft link">
                   <input
                     type="text"
@@ -1250,6 +1585,19 @@ export default function App() {
           ) : (
             <div className="settings-grid">
               <section className="settings-panel">
+                <h2>Optional tools</h2>
+                <details>
+                  <summary>Legacy API statistics</summary>
+                  <p>The API source remains available for older workflows.</p>
+                  <button
+                    className="button secondary"
+                    onClick={() => setTab("stats")}
+                  >
+                    Open API stats
+                  </button>
+                </details>
+              </section>
+              <section className="settings-panel">
                 <h2>On-screen details</h2>
                 <Toggle
                   checked={config.transparent}
@@ -1279,9 +1627,9 @@ export default function App() {
               <section className="settings-panel">
                 <h2>Workspace backup</h2>
                 <p>
-                  Names, logos, scores, and presentation settings are saved in
-                  this browser. Keep a backup to move them to another admin’s
-                  browser.
+                  {cloud
+                    ? "Names, logos, scores and presentation are shared and saved on the server. Export settings for an additional copy. Importing replaces the shared branding."
+                    : "Settings are saved in this browser. Export a backup to move them to another browser."}
                 </p>
                 <div className="backup-actions">
                   <button className="button secondary" onClick={backup}>
@@ -1310,8 +1658,8 @@ export default function App() {
                 </div>
                 <small>PARCHMENT & OLIVE · DEADLOCK AR IDENTITY</small>
               </section>
-              <section className="settings-panel">
-                <h2>Pick effects & sound</h2>
+              <section className="settings-panel draft-effects-settings">
+                <h2>Draft effects & sound</h2>
                 <Toggle
                   checked={config.pickEffects}
                   onChange={(v) => update("pickEffects", v)}
@@ -1323,6 +1671,16 @@ export default function App() {
                   onChange={(v) => update("voiceLines", v)}
                   label="Hero selection voice lines"
                   hint="Play one game voice line for each new pick in the broadcast."
+                />
+                <Toggle
+                  checked={config.banVoiceLines}
+                  onChange={(v) => update("banVoiceLines", v)}
+                  label="Hero ban voice lines"
+                  hint="Play the game’s hero-deselection voice line for each new ban. Sinclair stays silent because no deselection recording is verified."
+                />
+                <BanAnimationExamples
+                  selected={config.banAnimation}
+                  onSelect={(style) => update("banAnimation", style)}
                 />
                 <Field label={`Voice volume · ${config.voiceVolume}%`}>
                   <input
@@ -1337,7 +1695,7 @@ export default function App() {
                   />
                 </Field>
                 <p>
-                  Use Preview sound and Test pick in demo mode to check audio.
+                  Use Preview sound and a new manual pick or ban to check audio.
                   The studio starts muted so it can stay open beside OBS. In
                   OBS, enable “Control audio via OBS” on the Browser Source.
                 </p>
@@ -1357,8 +1715,9 @@ export default function App() {
               <span className="eyebrow">READY FOR YOUR STREAM</span>
               <h2>Your broadcast, one link away.</h2>
               <p>
-                Add this URL to OBS as a 1920 × 1080 Browser Source. Generate a
-                new URL after changing branding.
+                {cloud
+                  ? "Add this permanent URL to OBS at 1920 × 1080. It follows the shared draft and branding automatically."
+                  : "Add this URL to OBS as a 1920 × 1080 Browser Source. Generate a new URL after changing branding."}
               </p>
               <input
                 className="broadcast-url"
@@ -1416,8 +1775,9 @@ export default function App() {
               <b>Set your match identity</b>
               <p>
                 Edit names, upload logos, and set the series score and round.
-                Use Load demo to check hero artwork without affecting your live
-                room.
+                {cloud
+                  ? "Load demo replaces the shared draft output with a rehearsal. All connected OBS views follow it."
+                  : "Use Load demo to check hero artwork without affecting your live room."}
               </p>
             </li>
             <li>
@@ -1432,62 +1792,63 @@ export default function App() {
             <li>
               <b>Update branding when needed</b>
               <p>
-                Draft selections update live in OBS. The URL carries a copy of
-                names, logos, and scores; copy a new URL after editing those.
-                Broadcast tabs in this browser also follow local branding
-                changes.
+                {cloud
+                  ? "All authorized admins share one workspace. Changes to names, logos, scores and presentation update the same permanent OBS links."
+                  : "The URL carries a copy of names, logos and scores. Copy a new URL after editing those."}
               </p>
             </li>
           </ol>
           <div className="guide-note">
-            This version stores settings in your browser. Shared admin accounts
-            and cross-device branding updates need a backend. The OBS link
-            currently supports rooms with public spectator access. Passwords
-            entered in the studio stay in memory and are not included in the
-            broadcast link.
+            {cloud
+              ? "Draft connections run in the cloud as spectators. Lobby passwords stay in server memory, and are never stored in the shared settings or OBS links. After a server restart, reconnect private drafts with their password."
+              : "This version stores settings in your browser. Shared control needs the hosted studio."}
           </div>
         </Modal>
       )}
-      {picker && (
-        <Modal
-          title={`Choose a hero · Team ${picker.teamNumber} ${picker.selectionType}`}
-          onClose={() => setPicker(null)}
-        >
-          <input
-            className="hero-search"
-            placeholder="Search heroes…"
-            aria-label="Search heroes"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <div className="hero-picker">
-            {heroes
-              .filter((h) =>
-                h.name.toLowerCase().includes(search.toLowerCase()),
-              )
-              .sort((a, b) => a.name.localeCompare(b.name))
-              .map((h) => {
-                const used = snapshot.steps.some(
-                  (s) => s.id !== picker.id && s.heroId === h.id,
-                );
-                return (
-                  <button
-                    key={h.id}
-                    onClick={() => selectHero(h.id)}
-                    disabled={used}
-                  >
-                    <img src={h.image} alt="" />
-                    <span>{h.name}</span>
-                    {used && <small>Already selected</small>}
-                  </button>
-                );
-              })}
-          </div>
-          <button className="button secondary" onClick={() => selectHero(null)}>
-            Clear this slot
-          </button>
-        </Modal>
-      )}
+      {picker &&
+        (!cloud || picker.tournamentId === shared.data.activeTournamentId) && (
+          <Modal
+            title={`Choose a hero · Team ${picker.teamNumber} ${picker.selectionType}`}
+            onClose={() => setPicker(null)}
+          >
+            <input
+              className="hero-search"
+              placeholder="Search heroes…"
+              aria-label="Search heroes"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div className="hero-picker">
+              {heroes
+                .filter((h) =>
+                  h.name.toLowerCase().includes(search.toLowerCase()),
+                )
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((h) => {
+                  const used = snapshot.steps.some(
+                    (s) => s.id !== picker.id && s.heroId === h.id,
+                  );
+                  return (
+                    <button
+                      key={h.id}
+                      onClick={() => selectHero(h.id)}
+                      disabled={used}
+                    >
+                      <img src={h.image} alt="" />
+                      <span>{h.name}</span>
+                      {used && <small>Already selected</small>}
+                    </button>
+                  );
+                })}
+            </div>
+            <button
+              className="button secondary"
+              onClick={() => selectHero(null)}
+            >
+              Clear this slot
+            </button>
+          </Modal>
+        )}
     </div>
   );
 }

@@ -58,15 +58,15 @@ test("broadcast state discards participant and owner data and keeps changing ban
   state.participants = [{ browserSessionId: "private-session" }];
   state.ownerToken = "private-token";
   state.steps.push({
-    id: "third-ban",
+    id: "fourth-ban",
     teamNumber: 1,
     selectionType: "ban",
     heroId: 88,
   });
   const result = cleanSnapshot(state);
   assert.equal(JSON.stringify(result).includes("private-"), false);
-  assert.equal(teamSlots(result, 1, "ban").length, 3);
-  assert.equal(teamSlots(result, 1, "ban")[2].heroId, 88);
+  assert.equal(teamSlots(result, 1, "ban").length, 4);
+  assert.equal(teamSlots(result, 1, "ban")[3].heroId, 88);
   assert.equal(teamSlots(result, 2, "pick").length, 6);
 });
 

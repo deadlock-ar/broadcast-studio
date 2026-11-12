@@ -1,0 +1,82 @@
+{
+  "note": "Original source-income wire fields from match134405814; account IDs and unrelated details removed.",
+  "base64": "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",
+  "expected": {
+    "matchId": "134405814",
+    "duration": 1831,
+    "players": [
+      {
+        "id": "4000000001",
+        "slot": 1,
+        "team": 0,
+        "heroId": 7
+      },
+      {
+        "id": "4000000002",
+        "slot": 2,
+        "team": 0,
+        "heroId": 16
+      },
+      {
+        "id": "4000000003",
+        "slot": 3,
+        "team": 0,
+        "heroId": 87
+      },
+      {
+        "id": "4000000004",
+        "slot": 4,
+        "team": 0,
+        "heroId": 72
+      },
+      {
+        "id": "4000000005",
+        "slot": 5,
+        "team": 0,
+        "heroId": 88
+      },
+      {
+        "id": "4000000006",
+        "slot": 6,
+        "team": 0,
+        "heroId": 58
+      },
+      {
+        "id": "4000000007",
+        "slot": 7,
+        "team": 1,
+        "heroId": 78
+      },
+      {
+        "id": "4000000008",
+        "slot": 8,
+        "team": 1,
+        "heroId": 80
+      },
+      {
+        "id": "4000000009",
+        "slot": 9,
+        "team": 1,
+        "heroId": 85
+      },
+      {
+        "id": "4000000010",
+        "slot": 10,
+        "team": 1,
+        "heroId": 35
+      },
+      {
+        "id": "4000000011",
+        "slot": 11,
+        "team": 1,
+        "heroId": 11
+      },
+      {
+        "id": "4000000012",
+        "slot": 12,
+        "team": 1,
+        "heroId": 79
+      }
+    ]
+  }
+}

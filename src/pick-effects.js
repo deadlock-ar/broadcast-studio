@@ -1,5 +1,6 @@
 export const PICK_EFFECT_DURATION_MS = 6000;
 export const PICK_EFFECT_FADE_MS = 900;
+export const BAN_EFFECT_DURATION_MS = 1800;
 
 // A replacement starts its own six-second window; an old timeout cannot clear it.
 export function createPickFlashController({
@@ -17,7 +18,7 @@ export function createPickFlashController({
     if (notify && changed) onChange({});
   }
   return {
-    show(id, heroId) {
+    show(id, heroId, durationMs = PICK_EFFECT_DURATION_MS) {
       cancel(timers.get(id)?.timer);
       const token = {};
       flashes = { ...flashes, [id]: heroId };
@@ -29,7 +30,7 @@ export function createPickFlashController({
         delete next[id];
         flashes = next;
         onChange(flashes);
-      }, PICK_EFFECT_DURATION_MS);
+      }, durationMs);
       timers.set(id, { timer, token });
     },
     reset,
@@ -40,7 +41,7 @@ export function createPickFlashController({
 }
 
 // The first state after joining/rejoining is a baseline, never a new pick.
-export function createPickTracker() {
+export function createSelectionTracker(types = ["pick", "ban"]) {
   let previous = null;
   return {
     observe(snapshot, { initial = false } = {}) {
@@ -51,7 +52,7 @@ export function createPickTracker() {
         previous && !initial
           ? (snapshot?.steps || []).filter(
               (s) =>
-                s.selectionType === "pick" &&
+                types.includes(s.selectionType) &&
                 s.heroId &&
                 previous.get(s.id) !== s.heroId,
             )
@@ -63,6 +64,16 @@ export function createPickTracker() {
       previous = null;
     },
   };
+}
+
+export const createPickTracker = () => createSelectionTracker(["pick"]);
+
+export function selectionVoiceLines(hero, type, config) {
+  if (type === "ban")
+    return config.banVoiceLines
+      ? (hero?.banVoiceLines || []).map((voice) => voice.url)
+      : [];
+  return config.voiceLines ? hero?.voiceLines || [] : [];
 }
 
 const SILENCE =
