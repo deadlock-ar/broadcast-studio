@@ -132,3 +132,69 @@ test("a paused draft still displays its valid frozen source timer", () => {
   assert.equal(draftClockLabel(state.frame.phase, teams), "Draft paused");
   assert.equal(state.pendingUntil, null);
 });
+
+test("each team keeps its own timer and reserve across the handoff", () => {
+  const initial = advanceDraftClock(
+    null,
+    snapshot(0, {
+      ...clock(1, 12, 90),
+      team2StepTimer: 30,
+      team2ReserveTimer: 120,
+    }),
+    true,
+    0,
+  );
+  assert.deepEqual(initial.teamFrames, {
+    1: { seconds: 12, reserve: 90 },
+    2: { seconds: 30, reserve: 120 },
+  });
+  const gap = advanceDraftClock(initial, snapshot(1), true, 100);
+  assert.deepEqual(gap.teamFrames, initial.teamFrames);
+  const next = advanceDraftClock(
+    gap,
+    snapshot(1, clock(2, 29, 119)),
+    true,
+    1100,
+  );
+  assert.deepEqual(next.teamFrames[1], { seconds: 12, reserve: 90 });
+  assert.deepEqual(next.teamFrames[2], { seconds: 29, reserve: 119 });
+});
+
+test("an expired active clock never clears the other team's frozen values", () => {
+  const initial = advanceDraftClock(
+    null,
+    snapshot(0, {
+      ...clock(1, 12, 90),
+      team2StepTimer: 30,
+      team2ReserveTimer: 120,
+    }),
+    true,
+    0,
+  );
+  const gap = advanceDraftClock(initial, snapshot(1), true, 100);
+  const expired = advanceDraftClock(gap, gap.snapshot, true, 2100);
+  assert.deepEqual(expired.teamFrames[1], { seconds: 12, reserve: 90 });
+  assert.equal(expired.teamFrames[2], undefined);
+});
+
+test("finished drafts, disconnections and new rooms never retain team clocks", () => {
+  const initial = advanceDraftClock(
+    null,
+    snapshot(0, {
+      ...clock(1, 12, 90),
+      team2StepTimer: 30,
+      team2ReserveTimer: 120,
+    }),
+    true,
+    0,
+  );
+  for (const [next, connected] of [
+    [{ ...snapshot(1), status: "COMPLETED" }, true],
+    [snapshot(1), false],
+    [{ ...snapshot(1), draftCode: "NEWROOM1" }, true],
+  ])
+    assert.deepEqual(
+      advanceDraftClock(initial, next, connected, 100).teamFrames,
+      {},
+    );
+});

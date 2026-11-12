@@ -71,6 +71,41 @@ export function advanceDraftClock(previous, snapshot, connected, now) {
       next.pendingUntil = until;
     }
   }
+  // Each side owns its last source values. Inactive clocks stay frozen instead
+  // of moving to the other team's display when the turn changes.
+  const retainTeams =
+    connected &&
+    ["ACTIVE", "PAUSED"].includes(phase.status) &&
+    previous?.room === room &&
+    step >= previous.step &&
+    previous.connected &&
+    ["ACTIVE", "PAUSED"].includes(previous.snapshot?.status);
+  next.teamFrames = retainTeams ? { ...previous.teamFrames } : {};
+  if (connected && ["ACTIVE", "PAUSED"].includes(phase.status)) {
+    for (const team of [1, 2]) {
+      if (team === phase.team && !ready) continue;
+      const teamSeconds = timer?.[`team${team}StepTimer`];
+      const teamReserve = timer?.[`team${team}ReserveTimer`];
+      if (!Number.isFinite(teamSeconds) && !Number.isFinite(teamReserve))
+        continue;
+      const old = next.teamFrames[team];
+      next.teamFrames[team] = {
+        seconds: Number.isFinite(teamSeconds)
+          ? Math.max(0, teamSeconds)
+          : (old?.seconds ?? null),
+        reserve: Number.isFinite(teamReserve)
+          ? Math.max(0, teamReserve)
+          : (old?.reserve ?? null),
+      };
+    }
+    if (next.frame) {
+      const team = next.frame.phase.team || timerTeam;
+      next.teamFrames[team] = {
+        seconds: next.frame.seconds,
+        reserve: next.frame.reserve,
+      };
+    } else if (phase.team) delete next.teamFrames[phase.team];
+  }
   return next;
 }
 

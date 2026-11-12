@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import {
   advanceDraftClock,
-  draftClockLabel,
-  draftClockPhase,
   draftClockTime,
   DRAFT_CLOCK_HANDOFF_MS,
 } from "./draft-clock.js";
 
-export default function DraftClock({ snapshot, connected, enabled, teams }) {
+export default function DraftClock({
+  snapshot,
+  connected,
+  enabled,
+  teams,
+  team,
+}) {
   const live = connected && enabled;
   const [saved, setSaved] = useState(() =>
     advanceDraftClock(null, snapshot, live, 0),
@@ -35,34 +39,37 @@ export default function DraftClock({ snapshot, connected, enabled, teams }) {
     );
     return () => clearTimeout(timer);
   }, [state.pendingUntil]);
-  const frame = state.frame;
-  const phase = frame?.phase || draftClockPhase(snapshot);
+  const frame = state.teamFrames[team];
+  const active =
+    snapshot?.status === "ACTIVE" &&
+    snapshot.steps?.[snapshot.currentStepIndex]?.teamNumber === team;
+  if (!enabled || snapshot?.status === "COMPLETED") return null;
   return (
     <div
-      className="draft-clock"
+      className={`draft-clock team-draft-clock ${active ? "is-active" : ""}`}
+      aria-label={`${teams[team - 1].name} draft timers`}
+      data-team={team}
       aria-busy={Boolean(state.pendingUntil)}
       data-clock-state={
         state.pendingUntil ? "handoff" : frame ? "ready" : "unavailable"
       }
     >
-      <div className="draft-clock-readout" key={frame?.turn || "unavailable"}>
-        <span className="draft-phase">{draftClockLabel(phase, teams)}</span>
-        {enabled && (
-          <span className="draft-timer">
-            <span className="draft-step-time">
+      <div className="draft-clock-readout">
+        <span className="draft-timer">
+          <span className="draft-step-clock">
+            <small>TURN</small>
+            <strong className="draft-step-time">
               {draftClockTime(frame?.seconds)}
-            </span>
-            <small className="draft-reserve">
-              <span>RESERVE</span>
-              <strong>
-                {Number.isFinite(frame?.reserve)
-                  ? Math.ceil(frame.reserve)
-                  : "—"}
-                <span>s</span>
-              </strong>
-            </small>
+            </strong>
           </span>
-        )}
+          <small className="draft-reserve">
+            <span>RESERVE</span>
+            <strong>
+              {Number.isFinite(frame?.reserve) ? Math.ceil(frame.reserve) : "—"}
+              <span>s</span>
+            </strong>
+          </small>
+        </span>
       </div>
     </div>
   );

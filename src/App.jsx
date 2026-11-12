@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import heroes from "./heroes.json";
 import { usePickEffects } from "./use-pick-effects";
 import DraftClock from "./DraftClock.jsx";
+import { draftClockLabel, draftClockPhase } from "./draft-clock.js";
 import { PICK_EFFECT_FADE_MS } from "./pick-effects";
 import { createPickFlame } from "./pick-sparks";
 import {
@@ -443,26 +444,36 @@ function DraftBoard({
                 />
               ))}
             </div>
-            {config.showBans && (
-              <div className="ban-row">
-                <span>BANS</span>
-                {teamSlots(snapshot, number, "ban").map((slot, i) => (
-                  <HeroSlot
-                    slot={slot}
-                    index={i}
-                    type="ban"
-                    key={slot.id}
-                    active={active?.id === slot.id}
-                    flashing={
-                      config.banAnimation !== "none" &&
-                      flashes[slot.id] === slot.heroId
-                    }
-                    banAnimation={config.banAnimation}
-                    onSelect={onSelect}
-                  />
-                ))}
-              </div>
-            )}
+            <div className="draft-team-footer">
+              {config.showBans && (
+                <div className="ban-row">
+                  <span>BANS</span>
+                  {teamSlots(snapshot, number, "ban").map((slot, i) => (
+                    <HeroSlot
+                      slot={slot}
+                      index={i}
+                      type="ban"
+                      key={slot.id}
+                      active={active?.id === slot.id}
+                      flashing={
+                        config.banAnimation !== "none" &&
+                        flashes[slot.id] === slot.heroId
+                      }
+                      banAnimation={config.banAnimation}
+                      onSelect={onSelect}
+                    />
+                  ))}
+                </div>
+              )}
+              <DraftClock
+                key={`${snapshot?.draftCode || mode}:${config.event}:${config.game}:${number}`}
+                snapshot={snapshot}
+                connected={!disconnected}
+                enabled={config.showTimer && mode === "live"}
+                teams={teams}
+                team={number}
+              />
+            </div>
           </section>
         ))}
         <div className="draft-center">
@@ -480,13 +491,11 @@ function DraftBoard({
               <small>{config.round}</small>
             </span>
           )}
-          <DraftClock
-            key={`${snapshot?.draftCode || mode}:${config.event}:${config.game}`}
-            snapshot={snapshot}
-            connected={!disconnected}
-            enabled={config.showTimer && mode === "live"}
-            teams={teams}
-          />
+          <span
+            className={`draft-phase ${snapshot?.status === "COMPLETED" ? "draft-complete" : ""}`}
+          >
+            {draftClockLabel(draftClockPhase(snapshot), teams)}
+          </span>
         </div>
       </div>
       {config.layout === "board" && (
@@ -499,10 +508,10 @@ function DraftBoard({
               ? "DEMO • SAMPLE DRAFT"
               : mode === "manual"
                 ? "MANUAL DRAFT"
-                : disconnected
-                  ? "AWAITING LIVE UPDATES"
-                  : snapshot?.status === "COMPLETED"
-                    ? "DRAFT COMPLETE"
+                : snapshot?.status === "COMPLETED"
+                  ? "DRAFT COMPLETE"
+                  : disconnected
+                    ? "AWAITING LIVE UPDATES"
                     : "HERO DRAFT"}
           </span>
         </div>
