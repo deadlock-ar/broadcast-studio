@@ -123,3 +123,12 @@ test("clock formatting keeps zero honest and never creates a countdown for missi
   assert.equal(draftClockTime(NaN), "—");
   assert.equal(advanceDraftClock(null, snapshot(), true, 0).frame, null);
 });
+
+test("a paused draft still displays its valid frozen source timer", () => {
+  const paused = { ...snapshot(1, clock(2, 17, 89)), status: "PAUSED" };
+  const state = advanceDraftClock(null, paused, true, 0);
+  assert.equal(state.frame.seconds, 17);
+  assert.equal(state.frame.reserve, 89);
+  assert.equal(draftClockLabel(state.frame.phase, teams), "Draft paused");
+  assert.equal(state.pendingUntil, null);
+});

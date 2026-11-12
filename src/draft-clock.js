@@ -36,8 +36,9 @@ export function advanceDraftClock(previous, snapshot, connected, now) {
   const reserve = timer?.[`team${timerTeam}ReserveTimer`];
   const ready =
     connected &&
-    phase.status === "ACTIVE" &&
-    timerTeam === phase.team &&
+    (phase.status === "ACTIVE"
+      ? timerTeam === phase.team
+      : phase.status === "PAUSED" && [1, 2].includes(timerTeam)) &&
     Number.isFinite(seconds);
   const next = {
     snapshot,
